@@ -334,12 +334,40 @@ body.focus #fab-focus { color: var(--red); border-color: var(--red); }
 .offline-row button { border: 1px solid var(--rule); background: var(--paper); border-radius: 8px; padding: 8px 10px; cursor: pointer; font-size: 13.5px; text-align: left; }
 .offline-row small { color: var(--muted); font-size: 12px; line-height: 1.4; }
 
+/* Uygulama menüsü, açık sekmeler, pencere */
+.menu { position: fixed; z-index: 36; top: calc(env(safe-area-inset-top, 0px) + var(--bar1) - 4px); right: max(12px, env(safe-area-inset-right, 0px)); width: min(340px, calc(100vw - 24px)); max-height: 75vh; overflow-y: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; box-shadow: 0 14px 34px rgba(0,0,0,.18); padding: 8px; display: grid; gap: 6px; }
+.menu .it { display: flex; gap: 12px; align-items: flex-start; text-align: left; border: 1px solid var(--rule); background: var(--paper); border-radius: 12px; padding: 11px 12px; cursor: pointer; text-decoration: none; color: var(--ink); }
+.menu .it:hover { border-color: var(--lugat); }
+.menu .it svg { width: 20px; height: 20px; flex: none; color: var(--red); margin-top: 1px; }
+.menu .it b { display: block; font-size: 14.5px; }
+.menu .it small { display: block; color: var(--muted); font-size: 12.5px; line-height: 1.4; margin-top: 2px; }
+.menu .tab-it { display: flex; align-items: center; gap: 10px; border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; cursor: pointer; background: var(--paper); }
+.menu .tab-it.on { border-color: var(--red); }
+.menu .tab-it span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.menu .tab-it small { color: var(--muted); }
+.menu .tab-it button { background: none; border: none; color: var(--muted); cursor: pointer; }
+.round { position: relative; }
+.badge { position: absolute; top: -2px; right: -2px; min-width: 18px; height: 18px; border-radius: 9px; background: var(--red); color: #fff; font: 600 11px/18px var(--font-ui); padding: 0 4px; }
+.only-narrow { display: none !important; }
+.modal-wrap { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.4); display: grid; place-items: center; padding: 20px; }
+.modal { position: relative; width: min(560px, 100%); max-height: 85vh; overflow-y: auto; background: var(--surface); border-radius: 16px; padding: 26px 26px 22px; box-shadow: 0 20px 50px rgba(0,0,0,.3); line-height: 1.6; }
+.modal h2 { font-family: "Poppins", var(--font-ui); margin: 0 0 4px; font-size: 22px; }
+.modal h2::after { content: ""; display: block; width: 50px; height: 2px; background: var(--red); margin: 10px 0 14px; }
+.modal-x { position: absolute; top: 12px; right: 12px; border: none; background: var(--soft); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; }
+.modal table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.modal td { padding: 7px 4px; border-bottom: 1px solid var(--rule); }
+.modal kbd { font: 600 12px var(--font-ui); background: var(--soft); border: 1px solid var(--rule); border-bottom-width: 2px; border-radius: 6px; padding: 2px 7px; }
+.modal ul { padding-left: 20px; margin: 8px 0; }
+
 /* ---------- Telefon ve tablet ---------- */
 @media (max-width: 960px) {
   :root { --bar1: 56px; --side-w: min(340px, 86vw); }
   .logo { width: auto; }
   .logo .name { font-size: 22px; }
   .home-link, .tabs { display: none; }
+  .only-narrow { display: inline-flex !important; }
+  #btn-full { display: none; }
+  .tools { gap: 6px; }
   .round { width: 38px; height: 38px; }
   .bar2 .side-title { width: auto; padding-right: 12px; background: none; border-right: 1px solid var(--rule); }
   .bar2 .side-title span { display: none; }
@@ -366,8 +394,10 @@ body.focus #fab-focus { color: var(--red); border-color: var(--red); }
     <div class="tabs" id="tabs"></div>
     <div class="tools">
       <button class="round" id="btn-search" aria-label="Ara"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></button>
+      <button class="round only-narrow" id="btn-tabs" aria-label="Açık sekmeler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="7" width="14" height="13" rx="2"/><path d="M7 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/></svg><span class="badge" id="tabs-count">0</span></button>
       <button class="round" id="btn-full" aria-label="Tam ekran oku"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M9 10l3-3 3 3"/></svg></button>
       <button class="round" id="btn-theme" aria-label="Gece / gündüz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+      <button class="round" id="btn-apps" aria-label="Uygulama menüsü"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="12" cy="19" r="2"/><circle cx="19" cy="19" r="2"/></svg></button>
       <button class="round" id="btn-settings" aria-label="Okuma ayarları" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </div>
   </div>
@@ -390,6 +420,8 @@ body.focus #fab-focus { color: var(--red); border-color: var(--red); }
   <button id="fab-top" aria-label="Bölümün başına dön"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l6-6 6 6"/></svg></button>
 </div>
 
+<div class="menu" id="menu" hidden role="menu"></div>
+<div class="modal-wrap" id="modal" hidden><div class="modal" role="dialog" aria-modal="true"><button class="modal-x" id="modal-x" aria-label="Kapat">✕</button><div id="modal-body"></div></div></div>
 <div class="pop" id="pop" hidden role="dialog" aria-live="polite"></div>
 <div class="settings" id="settings" hidden role="dialog" aria-label="Ayarlar">
   <div class="set-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><b>AYARLAR</b><button id="set-close">Kapat ✕</button></div>
@@ -950,6 +982,7 @@ function syncTabs() {
   saveTabs(); renderTabs();
 }
 function renderTabs() {
+  const tc = document.getElementById("tabs-count"); if (tc) tc.textContent = tabs.length;
   const ICON_OPEN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M3 5.5c3-1 6-1 9 1 3-2 6-2 9-1V19c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6.5V20"/></svg>`;
   $("#tabs").innerHTML = `<button class="tab ${activeTab === "search" ? "on" : ""}" data-tab="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><span class="t">Arama</span></button>` +
     tabs.map((t) => `<div class="tab ${activeTab === t.k ? "on" : ""}" data-tab="${t.k}" role="button" tabindex="0">${ICON_OPEN}<span class="t">${escapeHtml(tabLabel(t.h))}</span><button class="x" data-close="${t.k}" aria-label="Sekmeyi kapat">✕</button></div>`).join("") +
@@ -1406,6 +1439,77 @@ $("#btn-offline").onclick = async () => {
   msg.textContent = "Bütün kitaplar bu cihaza kaydedildi. Artık internetsiz de okuyabilirsin.";
   btn.disabled = false;
 };
+
+/* ---------- Uygulama menüsü, açık sekmeler, pencereler ---------- */
+const menu = $("#menu");
+const MI = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+let installEvt = null;
+window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installEvt = e; });
+function openMenu(kind) {
+  if (!menu.hidden && menu.dataset.kind === kind) return closeMenu();
+  menu.dataset.kind = kind;
+  if (kind === "apps") {
+    const items = [
+      ["home", MI('<path d="M3 11l9-8 9 8M5 10v10h14V10"/>'), "Ana sayfa", "Arama, eser grupları ve günün vecizesi"],
+      ["notes", MI('<path d="M6 4h12v16l-6-4-6 4z"/>'), "Yer imleri ve notlarım", "İşaretlediğin sayfalar ve vurgular"],
+      ["keys", MI('<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/>'), "Kısayollar ve yardım", "Klavye kısayolları, nasıl kullanılır"],
+      ["about", MI('<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/>'), "NurRisale hakkında", "Proje, kaynaklar ve özellikler"],
+    ];
+    if (installEvt) items.push(["install", MI('<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>'), "Uygulama olarak yükle", "Telefona ya da bilgisayara ekle"]);
+    menu.innerHTML = items.map(([k, ic, t, d]) => `<button class="it" data-m="${k}">${ic}<span><b>${t}</b><small>${d}</small></span></button>`).join("") +
+      `<a class="it" href="https://github.com/karslio/nurrisale" target="_blank" rel="noopener">${MI('<path d="M9 19c-4 1.5-4-2-6-2.5M15 21v-3.5a3 3 0 0 0-.8-2.3c2.8-.3 5.8-1.4 5.8-6.3a5 5 0 0 0-1.3-3.4 4.6 4.6 0 0 0-.1-3.4s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.4 1.8 5.3 2.1 5.3 2.1a4.6 4.6 0 0 0-.1 3.4A5 5 0 0 0 3.9 9c0 4.9 3 6 5.8 6.3a3 3 0 0 0-.8 2.3V21"/>')}<span><b>Kaynak kodu</b><small>GitHub'da NurRisale</small></span></a>`;
+  } else {
+    menu.innerHTML = `<div class="it" style="cursor:default"><span><b>Açık sekmeler</b><small>${tabs.length} okuma sekmesi</small></span></div>` +
+      `<div class="tab-it ${activeTab === "search" ? "on" : ""}" data-go="search"><span>Arama</span></div>` +
+      tabs.map((t) => `<div class="tab-it ${activeTab === t.k ? "on" : ""}" data-go="${t.k}"><span>${escapeHtml(tabLabel(t.h))}</span><small>${t.h ? escapeHtml(metaOf(t.h.slice(1).split("-")[0])?.title || "") : ""}</small><button data-x="${t.k}" aria-label="Kapat">✕</button></div>`).join("") +
+      `<button class="it" data-m="newtab">${MI('<path d="M12 5v14M5 12h14"/>')}<span><b>Yeni sekme</b></span></button>`;
+  }
+  menu.hidden = false;
+}
+function closeMenu() { menu.hidden = true; }
+$("#btn-apps").onclick = (e) => { e.stopPropagation(); openMenu("apps"); };
+$("#btn-tabs").onclick = (e) => { e.stopPropagation(); openMenu("tabs"); };
+document.addEventListener("click", (e) => { if (!menu.hidden && !e.target.closest("#menu, #btn-apps, #btn-tabs")) closeMenu(); });
+menu.addEventListener("click", async (e) => {
+  const x = e.target.closest("[data-x]");
+  if (x) { e.stopPropagation(); $(`#tabs [data-close="${x.dataset.x}"]`)?.click(); menu.dataset.kind = ""; openMenu("tabs"); return; }
+  const g = e.target.closest("[data-go]");
+  if (g) { closeMenu(); $(`#tabs [data-tab="${g.dataset.go}"]`)?.click(); return; }
+  const m = e.target.closest("[data-m]")?.dataset.m; if (!m) return;
+  closeMenu();
+  if (m === "home") { activeTab = "search"; saveTabs(); location.hash = ""; route(); }
+  if (m === "newtab") $("#tab-add").click();
+  if (m === "notes") { if (narrow()) openSide(); else { renderSide(); side.scrollTo({ top: 0, behavior: "smooth" }); } if (!getMarks().length && !getHls().length) toast("Henüz yer imi ya da vurgu yok"); }
+  if (m === "keys") showModal(`<h2>Kısayollar ve yardım</h2><table>
+      <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Önceki / sonraki bölüm (sayfa modunda sayfa)</td></tr>
+      <tr><td><kbd>F</kbd></td><td>Odak modu</td></tr><tr><td><kbd>Esc</kbd></td><td>Açık pencereleri kapat</td></tr></table>
+      <ul><li>Renkli kelimelerin ve Arapça ifadelerin <b>üstüne gel</b> ya da dokun: anlamı açılır.</li>
+      <li>Küçük kırmızı numaralar <b>haşiyedir</b>.</li><li>Metni seçince <b>vurgula, not ekle, kopyala, bağlantı al</b>.</li>
+      <li>Üstteki yolda kitap ya da bölüm adına tıklayınca <b>listede o yere</b> gidersin.</li>
+      <li>Ayarlardan <b>sayfa sayfa okuma</b>, tema, yazı tipi ve boyutu değişir.</li></ul>`);
+  if (m === "about") showModal(`<h2>NurRisale hakkında</h2>
+      <p>NurRisale, Risale-i Nur Külliyatı'nı rahatça okumak için yapılmış bir öğrenme projesidir.</p>
+      <ul><li>${LIBRARY.length} kitap, ${LIBRARY.reduce((n, b) => n + b.pages, 0).toLocaleString("tr")} sayfa</li>
+      <li>${Object.keys(LUGAT).length.toLocaleString("tr")} kelimelik lugat, sık geçen Arapça ifadelerin meâli</li>
+      <li>Haşiyeler, yer imleri, vurgular ve notlar, sesli okuma, çevrimdışı okuma</li></ul>
+      <p style="color:var(--muted);font-size:14px">Sayfa numaraları sitenin kendi sayfalamasıdır, basılı kitapla aynı değildir.</p>`);
+  if (m === "install" && installEvt) { installEvt.prompt(); installEvt = null; }
+});
+function showModal(html) { $("#modal-body").innerHTML = html; $("#modal").hidden = false; }
+$("#modal-x").onclick = () => $("#modal").hidden = true;
+$("#modal").addEventListener("click", (e) => { if (e.target.id === "modal") $("#modal").hidden = true; });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") { $("#modal").hidden = true; closeMenu(); } });
+
+/* Sayfa modunda telefonda kaydırarak sayfa çevir */
+let touch0 = null;
+app.addEventListener("touchstart", (e) => { if (e.touches.length === 1) touch0 = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() }; }, { passive: true });
+app.addEventListener("touchend", (e) => {
+  if (!touch0 || settings.mode !== "page" || !current.id) return;
+  const dx = e.changedTouches[0].clientX - touch0.x, dy = e.changedTouches[0].clientY - touch0.y, quick = Date.now() - touch0.t < 600;
+  touch0 = null;
+  if (!quick || Math.abs(dx) < 70 || Math.abs(dy) > Math.abs(dx) * 0.6 || selectedText()) return;
+  (dx < 0 ? $("#next-pg") : $("#prev-pg"))?.click();
+}, { passive: true });
 
 /* =========================================================
    BAŞLAT
