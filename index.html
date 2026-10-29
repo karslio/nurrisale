@@ -60,6 +60,15 @@ button { font: inherit; color: inherit; }
 .logo .mark { width: 30px; height: 30px; flex: none; }
 .logo .name { font-family: var(--font-body); font-size: 26px; font-weight: 600; letter-spacing: -.01em; }
 .logo .name b { color: var(--red); font-weight: 600; }
+.tabs { display: flex; align-items: flex-end; gap: 6px; align-self: stretch; min-width: 0; overflow: hidden; flex: 1; padding-top: 12px; }
+.tab { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px 0 14px; border: 1px solid transparent; border-bottom: none; border-radius: 12px 12px 0 0; background: var(--soft); color: var(--muted); font-size: 15px; cursor: pointer; max-width: 220px; min-width: 0; flex: 0 1 auto; position: relative; }
+.tab .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tab svg { width: 17px; height: 17px; flex: none; }
+.tab.on { background: var(--paper); color: var(--ink); border-color: var(--rule); margin-bottom: -1px; height: 41px; }
+.tab.on svg { color: var(--red); }
+.tab .x { border: none; background: none; color: var(--muted); cursor: pointer; padding: 2px 4px; border-radius: 6px; font-size: 14px; line-height: 1; }
+.tab .x:hover { background: var(--rule); color: var(--ink); }
+.tab-add { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--soft); color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; align-self: center; flex: none; }
 .home-link { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border: 1px solid var(--rule); border-bottom: none; border-radius: 12px 12px 0 0; background: var(--paper); text-decoration: none; color: var(--ink); align-self: flex-end; margin-bottom: -1px; font-size: 15px; }
 .home-link svg { width: 18px; height: 18px; color: var(--red); }
 .tools { margin-left: auto; display: flex; gap: 8px; }
@@ -145,8 +154,7 @@ main { margin-left: var(--side-w); padding-top: calc(env(safe-area-inset-top, 0p
 .text p.c { text-align: center; text-indent: 0; }
 .text .arabic { font-family: var(--font-arabic); direction: rtl; text-align: center; text-indent: 0; color: var(--red); font-size: 1.32em; line-height: 1.9; margin: .6em 0 .9em; }
 .text h4 { font-family: var(--font-body); font-weight: 600; color: var(--red); text-align: center; font-size: 1.12em; margin: 1.6em 0 .7em; text-wrap: balance; }
-.pmark { display: flex; align-items: center; gap: 10px; color: var(--muted); font: 12px var(--font-ui); margin: 1.4em 0; font-variant-numeric: tabular-nums; }
-.pmark::before, .pmark::after { content: ""; flex: 1; border-top: 1px dashed var(--rule); }
+.pmark { border-top: 1px solid var(--rule); margin: 1.1em -12px .9em; padding: 6px 12px 0; text-align: right; font: 600 15px var(--font-body); color: var(--muted); font-variant-numeric: tabular-nums; }
 .w { color: var(--lugat); cursor: pointer; }
 .w:hover, .w.on { text-decoration: underline; text-underline-offset: 3px; }
 .aw { cursor: pointer; border-radius: 4px; }
@@ -209,7 +217,7 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; }
   :root { --bar1: 56px; --side-w: min(340px, 86vw); }
   .logo { width: auto; }
   .logo .name { font-size: 22px; }
-  .home-link { display: none; }
+  .home-link, .tabs { display: none; }
   .round { width: 38px; height: 38px; }
   .bar2 .side-title { width: auto; padding-right: 12px; background: none; border-right: 1px solid var(--rule); }
   .bar2 .side-title span { display: none; }
@@ -234,9 +242,10 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; }
       <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="6" fill="#E8A33D"/><g stroke="#C81E2B" stroke-width="2.2" stroke-linecap="round"><path d="M16 2.5v5M16 24.5v5M2.5 16h5M24.5 16h5M6.4 6.4l3.6 3.6M22 22l3.6 3.6M6.4 25.6 10 22M22 10l3.6-3.6"/></g></svg>
       <span class="name">Nur<b>Risale</b></span>
     </a>
-    <a class="home-link" href="#" id="home-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>Arama</a>
+    <div class="tabs" id="tabs"></div>
     <div class="tools">
       <button class="round" id="btn-search" aria-label="Ara"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></button>
+      <button class="round" id="btn-theme" aria-label="Gece / gündüz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
       <button class="round" id="btn-settings" aria-label="Okuma ayarları" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </div>
   </div>
@@ -430,6 +439,7 @@ function buildChapters(book) {
   });
   out.forEach((c, i) => {
     c.idx = i;
+    if (i === 0 && plain(c.title).replace(/[^a-z]/g, "") === plain(book.title).replace(/[^a-z]/g, "")) c.title = "Giriş";
     c.subs = book.toc.filter((t) => t.l > 1 && t.p >= c.start && t.p <= c.end);
   });
   return out;
@@ -641,6 +651,7 @@ async function showChapter(bookId, pageNo, highlight) {
   updatePage(pageNo);
   renderSide(); if (!narrow()) setTimeout(scrollSideToCurrent, 30);
   document.title = `${chap.title} · ${book.title} · NurRisale`;
+  renderTabs();
   if (speaking && !same) setTimeout(speakFrom, 300);
 }
 
@@ -667,6 +678,7 @@ function updatePage(p) {
   pageTimer = setTimeout(() => {
     store.set("nr-last", { book: book.id, page: p });
     history.replaceState(null, "", `#${book.id}-${p}`);
+    const t = tabs.find((x) => x.k === activeTab); if (t) { t.h = `#${book.id}-${p}`; saveTabs(); }
   }, 400);
 }
 function setRead(id) { const r = store.get("nr-read", {}); r[id] = 1; store.set("nr-read", r); }
@@ -676,8 +688,51 @@ function setRead(id) { const r = store.get("nr-read", {}); r[id] = 1; store.set(
    ========================================================= */
 let pendingHighlight = null;
 function go(bookId, page) { location.hash = `${bookId}-${page}`; }
+/* ---------- Sekmeler (Arama + okuma sekmeleri) ---------- */
+let tabs = store.get("nr-tabs", []);        // [{k, h}] h: "#sozler-27" ya da "" (yeni sekme)
+let activeTab = store.get("nr-tab", "search");
+let tabSeq = tabs.reduce((m, t) => Math.max(m, t.k), 0);
+const saveTabs = () => { store.set("nr-tabs", tabs); store.set("nr-tab", activeTab); };
+function tabLabel(h) {
+  const m = h.match(/^#([a-z]+)-(\d+)$/); if (!m) return "Yeni Sekme";
+  const bk = BOOKS.get(m[1]); if (bk) return chapterOf(bk, +m[2]).title;
+  return metaOf(m[1])?.title || "Kitap";
+}
+function syncTabs() {
+  const h = location.hash;
+  const isBook = /^#[a-z]+-\d+$/.test(h);
+  let t = tabs.find((x) => x.k === activeTab);
+  if (isBook) {
+    if (!t) { t = tabs.find((x) => !x.h) || (tabs.push({ k: ++tabSeq, h: "" }), tabs[tabs.length - 1]); activeTab = t.k; }
+    t.h = h;
+  } else if (!t || t.h) activeTab = "search";
+  saveTabs(); renderTabs();
+}
+function renderTabs() {
+  const ICON_OPEN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M3 5.5c3-1 6-1 9 1 3-2 6-2 9-1V19c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6.5V20"/></svg>`;
+  $("#tabs").innerHTML = `<button class="tab ${activeTab === "search" ? "on" : ""}" data-tab="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><span class="t">Arama</span></button>` +
+    tabs.map((t) => `<div class="tab ${activeTab === t.k ? "on" : ""}" data-tab="${t.k}" role="button" tabindex="0">${ICON_OPEN}<span class="t">${escapeHtml(tabLabel(t.h))}</span><button class="x" data-close="${t.k}" aria-label="Sekmeyi kapat">✕</button></div>`).join("") +
+    `<button class="tab-add" id="tab-add" aria-label="Yeni sekme">+</button>`;
+}
+$("#tabs").addEventListener("click", (e) => {
+  const close = e.target.closest("[data-close]");
+  if (close) {
+    const k = +close.dataset.close, i = tabs.findIndex((t) => t.k === k);
+    tabs.splice(i, 1);
+    if (activeTab === k) { const n = tabs[i] || tabs[i - 1]; activeTab = n ? n.k : "search"; saveTabs(); location.hash = n ? n.h : ""; route(); }
+    else { saveTabs(); renderTabs(); }
+    return;
+  }
+  if (e.target.closest("#tab-add")) { tabs.push({ k: ++tabSeq, h: "" }); activeTab = tabSeq; saveTabs(); location.hash = ""; route(); return; }
+  const t = e.target.closest("[data-tab]"); if (!t) return;
+  if (t.dataset.tab === "search") { activeTab = "search"; saveTabs(); location.hash = ""; route(); return; }
+  const tab = tabs.find((x) => x.k === +t.dataset.tab); activeTab = tab.k; saveTabs();
+  if (location.hash === tab.h) route(); else location.hash = tab.h;
+});
+
 function route() {
   hidePop();
+  syncTabs();
   const m = location.hash.match(/^#([a-z]+)-(\d+)$/);
   if (m) showChapter(m[1], +m[2], pendingHighlight); else { if (pageObserver) pageObserver.disconnect(); showLibrary(); }
   pendingHighlight = null;
@@ -688,7 +743,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight") $("#next-ch")?.click();
   if (e.key === "ArrowLeft") $("#prev-ch")?.click();
 });
-for (const id of ["#home", "#home-tab"]) $(id).onclick = (e) => { e.preventDefault(); closeSide(); location.hash = ""; route(); };
+$("#home").onclick = (e) => { e.preventDefault(); closeSide(); activeTab = "search"; saveTabs(); location.hash = ""; route(); };
 
 /* =========================================================
    6) LUGAT, MEÂL VE HAŞİYE BALONCUĞU
@@ -846,6 +901,10 @@ function applySettings() {
 }
 for (const [id, key] of [["#set-theme", "theme"], ["#set-font", "font"], ["#set-lh", "lh"]])
   $(id).addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { settings[key] = b.dataset.v; applySettings(); } });
+$("#btn-theme").onclick = () => {
+  const dark = settings.theme ? settings.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  settings.theme = dark ? "light" : "dark"; applySettings();
+};
 $("#btn-smaller").onclick = () => { settings.size = Math.max(15, settings.size - 1); applySettings(); };
 $("#btn-bigger").onclick = () => { settings.size = Math.min(30, settings.size + 1); applySettings(); };
 const settingsPanel = $("#settings");
