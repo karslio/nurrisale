@@ -228,6 +228,12 @@ main { margin-left: var(--side-w); padding-top: calc(env(safe-area-inset-top, 0p
 .fn { font: 600 .62em/1 var(--font-ui); position: relative; top: -.6em; background: color-mix(in srgb, var(--red) 10%, transparent); border: none; border-radius: 4px; color: var(--red); cursor: pointer; padding: 1px 4px; margin: 0 1px; }
 mark { background: var(--mark); color: inherit; border-radius: 2px; }
 .text .speaking { background: color-mix(in srgb, var(--lugat) 14%, transparent); border-radius: 4px; box-shadow: 0 0 0 6px color-mix(in srgb, var(--lugat) 14%, transparent); }
+.chap-sep { text-align: center; color: var(--red); letter-spacing: .6em; margin: 56px 0 8px; font-size: 14px; }
+.chap-sec .chap-title { margin-top: 6px; }
+.more { min-height: 40px; }
+.book-end { text-align: center; color: var(--muted); padding: 40px 0 10px; border-top: 1px solid var(--rule); margin-top: 30px; font-family: var(--font-body); }
+.prev-top { display: block; margin: 0 auto 10px; background: none; border: 1px solid var(--rule); border-radius: 99px; padding: 6px 14px; color: var(--muted); cursor: pointer; font-size: 13.5px; }
+.prev-top:hover { color: var(--ink); border-color: var(--lugat); }
 .chap-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--rule); }
 .chap-nav button { flex: 1; max-width: 48%; background: var(--side); border: 1px solid var(--rule); border-radius: 12px; padding: 12px 14px; cursor: pointer; text-align: left; }
 .chap-nav button:last-child { text-align: right; margin-left: auto; }
@@ -873,7 +879,7 @@ const app = $("#app");
 const EXAMPLES = ["haşir", "tevekkül", "şükür", "ihlas", "gençlik", "hastalık", "kâinat", "namaz"];
 
 function showLibrary() {
-  current = { id: null, page: 0, chapter: null };
+  current = { id: null, page: 0, chapter: null }; rendered = null;
   stopSpeaking();
   $("#fab").hidden = true;
   $("#progress").style.width = "0";
@@ -955,6 +961,33 @@ async function renderDaily() {
 }
 
 let pageObserver = null;
+/* Bir bölümün HTML'i (sürekli kaydırmada bölümler art arda eklenir) */
+function chapterHtml(book, chap, highlight) {
+  let html = `<section class="chap-sec" data-ch="${chap.idx}"><div class="chap-book">${escapeHtml(book.title)}</div><h1 class="chap-title">${escapeHtml(chap.title)}</h1><div class="text">`;
+  for (let p = chap.start; p <= chap.end; p++) {
+    html += p > chap.start ? `<div class="pmark" data-p="${p}">${p}</div>` : `<div data-p="${p}"></div>`;
+    html += book.pages[p - 1].b.map((b, i) => renderBlock(b, highlight).replace(/^<(\w+)/, `<$1 data-b="${p}:${i}"`)).join("");
+  }
+  return html + `</div></section>`;
+}
+let rendered = null;   // { bookId, lo, hi } — sürekli kaydırmada ekranda olan bölümler
+function appendNextChapter() {
+  if (!rendered || settings.mode === "page") return false;
+  const book = BOOKS.get(rendered.bookId), next = book && book.chapters[rendered.hi + 1];
+  if (!next) return false;
+  $("#more").insertAdjacentHTML("beforebegin", `<div class="chap-sep" aria-hidden="true">✦ ✦ ✦</div>` + chapterHtml(book, next));
+  rendered.hi = next.idx;
+  applyHighlights(book);
+  observePages(book);
+  if (!book.chapters[rendered.hi + 1]) $("#more").innerHTML = `<div class="book-end">${escapeHtml(book.title)} burada bitti.</div>`;
+  return true;
+}
+function inRendered(bookId, pageNo) {
+  if (!rendered || rendered.bookId !== bookId || settings.mode === "page") return false;
+  const book = BOOKS.get(bookId);
+  return pageNo >= book.chapters[rendered.lo].start && pageNo <= book.chapters[rendered.hi].end;
+}
+
 async function showChapter(bookId, pageNo, highlight) {
   const meta = metaOf(bookId);
   if (!meta) return showLibrary();
@@ -966,37 +999,43 @@ async function showChapter(bookId, pageNo, highlight) {
   pageNo = Math.min(Math.max(1, pageNo), book.pages.length);
   const chap = chapterOf(book, pageNo);
   const pageMode = settings.mode === "page";
-  const same = current.id === bookId && current.chapter === chap.idx && !highlight && (!pageMode || current.page === pageNo);
+  const same = !highlight && (pageMode ? (current.id === bookId && current.page === pageNo && !!app.querySelector(".reader .page-nav")) : inRendered(bookId, pageNo));
   current = { id: bookId, page: pageNo, chapter: chap.idx };
   openNodes.add("shelf:" + (meta.shelf || "kulliyat")); openNodes.add("book:" + bookId); saveOpen();
   setRead(bookId);
   addRecent(book, chap, pageNo);
+  const prev = book.chapters[chap.idx - 1], next = book.chapters[chap.idx + 1];
 
-  if (!same) {
-    const from = pageMode ? pageNo : chap.start, to = pageMode ? pageNo : chap.end;
-    const showTitle = !pageMode || pageNo === chap.start;
-    let html = `<article class="reader"><div class="chap-book">${escapeHtml(book.title)}${showTitle ? "" : " · " + escapeHtml(chap.title)}</div>${showTitle ? `<h1 class="chap-title">${escapeHtml(chap.title)}</h1>` : ""}<div class="text">`;
-    for (let p = from; p <= to; p++) {
-      if (p > from) html += `<div class="pmark" data-p="${p}">${p}</div>`;
-      else html += `<div data-p="${p}"></div>`;
-      html += book.pages[p - 1].b.map((b, i) => renderBlock(b, highlight).replace(/^<(\w+)/, `<$1 data-b="${p}:${i}"`)).join("");
-    }
-    const prev = book.chapters[chap.idx - 1], next = book.chapters[chap.idx + 1];
-    if (pageMode) html += `</div><nav class="page-nav"><button id="prev-pg" ${pageNo <= 1 ? "disabled" : ""}>← Önceki sayfa</button><span>${pageNo} / ${book.pages.length}</span><button id="next-pg" ${pageNo >= book.pages.length ? "disabled" : ""}>Sonraki sayfa →</button></nav><div>`;
-    html += `</div><nav class="chap-nav">
-      ${prev ? `<button id="prev-ch"><small>← Önceki</small>${escapeHtml(prev.title)}</button>` : "<span></span>"}
-      ${next ? `<button id="next-ch"><small>Sonraki →</small>${escapeHtml(next.title)}</button>` : ""}
-    </nav></article>`;
+  if (!same && pageMode) {
+    rendered = null;
+    const showTitle = pageNo === chap.start;
+    let html = `<article class="reader"><div class="chap-book">${escapeHtml(book.title)}${showTitle ? "" : " · " + escapeHtml(chap.title)}</div>${showTitle ? `<h1 class="chap-title">${escapeHtml(chap.title)}</h1>` : ""}<div class="text"><div data-p="${pageNo}"></div>`;
+    html += book.pages[pageNo - 1].b.map((b, i) => renderBlock(b, highlight).replace(/^<(\w+)/, `<$1 data-b="${pageNo}:${i}"`)).join("");
+    html += `</div><nav class="page-nav"><button id="prev-pg" ${pageNo <= 1 ? "disabled" : ""}>← Önceki sayfa</button><span>${pageNo} / ${book.pages.length}</span><button id="next-pg" ${pageNo >= book.pages.length ? "disabled" : ""}>Sonraki sayfa →</button></nav>
+      <nav class="chap-nav">${prev ? `<button id="prev-ch"><small>← Önceki bölüm</small>${escapeHtml(prev.title)}</button>` : "<span></span>"}${next ? `<button id="next-ch"><small>Sonraki bölüm →</small>${escapeHtml(next.title)}</button>` : ""}</nav></article>`;
     app.innerHTML = html;
     if (prev) $("#prev-ch").onclick = () => go(bookId, prev.start);
     if (next) $("#next-ch").onclick = () => go(bookId, next.start);
-    if (pageMode) { $("#prev-pg").onclick = () => go(bookId, pageNo - 1); $("#next-pg").onclick = () => go(bookId, pageNo + 1); }
-    observePages(book);
-    applyHighlights(book, chap);
+    $("#prev-pg").onclick = () => go(bookId, pageNo - 1); $("#next-pg").onclick = () => go(bookId, pageNo + 1);
+    observePages(book); applyHighlights(book);
+    window.scrollTo(0, 0);
+  } else if (!same) {
+    // Sürekli kaydırma: bu bölümden başla, aşağı indikçe sonraki bölümler eklenir
+    rendered = { bookId, lo: chap.idx, hi: chap.idx };
+    app.innerHTML = `<article class="reader">
+      ${prev ? `<button class="prev-top" id="prev-ch">↑ Önceki bölüm: ${escapeHtml(prev.title)}</button>` : ""}
+      ${chapterHtml(book, chap, highlight)}
+      <div id="more" class="more">${next ? "" : `<div class="book-end">${escapeHtml(book.title)} burada bitti.</div>`}</div></article>`;
+    if (prev) $("#prev-ch").onclick = () => go(bookId, prev.start);
+    observePages(book); applyHighlights(book);
   }
   // İstenen sayfaya kaydır
-  const target = pageNo === chap.start || pageMode ? null : app.querySelector(`[data-p="${pageNo}"]`);
-  if (target) target.scrollIntoView({ block: "start" }); else if (!same) window.scrollTo(0, 0);
+  if (!pageMode) {
+    const sec = app.querySelector(`.chap-sec[data-ch="${chap.idx}"]`);
+    const target = pageNo === chap.start ? sec : app.querySelector(`[data-p="${pageNo}"]`);
+    if (target && (same || pageNo !== chap.start)) { const y = target.getBoundingClientRect().top + scrollY - $("#bars").getBoundingClientRect().bottom - 8; window.scrollTo(0, Math.max(0, y)); }
+    else if (!same) window.scrollTo(0, 0);
+  }
   if (highlight) setTimeout(() => app.querySelector("mark")?.scrollIntoView({ block: "center" }), 60);
   $("#fab").hidden = false;
   refreshListenBtn();
@@ -1007,17 +1046,22 @@ async function showChapter(bookId, pageNo, highlight) {
   if (speaking && !same) setTimeout(speakFrom, 300);
 }
 
-/* Görünen sayfayı takip et: sayfa kutusu, ilerleme çubuğu, kaldığın yer */
+/* Görünen sayfayı takip et: sayfa kutusu, ilerleme, bölüm adı; sona yaklaşınca sonraki bölümü ekle */
 function observePages(book) {
   if (pageObserver) pageObserver.disconnect();
   const marks = [...app.querySelectorAll("[data-p]")];
+  let ticking = false;
   const onScroll = () => {
-    const top = $("#bars").getBoundingClientRect().bottom + 40;
-    let p = +marks[0].dataset.p;
-    for (const m of marks) { if (m.getBoundingClientRect().top <= top) p = +m.dataset.p; else break; }
-    // Sayfanın sonuna inildiyse son sayfayı say
-    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) p = +marks[marks.length - 1].dataset.p;
-    if (p !== current.page) updatePage(p);
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      if (document.documentElement.scrollHeight - (scrollY + innerHeight) < 1600 && appendNextChapter()) return;
+      const top = $("#bars").getBoundingClientRect().bottom + 40;
+      let p = +marks[0].dataset.p;
+      for (const m of marks) { if (m.getBoundingClientRect().top <= top) p = +m.dataset.p; else break; }
+      if (settings.mode === "page" && innerHeight + scrollY >= document.documentElement.scrollHeight - 4) p = +marks[marks.length - 1].dataset.p;
+      if (p !== current.page) updatePage(p);
+    });
   };
   pageObserver = { disconnect() { window.removeEventListener("scroll", onScroll); } };
   window.addEventListener("scroll", onScroll, { passive: true });
@@ -1027,6 +1071,13 @@ function updatePage(p) {
   const book = BOOKS.get(current.id); if (!book) return;
   current.page = p;
   trackRead(book.id, p);
+  const ch = chapterOf(book, p);
+  if (ch.idx !== current.chapter) {
+    current.chapter = ch.idx;
+    document.title = `${ch.title} · ${book.title} · NurRisale`;
+    const t = tabs.find((x) => x.k === activeTab); if (t) { t.h = `#${book.id}-${p}`; saveTabs(); }
+    addRecent(book, ch, p); renderSide(); renderTabs();
+  }
   renderCrumbs();
   $("#progress").style.width = (p / book.pages.length * 100) + "%";
   clearTimeout(pageTimer);
@@ -1136,7 +1187,7 @@ $("#tabs").addEventListener("click", (e) => {
 });
 
 function showPick() {
-  current = { id: null, page: 0, chapter: null };
+  current = { id: null, page: 0, chapter: null }; rendered = null;
   stopSpeaking(); $("#fab").hidden = true; $("#progress").style.width = "0";
   renderCrumbs(); renderSide();
   app.innerHTML = `<div class="pick">
@@ -1167,8 +1218,13 @@ function route() {
 window.addEventListener("hashchange", route);
 document.addEventListener("keydown", (e) => {
   if (!current.id || e.target.closest("input, textarea") || !$("#search").hidden) return;
-  if (e.key === "ArrowRight") ($("#next-pg") || $("#next-ch"))?.click();
-  if (e.key === "ArrowLeft") ($("#prev-pg") || $("#prev-ch"))?.click();
+  if (settings.mode === "page") {
+    if (e.key === "ArrowRight") $("#next-pg")?.click();
+    if (e.key === "ArrowLeft") $("#prev-pg")?.click();
+    return;
+  }
+  const book = BOOKS.get(current.id), ch = book && book.chapters[current.chapter + (e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0)];
+  if ((e.key === "ArrowRight" || e.key === "ArrowLeft") && ch && ch.idx !== current.chapter) go(book.id, ch.start);
 });
 $("#home").onclick = (e) => { e.preventDefault(); closeSide(); activeTab = "search"; saveTabs(); location.hash = ""; route(); };
 
@@ -1292,7 +1348,7 @@ function renderHits(container, qy, res, ids, onlyBook = null) {
     const h = res.hits[+el.dataset.n];
     pendingHighlight = hl; closeSearch();
     const target = `#${h.book.id}-${h.page}`;
-    current.chapter = null;
+    current.chapter = null; rendered = null;
     if (location.hash === target) route(); else location.hash = target;
   });
 }
@@ -1365,7 +1421,7 @@ for (const [id, key] of [["#set-theme", "theme"], ["#set-lh", "lh"], ["#set-widt
     const b = e.target.closest("button"); if (!b) return;
     const changedMode = key === "mode" && settings.mode !== b.dataset.v;
     settings[key] = b.dataset.v; applySettings();
-    if (changedMode && current.id) { current.chapter = null; showChapter(current.id, current.page); }
+    if (changedMode && current.id) { current.chapter = null; rendered = null; showChapter(current.id, current.page); }
   });
 for (const k of ["justify", "lugat", "hover", "hls", "meal", "fn", "pnum"]) $("#set-" + k).onchange = (e) => { settings[k] = e.target.checked; applySettings(); };
 $("#set-font").onchange = (e) => { settings.font = e.target.value; applySettings(); };
@@ -1425,13 +1481,17 @@ function speakFrom() {
   speechSynthesis.cancel();
   const token = ++speakToken;
   const top = $("#bars").getBoundingClientRect().bottom;
-  const all = [...document.querySelectorAll(".text > p:not(.arabic), .text > h4")];
+  let all = [...document.querySelectorAll(".text > p:not(.arabic), .text > h4")];
   let i = all.findIndex((el) => el.getBoundingClientRect().bottom > top + 10); if (i < 0) i = 0;
   const voice = speechSynthesis.getVoices().find((v) => /^tr/i.test(v.lang)) || null;
   const next = (k) => {
     if (token !== speakToken) return;
     document.querySelectorAll(".speaking").forEach((e) => e.classList.remove("speaking"));
-    if (k >= all.length) { const n = $("#next-ch"); if (n) n.click(); else stopSpeaking(); return; }
+    if (k >= all.length) {
+      if (settings.mode === "page") { const n = $("#next-pg"); if (n && !n.disabled) n.click(); else stopSpeaking(); return; }
+      if (appendNextChapter()) { all.push(...[...document.querySelectorAll(".text > p:not(.arabic), .text > h4")].slice(all.length)); return next(k); }
+      stopSpeaking(); return;
+    }
     const el = all[k], text = el.textContent.trim();
     if (!text) return next(k + 1);
     el.classList.add("speaking"); el.scrollIntoView({ block: "center", behavior: "smooth" });
@@ -1504,10 +1564,10 @@ function removeHl(id) {
 }
 function unwrapHls() { app.querySelectorAll("span.hl[data-hl]").forEach((m) => m.replaceWith(...m.childNodes)); }
 /* Kayıtlı vurguları metne uygula: paragrafın metin düğümlerinde [s, e) aralığını sar */
-function applyHighlights(book, chap) {
+function applyHighlights(book) {
   unwrapHls();
   for (const h of getHls()) {
-    if (h.book !== book.id || h.p < chap.start || h.p > chap.end) continue;
+    if (h.book !== book.id) continue;
     const el = app.querySelector(`[data-b="${h.p}:${h.bi}"]`); if (!el) continue;
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     const nodes = []; let pos = 0, n;
@@ -1630,7 +1690,11 @@ document.addEventListener("keydown", (e) => {
 
 /* ---------- Uygulama ve çevrimdışı (yalnız GitHub Pages'te) ---------- */
 if ("serviceWorker" in navigator && /github\.io$/.test(location.hostname)) {
-  navigator.serviceWorker.register("sw.js").then(() => { $("#offline-row").hidden = false; }).catch(() => {});
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register("sw.js").then((reg) => { $("#offline-row").hidden = false; reg.update().catch(() => {}); }).catch(() => {});
+  // Yeni sürüm devreye girince sayfayı bir kez yenile, eski kopya kalmasın
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if (hadController && !reloaded) { reloaded = true; location.reload(); } });
 }
 $("#btn-offline").onclick = async () => {
   const btn = $("#btn-offline"), msg = $("#offline-msg");
