@@ -7,38 +7,39 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=Amiri&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap">
 <style>
-/* Düzen: üst çubuk + soldan açılan çekmece (kütüphane, içindekiler); ana sayfa kitap rafı, okuma sayfası ~65 karakter */
+/* Düzen: üst çubuk; bilgisayarda okurken solda sabit içindekiler, telefonda açılır pencere; ana sayfa kapak ızgarası */
 :root {
-  --paper: #F3F5F0;   /* sayfa zemini */
-  --surface: #FFFFFF; /* çekmece, açılır pencereler */
-  --ink: #1E2928;     /* yazı */
-  --muted: #5B6A66;   /* ikincil yazı */
-  --rule: #D7DDD4;    /* çizgiler */
-  --accent: #23508E;  /* lâcivert vurgu */
-  --gilt: #A27A26;    /* yaldız */
-  --mark: #F2E3B3;    /* arama vurgusu */
-  --wall: #E7EAE2;    /* raf arkası */
-  --shelf: #B89C74;   /* raf tahtası */
-  --shelf-edge: #8E7350;
-  --font-display: "Marcellus", "Times New Roman", serif;
+  --paper: #FFFFFF;   /* zemin */
+  --surface: #FFFFFF; /* paneller */
+  --soft: #F1F5F9;    /* hafif dolgu */
+  --ink: #0F172A;     /* yazı */
+  --muted: #64748B;   /* ikincil yazı */
+  --rule: #E2E8F0;    /* çizgiler */
+  --accent: #0284C7;  /* mavi vurgu */
+  --gilt: #9F1239;    /* Arapça ve süs: koyu kırmızı */
+  --mark: #FEF08A;    /* arama vurgusu */
+  --wall: #F8FAFC;
+  --shelf: transparent; --shelf-edge: transparent;
+  --font-display: "IBM Plex Sans", system-ui, sans-serif;
   --font-body: "Literata", "Amiri", Georgia, serif;
   --font-ui: "IBM Plex Sans", system-ui, sans-serif;
   --font-arabic: "Amiri", "Traditional Arabic", serif;
   --reader-size: 19px;
   --reader-lh: 1.75;
   --reader-font: var(--font-body);
+  --side-w: 330px;
 }
 /* Sepya tonu (açık temanın sıcak hâli) */
-:root[data-tone="sepia"] { --paper: #F4ECDA; --surface: #FBF6EB; --ink: #3A2E21; --muted: #786853; --rule: #E2D5BA; --accent: #8A4B1E; --gilt: #9A6B1F; --mark: #F0D98F; --wall: #EBDFC7; --shelf: #B48E5E; --shelf-edge: #8A6A42; }
+:root[data-tone="sepia"] { --paper: #F6EFDF; --surface: #FBF6EA; --soft: #EFE5CF; --ink: #3A2E21; --muted: #786853; --rule: #E3D6BB; --accent: #A0522D; --gilt: #8B1E2D; --mark: #F0D98F; --wall: #F2E9D6; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #111716; --surface: #1A2220; --ink: #E2E8E3; --muted: #93A39E; --rule: #2A3633;
-    --accent: #93B3EA; --gilt: #D3AE5B; --mark: #4A3F1C; --wall: #161E1C; --shelf: #4A3A28; --shelf-edge: #2E2418; color-scheme: dark;
+    --paper: #0B1120; --surface: #111827; --soft: #1E293B; --ink: #E5E7EB; --muted: #94A3B8; --rule: #1F2937;
+    --accent: #38BDF8; --gilt: #FDA4AF; --mark: #713F12; --wall: #0F172A; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #111716; --surface: #1A2220; --ink: #E2E8E3; --muted: #93A39E; --rule: #2A3633;
-  --accent: #93B3EA; --gilt: #D3AE5B; --mark: #4A3F1C; --wall: #161E1C; --shelf: #4A3A28; --shelf-edge: #2E2418; color-scheme: dark;
+  --paper: #0B1120; --surface: #111827; --soft: #1E293B; --ink: #E5E7EB; --muted: #94A3B8; --rule: #1F2937;
+  --accent: #38BDF8; --gilt: #FDA4AF; --mark: #713F12; --wall: #0F172A; color-scheme: dark;
 }
 
 [hidden] { display: none !important; }
@@ -52,8 +53,8 @@ button { font: inherit; color: inherit; }
 /* Üst çubuk */
 header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper); border-bottom: 1px solid var(--rule); }
 .top-inner { max-width: 1040px; margin: 0 auto; display: flex; align-items: center; gap: 8px; padding-block: 8px; }
-.logo { font-family: var(--font-display); font-size: 24px; color: var(--ink); text-decoration: none; display: flex; align-items: baseline; }
-.logo b { font-weight: 400; color: var(--gilt); }
+.logo { font-family: var(--font-ui); font-weight: 700; letter-spacing: -.02em; font-size: 22px; color: var(--ink); text-decoration: none; display: flex; align-items: baseline; }
+.logo b { font-weight: 700; color: var(--accent); }
 .tools { margin-left: auto; display: flex; gap: 2px; }
 .icon-btn { background: none; border: 1px solid transparent; border-radius: 8px; height: 38px; min-width: 38px; padding: 0 10px; cursor: pointer; font-size: 14px; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .icon-btn:hover { border-color: var(--rule); color: var(--ink); }
@@ -63,29 +64,28 @@ header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; b
 main { max-width: 1040px; margin: 0 auto; padding-block: 28px 64px; }
 
 /* ---------- Kütüphane (kitap rafı) ---------- */
-.hero { text-align: center; display: grid; gap: 6px; margin-bottom: 30px; }
-.besmele { font-family: var(--font-arabic); font-size: 30px; color: var(--gilt); line-height: 1.4; }
-.hero h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(28px, 5vw, 42px); margin: 0; text-wrap: balance; }
+.hero { text-align: center; display: grid; gap: 6px; margin-bottom: 8px; }
+.besmele { font-family: var(--font-arabic); font-size: 26px; color: var(--gilt); line-height: 1.4; }
+.hero h1 { font-family: var(--font-ui); font-weight: 700; letter-spacing: -.02em; font-size: clamp(26px, 4.5vw, 36px); margin: 0; text-wrap: balance; }
 .hero p { margin: 0 auto; color: var(--muted); max-width: 52ch; line-height: 1.55; }
 
 .shelf-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 34px 0 12px; }
-.shelf-title h2 { font-family: var(--font-display); font-weight: 400; font-size: 24px; margin: 0; }
+.shelf-title h2 { font-family: var(--font-ui); font-weight: 650; font-size: 20px; margin: 0; letter-spacing: -.01em; }
 .shelf-title span { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
-.bookcase { background: linear-gradient(var(--wall), color-mix(in srgb, var(--wall) 92%, #000)); border-radius: 12px; padding: 26px 10px 18px; box-shadow: inset 0 10px 18px -12px rgba(0,0,0,.25); }
-.row { display: grid; grid-template-columns: repeat(auto-fill, var(--slot)); justify-content: center; row-gap: 26px; --slot: 136px; --cover-h: 196px; }
+.bookcase { padding: 4px 0 0; }
+.row { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--slot), 1fr)); gap: 26px 18px; --slot: 128px; --cover-h: 190px; }
 .slot { display: flex; flex-direction: column; align-items: center; min-width: 0; }
-.stand { width: 100%; height: calc(var(--cover-h) + 16px); display: flex; justify-content: center; align-items: flex-end; padding-bottom: 14px;
-  background: linear-gradient(to top, var(--shelf-edge) 0 3px, var(--shelf) 3px 14px, transparent 14px); }
-.cover { height: var(--cover-h); width: auto; max-width: calc(100% - 14px); border: none; padding: 0; cursor: pointer; position: relative; border-radius: 2px 5px 5px 2px; overflow: hidden;
-  background: #7A1426; box-shadow: 2px 0 0 rgba(0,0,0,.2), 6px 6px 12px -4px rgba(0,0,0,.45); transition: transform .2s ease; display: block; }
+.stand { width: 100%; height: var(--cover-h); display: flex; justify-content: center; align-items: flex-end; }
+.cover { height: var(--cover-h); width: auto; max-width: calc(100% - 14px); border: none; padding: 0; cursor: pointer; position: relative; border-radius: 4px; overflow: hidden;
+  background: var(--soft); box-shadow: 0 1px 2px rgba(15,23,42,.08), 0 8px 20px -8px rgba(15,23,42,.35); transition: transform .2s ease; display: block; }
 .cover img { height: 100%; width: auto; max-width: 100%; object-fit: cover; display: block; }
 .cover::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(90deg, rgba(0,0,0,.32) 0, rgba(255,255,255,.12) 4%, rgba(0,0,0,0) 8%, rgba(0,0,0,0) 94%, rgba(0,0,0,.18)); }
-.cover:hover, .cover:focus-visible { transform: translateY(-6px); }
-.slot .cap { text-align: center; padding: 8px 6px 0; font-size: 13px; line-height: 1.3; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  background: linear-gradient(90deg, rgba(0,0,0,.18) 0, rgba(255,255,255,.1) 3%, rgba(0,0,0,0) 6%); }
+.cover:hover, .cover:focus-visible { transform: translateY(-4px); }
+.slot .cap { text-align: center; padding: 10px 4px 0; font-size: 13.5px; font-weight: 500; line-height: 1.3; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .slot .pg { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; margin-top: 2px; }
 .slot .read { font-size: 11px; color: var(--gilt); }
-@media (max-width: 560px) { .row { --slot: 104px; --cover-h: 150px; } .bookcase { padding-inline: 4px; } }
+@media (max-width: 560px) { .row { --slot: 96px; --cover-h: 146px; gap: 20px 12px; } }
 .resume { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; margin-top: 22px; }
 .resume small { display: block; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; color: var(--muted); margin-bottom: 2px; }
 .resume strong { font-family: var(--font-body); font-weight: 600; font-size: 17px; }
@@ -99,7 +99,7 @@ main { max-width: 1040px; margin: 0 auto; padding-block: 28px 64px; }
 body.drawer-open .drawer { transform: none; }
 body.drawer-open .scrim { opacity: 1; pointer-events: auto; }
 .drawer-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px 10px 18px; border-bottom: 1px solid var(--rule); }
-.drawer-head .logo { font-size: 21px; }
+.drawer-head .logo { font-size: 20px; }
 .drawer-head .icon-btn { margin-left: auto; }
 .drawer-body { overflow-y: auto; flex: 1; padding: 6px 0 24px; }
 .d-label { text-transform: uppercase; letter-spacing: .1em; font-size: 11px; color: var(--muted); padding: 16px 18px 8px; }
@@ -112,7 +112,7 @@ body.drawer-open .scrim { opacity: 1; pointer-events: auto; }
 .d-book:hover { background: var(--paper); }
 .d-book.cur { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 .d-book .chip { width: 26px; height: 40px; object-fit: cover; border-radius: 1px 3px 3px 1px; flex: none; box-shadow: 2px 2px 4px -1px rgba(0,0,0,.35); background: #7A1426; }
-.d-book .n { font-family: var(--font-display); font-size: 18px; }
+.d-book .n { font-weight: 500; font-size: 15px; }
 .d-book .m { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .toc details { border-top: 1px solid var(--rule); }
 .toc details:last-child { border-bottom: 1px solid var(--rule); }
@@ -123,7 +123,7 @@ body.drawer-open .scrim { opacity: 1; pointer-events: auto; }
 .toc summary .caret.none { visibility: hidden; }
 .toc a { display: flex; justify-content: space-between; gap: 10px; text-decoration: none; color: var(--ink); padding: 8px 0; flex: 1; min-width: 0; line-height: 1.35; }
 .toc a .pg { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; flex: none; }
-.toc summary a { font-family: var(--font-body); font-weight: 600; font-size: 15px; }
+.toc summary a { font-weight: 600; font-size: 14.5px; }
 .toc .sub a { font-size: 14px; padding: 6px 12px 6px 46px; }
 .toc .sub a.l3 { padding-left: 62px; color: var(--muted); }
 .toc a:hover { color: var(--accent); }
@@ -135,14 +135,14 @@ body.drawer-open .scrim { opacity: 1; pointer-events: auto; }
 .crumb { background: none; border: 1px solid var(--rule); border-radius: 99px; color: var(--ink); cursor: pointer; padding: 6px 12px; font-size: 13.5px; display: inline-flex; align-items: center; gap: 6px; }
 .crumb:hover { border-color: var(--accent); color: var(--accent); }
 .page { max-width: 65ch; margin: 0 auto; }
-.page .book-title { font-family: var(--font-display); font-size: 15px; color: var(--muted); text-align: center; letter-spacing: .04em; }
-.page h2 { font-family: var(--font-display); font-weight: 400; font-size: 28px; text-align: center; margin: 6px 0 4px; text-wrap: balance; }
+.page .book-title { font-size: 12px; color: var(--accent); text-align: center; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; }
+.page h2 { font-family: var(--font-ui); font-weight: 650; letter-spacing: -.01em; font-size: 26px; text-align: center; margin: 6px 0 4px; text-wrap: balance; }
 .ornament { text-align: center; color: var(--gilt); letter-spacing: .6em; margin-bottom: 24px; font-size: 13px; }
 .text { font-family: var(--reader-font); font-size: var(--reader-size); line-height: var(--reader-lh); overflow-wrap: break-word; }
 .text p { margin: 0 0 1.1em; text-indent: 1.5em; hyphens: auto; }
 .text p.c { text-align: center; text-indent: 0; }
 .text .arabic { font-family: var(--font-arabic); direction: rtl; text-align: center; font-size: 1.35em; text-indent: 0; color: var(--gilt); line-height: 1.9; }
-.text h4 { font-family: var(--font-display); font-weight: 400; font-size: 1.15em; text-align: center; margin: 1.6em 0 .8em; color: var(--accent); text-wrap: balance; }
+.text h4 { font-family: var(--font-ui); font-weight: 600; font-size: 1.05em; text-align: center; margin: 1.6em 0 .8em; color: var(--accent); text-wrap: balance; }
 .w { cursor: pointer; border-bottom: 1px dotted color-mix(in srgb, var(--accent) 55%, transparent); }
 .w:hover, .w.on { color: var(--accent); }
 .aw { cursor: help; border-bottom: 1px dotted color-mix(in srgb, var(--gilt) 60%, transparent); border-radius: 3px; }
@@ -212,6 +212,15 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; }
 .scope button { border: 1px solid var(--rule); background: none; border-radius: 99px; padding: 4px 12px; font-size: 13px; cursor: pointer; color: var(--muted); }
 .scope button.on { border-color: var(--accent); color: var(--accent); }
 @media (max-width: 520px) { .crumb .t { display: none; } }
+
+@media (min-width: 1100px) {
+  body.reading:not(.side-off) .drawer { transform: none; top: calc(env(safe-area-inset-top, 0px) + 55px); width: var(--side-w); z-index: 4; transition: none; }
+  body.reading:not(.side-off) .drawer-head { display: none; }
+  body.reading:not(.side-off) .scrim { display: none; }
+  body.reading:not(.side-off) main { margin-left: calc(var(--side-w) + max(24px, (100vw - var(--side-w) - 900px) / 2)); margin-right: auto; max-width: 900px; }
+  body.reading .top-inner { max-width: none; }
+  body.reading:not(.side-off) #toc-btn { display: none; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .drawer, .scrim, .cover { transition: none; }
@@ -464,7 +473,7 @@ function renderDrawer() {
   let html = `<div class="d-label">Kütüphane</div>` + SHELVES.map((sh) => {
     const list = LIBRARY.filter((b) => (b.shelf || "kulliyat") === sh.id);
     if (!list.length) return "";
-    return `<details class="d-group" ${sh.id === curShelf ? "open" : ""}>
+    return `<details class="d-group" ${sh.id === curShelf && !sidebarOn() ? "open" : ""}>
       <summary><span class="caret">▶</span>${sh.title}<span class="n">${list.length}</span></summary>
       ${list.map((b) => `
         <button class="d-book ${b.id === current.id ? "cur" : ""}" data-open="${b.id}">
@@ -499,7 +508,21 @@ function renderDrawer() {
   $("#drawer-body").querySelectorAll(".toc a, .mark-row a").forEach((a) => a.addEventListener("click", closeDrawer));
   bindMarks($("#drawer-body"), renderDrawer);
 }
+const wide = () => matchMedia("(min-width: 1100px)").matches;
+const sidebarOn = () => wide() && document.body.classList.contains("reading") && !document.body.classList.contains("side-off");
+function refreshSidebar() {
+  if (!sidebarOn()) return;
+  renderDrawer();
+  const cur = $("#drawer-body .toc a.cur") || $("#drawer-body .toc details[open]");
+  if (cur) cur.scrollIntoView({ block: "center" });
+}
 function openDrawer() {
+  // Bilgisayarda okurken sol panel zaten açık: düğme onu gizleyip gösterir
+  if (wide() && document.body.classList.contains("reading")) {
+    document.body.classList.toggle("side-off");
+    store.set("nr-side-off", document.body.classList.contains("side-off"));
+    if (!document.body.classList.contains("side-off")) { refreshSidebar(); return; }
+  }
   renderDrawer();
   document.body.classList.add("drawer-open");
   const cur = $("#drawer-body .toc a.cur") || $("#drawer-body .toc details[open]");
@@ -597,6 +620,7 @@ async function showPage(bookId, pageNo, highlight) {
   if (speechOK) $("#listen-btn").onclick = () => speaking ? stopSpeaking() : startSpeaking();
   $("#progress").style.width = (pageNo / book.pages.length * 100) + "%";
   if (speaking) setTimeout(speakPage, 300);
+  refreshSidebar();
   $("#prev").onclick = () => go(bookId, pageNo - 1);
   $("#next").onclick = () => go(bookId, pageNo + 1);
   $("#pageinput").onchange = (e) => go(bookId, +e.target.value || 1);
@@ -612,6 +636,7 @@ function go(bookId, page) { location.hash = `${bookId}-${page}`; }
 function route() {
   hidePop();
   const m = location.hash.match(/^#([a-z]+)-(\d+)$/);
+  document.body.classList.toggle("reading", !!m);
   if (m) showPage(m[1], +m[2], pendingHighlight); else showLibrary();
   pendingHighlight = null;
 }
@@ -932,5 +957,6 @@ app.addEventListener("touchend", (e) => {
 for (const id of ["#home", "#drawer-home"]) $(id).onclick = (e) => { e.preventDefault(); closeDrawer(); location.hash = ""; };
 
 applySettings();
+if (store.get("nr-side-off", false)) document.body.classList.add("side-off");
 Promise.all([loadLibrary(), loadLugat()]).then(route).catch(() => { app.innerHTML = `<div class="loading">Kitap listesi yüklenemedi. Sayfayı yenile.</div>`; });
 </script>

@@ -119,6 +119,9 @@ def convert(epub_path, chapter_tags=("h1",)):
     path = lambda href: posixpath.normpath(posixpath.join(base, unquote(href.split("#")[0])))
 
     book_id = slug(raw_title)
+    # Her ana kitabın kendi bölüm adı var; başka kitabın birimi (ör. Sözler içindeki "Birinci Şua") bölüm sayılmaz
+    unit = {"sozler": "Söz", "mektubat": "Mektub|Mektup", "lemalar": "Lem[’']a", "sualar": "Şua|Şuâ"}.get(book_id)
+    unit_re = re.compile(rf"^[\wÇĞİÖŞÜçğıöşüâîû ]+ ({unit})\s*$", re.I) if unit else None
     meta = META.get(book_id, {"title": raw_title.title(), "order": 99, "shelf": "cep", "color": "red", "desc": ""})
 
     # Haşiyeler
@@ -163,7 +166,7 @@ def convert(epub_path, chapter_tags=("h1",)):
                 continue
 
             if tag.startswith("h"):
-                is_chapter = (bool(CHAPTER.match(visible)) or tag in chapter_tags) and slug(visible) != book_id
+                is_chapter = (bool(unit_re and unit_re.match(visible)) or tag in chapter_tags) and slug(visible) != book_id
                 if is_chapter:
                     state["section"] = visible
                     new_page()

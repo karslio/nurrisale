@@ -7,8 +7,8 @@
   "cover": "books/covers/sozler.jpg",
   "shelf": "kulliyat",
   "order": 1,
-  "pages": 962,
-  "chapters": 43
+  "pages": 959,
+  "chapters": 36
  },
  {
   "id": "mektubat",
@@ -40,8 +40,8 @@
   "cover": "books/covers/sualar.jpg",
   "shelf": "kulliyat",
   "order": 4,
-  "pages": 822,
-  "chapters": 15
+  "pages": 821,
+  "chapters": 14
  },
  {
   "id": "tarihceihayat",
