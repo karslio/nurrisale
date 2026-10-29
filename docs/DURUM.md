@@ -13,6 +13,7 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 - `books/lugat.json` — ~950 kelimelik küçük lugat (yedek)
 - `books/lugat-big.json` — 40 bin kayıtlık büyük lugat (13 bin kelime + 27 bin tamlama), `books/kelime-sira.json` — en sık 1000 kelime
   - `tools/build_lugat.py` ile [Risale-i Nur Kelime Frekansı](https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans) verisinden (Ali Tekdemir, CC0); sitede kaynak belirtildi
+- `books/stats.json` — kitaplara göre kelime sayısı, farklı kelime, en sık kelimeler (`tools/build_stats.py`; kitap eklenince yeniden çalıştır)
 - `books/covers/` — kapaklar (EPUB'lardan; külliyat kitapları sitede çizilmiş cilt kapağıyla görünür)
 - `fonts/` — Souvenir (metin; eksik â î û Â Î Û harfleri eklendi) ve Hamdullah (Arapça), WOFF
 - `tools/epub_to_json.py` — EPUB → JSON dönüştürücü (kitap adları, raflar ve açıklamalar `META` içinde)
@@ -26,6 +27,7 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 - Sayfa sayfa okuma modu ayrıca var (ok tuşları, telefonda kaydırma)
 - Lugat: altın renkli kelimeler ve tamlamalar (Cenâb-ı Hak, derd-i maîşet…), üstüne gelince/dokununca anlam, sıklık sırası ve "Biliyorum" düğmesi; aranabilir lugat penceresi
 - Kelime Öğren: en sık 100/300/500/1000 kelime kartları, bilinen kelimeler metinde düz yazılır (ayar), kapsam yüzdesi
+- İstatistik sekmesi (#istatistik, #istatistik-<kitap>): toplam/farklı kelime, en sık kelimeler (bağlaçlar hariç seçeneği), kitaplara göre tablo, istenen kelime/ifadenin kitaplara göre sayısı ve payları (ekli hâller dahil ya da tam kelime)
 - Arapça: kırmızı, Hamdullah yazı tipi; sık geçen ifade ve ayetlerin meâli (~%56 satır)
 - Haşiyeler: kırmızı numara, tıklayınca metni
 - Ayarlar paneli: tema (sistem/açık/sepya/gece), sürekli ya da sayfa sayfa okuma, yazı boyutu, yazı tipi, iki yana hizalama, sayfa/satır boşluğu, lugat/meâl/haşiye/sayfa numarası aç-kapa

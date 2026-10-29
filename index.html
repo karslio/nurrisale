@@ -412,6 +412,41 @@ body.hide-known .w.kn { color: inherit; }
 .recent a { display: flex; justify-content: space-between; gap: 10px; text-decoration: none; color: var(--ink); padding: 8px 2px; border-bottom: 1px solid var(--rule); }
 .recent a span:last-child { color: var(--muted); font-size: 13px; white-space: nowrap; }
 
+/* İstatistik */
+.stv { max-width: 980px; margin: 0 auto; padding: 34px 0 40px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.stv-h { font-family: "Poppins", var(--font-ui); font-size: clamp(24px, 3.4vw, 32px); margin: 0; }
+.stv-sub { margin: -10px 0 0; color: var(--muted); font-size: 14px; }
+.stv-ask { border: 1px solid var(--rule); border-radius: 14px; background: var(--side); padding: 16px; display: grid; gap: 10px; }
+.stv-ask form { display: flex; gap: 8px; }
+.stv-ask input[type=search] { flex: 1; min-width: 0; font: 16px var(--font-ui); padding: 10px 14px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); }
+#stq-res { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.stv-ask { grid-template-columns: minmax(0, 1fr); }
+#stq-res .empty { padding: 2px 0; }
+.stv-opt { font-size: 13.5px; color: var(--muted); display: flex; gap: 6px; align-items: center; cursor: pointer; }
+.stv-scope { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.stv-scope label { font-weight: 600; }
+.stv-scope select { font: 15px var(--font-ui); padding: 8px 10px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); max-width: 100%; min-width: 0; flex: 1 1 200px; }
+.stv-cards, .stq-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.stv-cards div, .stq-sum div { border: 1px solid var(--rule); border-radius: 12px; background: var(--surface); padding: 12px 14px; }
+.stv-cards b, .stq-sum b { display: block; font: 700 24px "Poppins", var(--font-ui); color: var(--red); font-variant-numeric: tabular-nums; }
+.stv-cards span, .stq-sum span { font-size: 12.5px; color: var(--muted); }
+.stv-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+.stv-head h2 { font-size: 19px; margin: 0; }
+.tbl-wrap { overflow: auto; border: 1px solid var(--rule); border-radius: 12px; background: var(--surface); }
+.tbl-wrap.tall { max-height: 540px; }
+.stv-tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.stv-tbl th { text-align: left; font-weight: 600; font-size: 12.5px; color: var(--muted); background: var(--side); padding: 9px 12px; position: sticky; top: 0; white-space: nowrap; z-index: 1; }
+.stv-tbl td { padding: 8px 12px; border-top: 1px solid var(--rule); white-space: nowrap; }
+.stv-tbl .n { text-align: right; font-variant-numeric: tabular-nums; }
+.stv-tbl tr.on td { background: color-mix(in srgb, var(--select) 55%, transparent); }
+.stv-tbl.books tbody tr { cursor: pointer; } .stv-tbl.books tbody tr:hover td { background: var(--side); }
+.stv-tbl .bar { display: inline-block; width: 90px; height: 7px; border-radius: 99px; background: var(--rule); vertical-align: middle; margin-right: 6px; overflow: hidden; }
+.stv-tbl .bar i { display: block; height: 100%; background: var(--red); border-radius: 99px; }
+.wlink { background: none; border: none; padding: 0; color: var(--lugat); cursor: pointer; font: 15px var(--font-body); }
+.wlink:hover { text-decoration: underline; }
+.link-btn { justify-self: start; background: none; border: none; color: var(--red); cursor: pointer; font-weight: 600; padding: 4px 0; }
+.stq-note { font-size: 13px; color: var(--muted); }
+
 /* ---------- Telefon ve tablet ---------- */
 @media (max-width: 960px) {
   :root { --bar1: 56px; --side-w: min(340px, 86vw); }
@@ -935,11 +970,13 @@ function renderCrumbs() {
   c.innerHTML = `${ICON_BOOK.replace('class="ic"', "")}<button class="crumb-btn" data-crumb="book">${escapeHtml(book.title)}</button><span>/</span><button class="crumb-btn ${last < 0 ? "cur" : "mid"}" data-crumb="chap">${escapeHtml(chap.title)}</button>` +
     chain.map(([i, x], n) => `<span>/</span><button class="crumb-btn ${n === last ? "cur" : "mid"}" data-crumb="sub:${i}">${escapeHtml(x.t)}</button>`).join("") + `
     <span class="pagebox">
+      <button class="bar-btn" id="crumb-stats" aria-label="Bu kitabın kelime istatistikleri" title="Kelime istatistikleri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/></svg></button>
       <button class="bar-btn ${isMarked(book.id, current.page) ? "on" : ""}" id="crumb-mark" aria-label="Sayfayı işaretle"><svg viewBox="0 0 24 24" fill="${isMarked(book.id, current.page) ? "currentColor" : "none"}" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 4h12v16l-6-4-6 4z"/></svg></button>
       <input id="pageinput" type="number" min="1" max="${book.pages.length}" value="${current.page}" aria-label="Sayfa"><span class="tot">/ ${book.pages.length}</span>
     </span>`;
   $("#pageinput").onchange = (e) => go(book.id, +e.target.value || 1);
   $("#crumb-mark").onclick = () => toggleMarkHere();
+  $("#crumb-stats").onclick = () => { location.hash = "#istatistik-" + book.id; };
   c.querySelectorAll("[data-crumb]").forEach((b) => b.onclick = () => {
     const v = b.dataset.crumb;
     if (v.startsWith("sub:")) { const sub = chap.subs[+v.slice(4)]; jumpTree("chap"); setTimeout(() => side.querySelector(`.row[data-key="sub:${book.id}:${chap.idx}:${v.slice(4)}"]`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 120); return; }
@@ -989,6 +1026,7 @@ function showLibrary() {
         <div class="goal"><div style="width:${Math.min(100, r.today / goal * 100)}%"></div></div><small>Günlük hedef: ${goal} sayfa${r.today >= goal ? " · tamamlandı ✓" : ""}</small>
         <div class="week">${r.last7.map((x) => `<div><i style="height:${Math.round(x.n / max * 100)}%" title="${x.n} sayfa"></i><span>${DAYS[x.d.getDay()]}</span></div>`).join("")}</div></div></div>`; })()}
     <div class="sec"><div class="card"><div class="row2"><div><div class="h">Kelime Öğren</div><strong>En sık geçen kelimelerle başla</strong><div style="color:var(--muted);font-size:13.5px;margin-top:2px">${KNOWN.size ? `${KNOWN.size} kelime biliyorsun` : "İlk 100 kelime, lugata bakma ihtiyacının beşte birini karşılar"}</div></div><button class="btn" id="home-learn">Başla</button></div></div></div>
+    <div class="sec"><div class="card"><div class="row2"><div><div class="h">Kelime istatistikleri</div><strong>Hangi kelime kaç kez geçiyor?</strong><div style="color:var(--muted);font-size:13.5px;margin-top:2px">Kitaplara göre kelime sayıları, en sık kelimeler, istediğin kelimenin payı</div></div><button class="btn" id="home-stats">Aç</button></div></div></div>
     ${store.get("nr-recent", []).length > 1 ? `<div class="sec"><div class="card"><div class="h">Son okuduklarım</div><div class="recent">${store.get("nr-recent", []).slice(0, 5).map((r) => `<a href="#${r.book}-${r.page}"><span>${escapeHtml(r.chap)} <span style="color:var(--muted)">· ${escapeHtml(r.title)}</span></span><span>Sayfa ${r.page}</span></a>`).join("")}</div></div></div>` : ""}
     ${lastMeta ? `<div class="sec"><div class="card"><div class="h">Kaldığın yer</div><div class="row2"><div><strong>${escapeHtml(lastMeta.title)}</strong> <span style="color:var(--muted)">· Sayfa ${last.page}</span></div><button class="btn" id="resume">Devam et</button></div></div></div>` : ""}
     <div class="sec">
@@ -1012,6 +1050,7 @@ function showLibrary() {
     </footer>
     </div>`;
   $("#home-learn").onclick = () => openLearn();
+  $("#home-stats").onclick = () => { location.hash = "#istatistik"; };
   app.querySelectorAll("[data-jump]").forEach((el) => el.onclick = () => document.getElementById(el.dataset.jump)?.scrollIntoView({ behavior: "smooth", block: "start" }));
   renderDaily();
   app.querySelectorAll("[data-open]").forEach((el) => el.onclick = () => go(el.dataset.open, 1));
@@ -1237,6 +1276,7 @@ function tabLabel(h) {
 }
 function syncTabs() {
   const h = location.hash;
+  if (h.startsWith("#istatistik")) { activeTab = "stats"; saveTabs(); renderTabs(); return; }
   const isBook = /^#[a-z]+-\d+$/.test(h);
   let t = tabs.find((x) => x.k === activeTab);
   if (isBook) {
@@ -1256,6 +1296,7 @@ function renderTabs() {
   const tc = document.getElementById("tabs-count"); if (tc) tc.textContent = tabs.length;
   const ICON_OPEN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M3 5.5c3-1 6-1 9 1 3-2 6-2 9-1V19c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6.5V20"/></svg>`;
   $("#tabs").innerHTML = `<button class="tab ${activeTab === "search" ? "on" : ""}" data-tab="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><span class="t">Arama</span></button>` +
+    `<button class="tab ${activeTab === "stats" ? "on" : ""}" data-tab="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/></svg><span class="t">İstatistik</span></button>` +
     tabs.map((t) => `<div class="tab ${activeTab === t.k ? "on" : ""}" data-tab="${t.k}" role="button" tabindex="0">${ICON_OPEN}<span class="t">${escapeHtml(tabLabel(t.h))}</span><button class="x" data-close="${t.k}" aria-label="Sekmeyi kapat">✕</button></div>`).join("") +
     `<button class="tab-add" id="tab-add" aria-label="Yeni sekme">+</button>`;
 }
@@ -1279,6 +1320,7 @@ $("#tabs").addEventListener("click", (e) => {
   }
   if (e.target.closest("#tab-add")) { newTab(); return; }
   const t = e.target.closest("[data-tab]"); if (!t) return;
+  if (t.dataset.tab === "stats") { activeTab = "stats"; saveTabs(); if (location.hash === "#istatistik") route(); else location.hash = "#istatistik"; return; }
   if (t.dataset.tab === "search") { activeTab = "search"; saveTabs(); location.hash = ""; route(); return; }
   const tab = tabs.find((x) => x.k === +t.dataset.tab); activeTab = tab.k; saveTabs();
   if (location.hash === tab.h) route(); else location.hash = tab.h;
@@ -1309,6 +1351,7 @@ function route() {
   clearTimeout(pageTimer);
   syncTabs();
   if (!location.hash && activeTab !== "search") { if (pageObserver) pageObserver.disconnect(); return showPick(); }
+  if (location.hash.startsWith("#istatistik")) { if (pageObserver) pageObserver.disconnect(); return showStats(location.hash.slice(12) || null); }
   const m = location.hash.match(/^#([a-z]+)-(\d+)$/);
   if (m) showChapter(m[1], +m[2], pendingHighlight); else { if (pageObserver) pageObserver.disconnect(); showLibrary(); }
   pendingHighlight = null;
@@ -1830,6 +1873,7 @@ function openMenu(kind) {
     const items = [
       ["home", MI('<path d="M3 11l9-8 9 8M5 10v10h14V10"/>'), "Ana sayfa", "Arama, eser grupları ve günün vecizesi"],
       ["notes", MI('<path d="M6 4h12v16l-6-4-6 4z"/>'), "Yer imleri ve notlarım", "İşaretlediğin sayfalar ve vurgular"],
+      ["stats", MI('<path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/>'), "Kelime istatistikleri", "Kitaplara göre kelime sayıları ve sıklıklar"],
       ["learn", MI('<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/>'), "Kelime Öğren", "En sık geçen kelimelerden başlayarak öğren"],
       ["lugat", MI('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M8 7h8M8 11h6"/>'), "Lugat", "Bütün kelimeler ve anlamları, aranabilir"],
       ["keys", MI('<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/>'), "Kısayollar ve yardım", "Klavye kısayolları, nasıl kullanılır"],
@@ -1861,6 +1905,7 @@ menu.addEventListener("click", async (e) => {
   if (m === "newtab") newTab();
   if (m === "notes") { if (narrow()) openSide(); else { renderSide(); side.scrollTo({ top: 0, behavior: "smooth" }); } if (!getMarks().length && !getHls().length) toast("Henüz yer imi ya da vurgu yok"); }
   if (m === "learn") openLearn();
+  if (m === "stats") location.hash = "#istatistik";
   if (m === "lugat") {
     showModal(`<h2>Lugat</h2><input id="lug-q" class="lug-q" type="search" placeholder="Kelime, tamlama ya da anlam ara" autocomplete="off"><div id="lug-list" class="lug-list"><div class="lug-n">Lugat yükleniyor…</div></div>`);
     loadBig().then(() => {
@@ -1955,6 +2000,110 @@ app.addEventListener("touchend", (e) => {
   if (!quick || Math.abs(dx) < 70 || Math.abs(dy) > Math.abs(dx) * 0.6 || selectedText()) return;
   (dx < 0 ? $("#next-pg") : $("#prev-pg"))?.click();
 }, { passive: true });
+
+/* ---------- Kelime istatistikleri (#istatistik, #istatistik-<kitap>) ---------- */
+let STATS = null;
+async function loadStats() { if (!STATS) STATS = await fetch("books/stats.json").then((r) => { if (!r.ok) throw 0; return r.json(); }); return STATS; }
+const fmtN = (n) => n.toLocaleString("tr");
+const fmtP = (p) => "%" + p.toLocaleString("tr", { maximumFractionDigits: p >= 10 ? 1 : p >= 1 ? 2 : p >= 0.1 ? 2 : 3 });
+const statCache = new Map();
+function statText(book) {
+  let t = statCache.get(book.id);
+  if (!t) { t = indexOf(book).map((r) => r.plain).join("\n").replace(/[’`]/g, "'"); statCache.set(book.id, t); }
+  return t;
+}
+// Kelime başında eşleşme; "ekli hâller" kapalıysa kelime sonunda da sınır aranır
+function countIn(text, term, suf) {
+  const isW = (c) => (c >= 97 && c <= 122) || (c >= 48 && c <= 57);
+  let n = 0, i = text.indexOf(term);
+  while (i >= 0) {
+    if (!isW(i ? text.charCodeAt(i - 1) : 32) && (suf || !isW(text.charCodeAt(i + term.length)))) n++;
+    i = text.indexOf(term, i + term.length);
+  }
+  return n;
+}
+async function showStats(bookId) {
+  current = { id: null, page: 0, chapter: null }; rendered = null;
+  stopSpeaking(); $("#fab").hidden = true; $("#progress").style.width = "0";
+  renderCrumbs(); renderSide();
+  document.title = "Kelime İstatistikleri · NurRisale";
+  app.innerHTML = `<div class="loading">İstatistikler hazırlanıyor…</div>`;
+  try { await loadStats(); } catch { app.innerHTML = `<div class="loading">İstatistikler yüklenemedi. Bağlantını kontrol edip sayfayı yenile.</div>`; return; }
+  const S = STATS;
+  if (bookId && (!metaOf(bookId) || !S.books[bookId])) bookId = null;
+  const meta = bookId && metaOf(bookId), sc = bookId ? S.books[bookId] : S;
+  const books = LIBRARY.filter((b) => S.books[b.id]).map((b) => ({ b, s: S.books[b.id] })).sort((x, y) => y.s.total - x.s.total);
+  const maxT = books[0].s.total;
+  document.title = `${bookId ? meta.title + " · " : ""}Kelime İstatistikleri · NurRisale`;
+  app.innerHTML = `<section class="stv">
+    <h1 class="stv-h">Kelime İstatistikleri${bookId ? ` <span style="color:var(--red)">· ${escapeHtml(meta.title)}</span>` : ""}</h1>
+    <p class="stv-sub">Türkçe metindeki kelimeler sayıldı; Arapça satırlar ve haşiyeler sayıma dahil değil.</p>
+    <div class="stv-ask">
+      <form id="stq-form"><input id="stq" type="search" placeholder="Kelime ya da ifade (ör. Cenâb-ı Hak)" autocomplete="off" aria-label="Kelime ya da ifade"><button class="btn">Say</button></form>
+      <label class="stv-opt"><input type="checkbox" id="stq-suf" checked> Ekli hâllerini de say (Hakk'a, Hakk'ın…)</label>
+      <div id="stq-res"></div>
+    </div>
+    <div class="stv-scope"><label for="st-book">Kitap</label><select id="st-book"><option value="">Bütün Risale-i Nur (${books.length} kitap)</option>${SHELVES.map((sh) => `<optgroup label="${sh.title}">${LIBRARY.filter((b) => (b.shelf || "kulliyat") === sh.id && S.books[b.id]).map((b) => `<option value="${b.id}" ${b.id === bookId ? "selected" : ""}>${escapeHtml(b.title)}</option>`).join("")}</optgroup>`).join("")}</select></div>
+    <div class="stv-cards">
+      <div><b>${fmtN(sc.total)}</b><span>toplam kelime</span></div>
+      <div><b>${fmtN(sc.unique)}</b><span>farklı kelime (tekrarlar hariç)</span></div>
+      ${bookId ? `<div><b>${fmtP(100 * sc.total / S.total)}</b><span>bütün Risale-i Nur içindeki payı</span></div><div><b>${fmtN(meta.pages)}</b><span>sayfa · sayfa başına ${fmtN(Math.round(sc.total / meta.pages))} kelime</span></div>`
+        : `<div><b>${books.length}</b><span>kitap</span></div><div><b>${fmtN(LIBRARY.reduce((n, b) => n + b.pages, 0))}</b><span>sayfa</span></div>`}
+    </div>
+    <div class="stv-head"><h2>En sık geçen kelimeler</h2><label class="stv-opt"><input type="checkbox" id="st-stop" checked> Bağlaçları ve çok sık Türkçe kelimeleri çıkar</label></div>
+    <div class="tbl-wrap tall"><table class="stv-tbl" id="st-top"></table></div>
+    <div class="stv-head"><h2>Kitaplara göre</h2><span class="stq-note">Bir kitaba tıklayınca onun istatistikleri açılır</span></div>
+    <div class="tbl-wrap tall"><table class="stv-tbl books">
+      <thead><tr><th>Kitap</th><th class="n">Kelime</th><th class="n">Farklı kelime</th><th>Bütün içindeki payı</th></tr></thead>
+      <tbody>${books.map(({ b, s }) => `<tr data-bk="${b.id}" class="${b.id === bookId ? "on" : ""}"><td>${escapeHtml(b.title)}</td><td class="n">${fmtN(s.total)}</td><td class="n">${fmtN(s.unique)}</td><td><span class="bar"><i style="width:${100 * s.total / maxT}%"></i></span>${fmtP(100 * s.total / S.total)}</td></tr>`).join("")}</tbody></table></div>
+    <p class="stq-note">"Farklı kelime" sayılırken özel isimlerdeki ekler (Nur'un → Nur) ve izafet ekleri (risale-i → risale) ayrıldı.</p>
+  </section>`;
+
+  const drawTop = () => {
+    const list = $("#st-stop").checked ? sc.top : sc.topAll;
+    $("#st-top").innerHTML = `<thead><tr><th class="n">#</th><th>Kelime</th><th class="n">Geçiş</th><th class="n">${bookId ? "Kitaptaki payı" : "Bütündeki payı"}</th>${bookId ? `<th class="n">Bütün Risale'de</th><th>Bu kitaptakilerin payı</th>` : ""}</tr></thead><tbody>` +
+      list.map(([w, n], i) => {
+        const g = S.counts[plain(w)] || n;
+        return `<tr><td class="n">${i + 1}</td><td><button class="wlink">${escapeHtml(w)}</button></td><td class="n">${fmtN(n)}</td><td class="n">${fmtP(100 * n / sc.total)}</td>${bookId ? `<td class="n">${fmtN(g)}</td><td><span class="bar"><i style="width:${100 * n / g}%"></i></span>${fmtP(100 * n / g)}</td>` : ""}</tr>`;
+      }).join("") + `</tbody>`;
+    $("#st-top").querySelectorAll(".wlink").forEach((b) => b.onclick = () => { $("#stq").value = b.textContent; $("#stq-suf").checked = true; countTerm(); $(".stv-ask").scrollIntoView({ block: "start", behavior: "smooth" }); });
+  };
+  const countTerm = async () => {
+    const raw = $("#stq").value.trim(), res = $("#stq-res");
+    const term = plain(raw).replace(/[’`]/g, "'").replace(/\s+/g, " ").trim();
+    if (term.replace(/[^a-z0-9]/g, "").length < 2) { res.innerHTML = `<div class="empty">En az 2 harf yaz.</div>`; return; }
+    const suf = $("#stq-suf").checked, ids = books.map((x) => x.b.id);
+    res.innerHTML = `<div class="empty">Kitaplar hazırlanıyor…</div>`;
+    try { await ensureBooks(ids, (d, n) => { res.innerHTML = `<div class="empty">Kitaplar hazırlanıyor: ${d} / ${n}</div>`; }); }
+    catch { res.innerHTML = `<div class="empty">Kitaplar yüklenemedi. Bağlantını kontrol et.</div>`; return; }
+    if (!$("#stq") || $("#stq").value.trim() !== raw) return;
+    const rows = ids.map((id) => ({ id, n: countIn(statText(BOOKS.get(id)), term, suf) }));
+    const tot = rows.reduce((a, r) => a + r.n, 0);
+    if (!tot) { res.innerHTML = `<div class="empty">“${escapeHtml(raw)}” hiçbir kitapta geçmiyor.</div>`; return; }
+    const hit = rows.filter((r) => r.n).sort((a, b) => b.n - a.n), maxN = hit[0].n;
+    const mine = bookId ? rows.find((r) => r.id === bookId) : null;
+    const short = suf && !term.includes(" ") && term.length < 5;
+    res.innerHTML = `<div class="stq-sum">
+        <div><b>${fmtN(tot)}</b><span>kez geçiyor · ${hit.length} kitapta</span></div>
+        <div><b>${fmtP(100 * tot / S.total)}</b><span>bütün Risale-i Nur'daki kelimeler içindeki payı</span></div>
+        ${mine ? `<div><b>${fmtN(mine.n)}</b><span>kez ${escapeHtml(meta.title)} içinde · kitaptaki payı ${fmtP(100 * mine.n / S.books[bookId].total)}</span></div>
+          <div><b>${fmtP(100 * mine.n / tot)}</b><span>bütün geçişlerin ${escapeHtml(meta.title)} içindeki payı</span></div>` : ""}
+      </div>
+      <div class="tbl-wrap tall"><table class="stv-tbl"><thead><tr><th>Kitap</th><th class="n">Geçiş</th><th class="n">Kitaptaki payı</th><th>Geçişlerin payı</th></tr></thead><tbody>
+        ${hit.map((r) => `<tr class="${r.id === bookId ? "on" : ""}"><td>${escapeHtml(metaOf(r.id).title)}</td><td class="n">${fmtN(r.n)}</td><td class="n">${fmtP(100 * r.n / S.books[r.id].total)}</td><td><span class="bar"><i style="width:${100 * r.n / maxN}%"></i></span>${fmtP(100 * r.n / tot)}</td></tr>`).join("")}
+      </tbody></table></div>
+      ${hit.length < ids.length ? `<div class="stq-note">${ids.length - hit.length} kitapta hiç geçmiyor.</div>` : ""}
+      ${short ? `<div class="stq-note">Kısa kelimelerde ekli sayım, aynı harflerle başlayan başka kelimeleri de kapsayabilir (hak → hakikat). Daha kesin sonuç için "Ekli hâllerini de say" işaretini kaldır.</div>` : ""}
+      <button class="link-btn" id="stq-find">Geçtiği yerleri aramada göster →</button>`;
+    $("#stq-find").onclick = () => { searchPanel.hidden = false; q.value = raw.includes(" ") ? `"${raw}"` : raw; $("#scope").hidden = true; runSearch(); };
+  };
+  $("#st-stop").onchange = drawTop; drawTop();
+  $("#st-book").onchange = (e) => { location.hash = e.target.value ? "#istatistik-" + e.target.value : "#istatistik"; };
+  app.querySelectorAll("[data-bk]").forEach((r) => r.onclick = () => { location.hash = "#istatistik-" + r.dataset.bk; });
+  $("#stq-form").onsubmit = (e) => { e.preventDefault(); countTerm(); };
+  $("#stq-suf").onchange = () => { if ($("#stq").value.trim()) countTerm(); };
+  window.scrollTo(0, 0);
+}
 
 /* =========================================================
    BAŞLAT

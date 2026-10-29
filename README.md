@@ -11,12 +11,14 @@ Site: https://karslio.github.io/nurrisale
 - `books/<kitap>.json` — kitabın sayfaları, içindekiler ve haşiyeleri
 - `books/lugat-big.json`, `books/kelime-sira.json` — büyük lugat ve en sık 1000 kelime
   (`tools/build_lugat.py` ile [Risale-i Nur Kelime Frekansı](https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans) verisinden, CC0)
+- `books/stats.json` — kitaplara göre kelime istatistikleri (`tools/build_stats.py`)
 - `tools/epub_to_json.py` — EPUB dosyasını `books/` için JSON'a çeviren araç
 
 ## Yeni kitap eklemek
 
 ```
 python3 tools/epub_to_json.py Kitap.epub
+python3 tools/build_stats.py   # istatistikleri yenile
 ```
 
 Kitabın adı, sırası ve kapak rengi `tools/epub_to_json.py` içindeki `META` listesinde ayarlanır.
