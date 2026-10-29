@@ -782,6 +782,7 @@ function go(bookId, page) { location.hash = `${bookId}-${page}`; }
 /* ---------- Sekmeler (Arama + okuma sekmeleri) ---------- */
 let tabs = store.get("nr-tabs", []);        // [{k, h}] h: "#sozler-27" ya da "" (yeni sekme)
 let activeTab = store.get("nr-tab", "search");
+if (tabs.length > 6) tabs = tabs.slice(-6);
 let tabSeq = tabs.reduce((m, t) => Math.max(m, t.k), 0);
 const saveTabs = () => { store.set("nr-tabs", tabs); store.set("nr-tab", activeTab); };
 function tabLabel(h) {
@@ -794,8 +795,15 @@ function syncTabs() {
   const isBook = /^#[a-z]+-\d+$/.test(h);
   let t = tabs.find((x) => x.k === activeTab);
   if (isBook) {
-    if (!t) { t = tabs.find((x) => !x.h) || (tabs.push({ k: ++tabSeq, h: "" }), tabs[tabs.length - 1]); activeTab = t.k; }
+    if (!t) {
+      // Aynı kitap açık bir sekmede varsa ona geç; yoksa boş sekmeyi ya da yeni sekme kullan
+      const bookId = h.slice(1).split("-")[0];
+      t = tabs.find((x) => x.h && x.h.slice(1).split("-")[0] === bookId) || tabs.find((x) => !x.h);
+      if (!t) { t = { k: ++tabSeq, h: "" }; tabs.push(t); }
+      activeTab = t.k;
+    }
     t.h = h;
+    while (tabs.length > 6) { const i = tabs.findIndex((x) => x.k !== activeTab); tabs.splice(i, 1); }
   } else if (!t || t.h) activeTab = "search";
   saveTabs(); renderTabs();
 }
