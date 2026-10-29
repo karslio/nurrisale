@@ -64,3 +64,5 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
   numarası basılı bir kaynak (taranmış PDF) gerekiyor.
 - Souvenir ticari bir yazı tipi; kullanım izni kullanıcının sorumluluğunda.
 - Arapça satırların %96,6'sında meal var (ayet %41, hazır ifadeler, çalışma tercümesi). Kalanlar: Celcelutiye'nin şifreli isimleri, içindekiler başlıkları, Osmanlıca satırlar, birkaç takriz şiiri ve hemen altında Risale'nin kendi meali olan satırlar. Çalışma tercümeleri yaklaşık; bir hocanın gözden geçirmesi iyi olur.
+- Tarihçe-i Hayat ve Lâhikalarda hayat haritasına bağlı paragrafların altında "📍 Hayat haritasında gör" bağlantısı çıkar (HYREF, hayat.json'dan kurulur)
+- Düzeltme: 9 noktalı menü açıkken ayarlar düğmesine basınca menü kapanmıyordu; ikisi artık birbirini kapatır

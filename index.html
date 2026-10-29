@@ -228,11 +228,14 @@ main { margin-left: var(--side-w); padding-top: calc(env(safe-area-inset-top, 0p
 .aw:hover, .aw.on { background: color-mix(in srgb, var(--red) 10%, transparent); }
 .ayref { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin: -.5em 0 1em; text-indent: 0; }
 .ay { font: 500 12px var(--font-ui); color: var(--red); background: color-mix(in srgb, var(--red) 8%, transparent); border: 1px solid color-mix(in srgb, var(--red) 25%, transparent); border-radius: 99px; padding: 2px 10px; cursor: pointer; }
+a.hyl { text-decoration: none; display: inline-block; font: 500 12px var(--font-ui); color: var(--red); background: color-mix(in srgb, var(--red) 8%, transparent); border: 1px solid color-mix(in srgb, var(--red) 25%, transparent); border-radius: 99px; padding: 2px 10px; }
+a.hyl:hover { background: color-mix(in srgb, var(--red) 15%, transparent); }
+.hyref { margin-top: -.3em; }
 .ay:hover, .ay.on { background: color-mix(in srgb, var(--red) 15%, transparent); }
 .pop .ayl { font-family: var(--font-body); line-height: 1.55; margin-top: 4px; }
 .pop .ayfn { font-size: 12px; color: var(--muted); margin-top: 2px; }
 .pop a { color: var(--red); }
-body.no-meal .ayref { display: none; }
+body.no-meal .ayref:not(.hyref) { display: none; }
 .fn { font: 600 .62em/1 var(--font-ui); position: relative; top: -.6em; background: color-mix(in srgb, var(--red) 10%, transparent); border: none; border-radius: 4px; color: var(--red); cursor: pointer; padding: 1px 4px; margin: 0 1px; }
 mark { background: var(--mark); color: inherit; border-radius: 2px; }
 .text .speaking { background: color-mix(in srgb, var(--lugat) 14%, transparent); border-radius: 4px; box-shadow: 0 0 0 6px color-mix(in srgb, var(--lugat) 14%, transparent); }
@@ -1073,6 +1076,15 @@ function loadArm() {
   return ARM_P;
 }
 const refText = ([s, a1, a2]) => `${AY.sure[s - 1]} ${s}:${a1}${a2 !== a1 ? "-" + a2 : ""}`;
+/* Hayat haritasındaki duraklara bağlanan paragraflar: "kitap:sayfa:blok" -> durak no */
+let HYREF = {};
+function loadHy() {
+  return loadJson("hayat").then((H) => {
+    const m = {};
+    H.stops.forEach((st, n) => { const refs = [...(st.q ? [st.q[1]] : []), ...st.src.map((x) => x[0])]; refs.forEach((r) => { const k = r.replace(/-(\d+)-(\d+)$/, ":$1:$2"); if (!(k in m)) m[k] = n + 1; }); });
+    HYREF = m;
+  }).catch(() => {});
+}
 function blockHtml(book, p, i, b, highlight) {
   let html = renderBlock(b, highlight).replace(/^<(\w+)/, `<$1 data-b="${p}:${i}"`);
   const refs = b[0] === "ar" && AY && AY.bloklar[book.id] && AY.bloklar[book.id][`${p}:${i}`];
@@ -1082,6 +1094,8 @@ function blockHtml(book, p, i, b, highlight) {
     const j = ARM.bloklar[book.id][`${p}:${i}`];
     if (j != null) html += `<div class="ayref"><button class="ay arm" data-arm="${j}">Türkçesi</button></div>`;
   }
+  const hy = HYREF[`${book.id}:${p}:${i}`];
+  if (hy) html += `<div class="ayref hyref"><a class="hyl" href="#hayat-${hy}" title="Hayat haritasında ${hy}. durak">📍 Hayat haritasında gör</a></div>`;
   return html;
 }
 function renderBlock([k, t], highlight) {
@@ -1942,7 +1956,7 @@ $("#btn-theme").onclick = () => {
 $("#btn-smaller").onclick = () => { settings.size = Math.max(70, settings.size - 10); applySettings(); };
 $("#btn-bigger").onclick = () => { settings.size = Math.min(180, settings.size + 10); applySettings(); };
 const settingsPanel = $("#settings");
-function toggleSettings(open = settingsPanel.hidden) { settingsPanel.hidden = !open; $("#btn-settings").setAttribute("aria-expanded", open); }
+function toggleSettings(open = settingsPanel.hidden) { if (open) closeMenu(); settingsPanel.hidden = !open; $("#btn-settings").setAttribute("aria-expanded", open); }
 $("#btn-settings").onclick = (e) => { e.stopPropagation(); toggleSettings(); };
 $("#set-close").onclick = () => toggleSettings(false);
 document.addEventListener("click", (e) => { if (!settingsPanel.hidden && !e.target.closest("#settings, #btn-settings")) toggleSettings(false); });
@@ -2226,6 +2240,7 @@ const MI = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 let installEvt = null;
 window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installEvt = e; });
 function openMenu(kind) {
+  toggleSettings(false);
   if (!menu.hidden && menu.dataset.kind === kind) return closeMenu();
   menu.dataset.kind = kind;
   if (kind === "apps") {
@@ -3011,7 +3026,7 @@ applySettings();
 loadRank();
 // Lugat ve ayetler hemen arka planda inmeye başlasın; kitap açıldığında hazır olsunlar
 loadBig(); loadAyet(); loadArm();
-Promise.all([loadLibrary(), loadLugat()]).then(async () => {
+Promise.all([loadLibrary(), loadLugat(), loadHy()]).then(async () => {
   // Açık kalan kitapların bölümlerini yükle
   await Promise.all([...openNodes].filter((k) => k.startsWith("book:")).map((k) => loadBook(k.slice(5)).catch(() => {})));
   route();
