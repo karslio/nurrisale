@@ -15,6 +15,7 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
   - `tools/build_lugat.py` ile [Risale-i Nur Kelime Frekansı](https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans) verisinden (Ali Tekdemir, CC0); sitede kaynak belirtildi
 - `books/ayetler.json` — ayet eşleşmeleri (3.810 Arapça satırın %41'i, 501 farklı ayet) ve Türkçe meal (Rowwad, QuranEnc.com 1.0.4; metne dokunmadan, kaynakla) — `tools/build_ayet.py /yol/quran-json`
 - `books/konular.json` — konu dizini: 28 konu (haşir, kader, namaz, ihlas, gençlik…), her biri için anahtar kelimelerin en yoğun geçtiği 30 bölüm/alt başlık ve kitaplara göre sayılar (`tools/build_konular.py`)
+- `books/arapca.json` — ayet olmayan Arapça/Farsça satırların meali (dua, salavat, Âyetü'l-Kübra, Farsça münacatlar): 311 tercüme, 768 satır; kaynak `tools/arapca_tercume.json` (NurRisale çalışma tercümesi, yaklaşık meal), `tools/build_arapca.py`
 - `books/stats.json` — kitaplara göre kelime sayısı, farklı kelime, en sık kelimeler (`tools/build_stats.py`; kitap eklenince yeniden çalıştır)
 - `books/covers/` — kapaklar (EPUB'lardan; külliyat kitapları sitede çizilmiş cilt kapağıyla görünür)
 - `fonts/` — Souvenir (metin; eksik â î û Â Î Û harfleri eklendi) ve Hamdullah (Arapça), WOFF
@@ -35,6 +36,7 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 - Ayetler: Arapça satırın altında sure:ayet etiketi, üstüne gelince meal; Ayet dizini (#ayetler, #ayetler-<kitap>): sure sırasıyla, en çok geçenler, geçtiği yerler, arama
 - Hız: uzun bölümler 10'ar sayfa çizilir (Onuncu Söz 0,7 sn → 0,06 sn); lugat ve ayet dosyaları açılışta arka planda iner; lugat kitaplarda geçmeyen kayıtlardan ayıklandı (31 bin kayıt)
 - Konu dizini (#konular, #konular-<konu>): konu kartları ve arama; konu sayfasında en çok işlendiği yerler (tıklayınca açılır, anahtar kelimeler işaretli), kitaplara göre çubuk grafik. İstatistik sekmesinde Kelimeler / Ayetler / Konular geçişi; menüde ve ana sayfada bağlantı
+- Arapça satırların altında "Türkçesi" düğmesi (ayet değilse): yaklaşık meal penceresi
 - Arapça: kırmızı, Hamdullah yazı tipi; sık geçen ifade ve ayetlerin meâli (~%56 satır)
 - Haşiyeler: kırmızı numara, tıklayınca metni
 - Ayarlar paneli: tema (sistem/açık/sepya/gece), sürekli ya da sayfa sayfa okuma, yazı boyutu, yazı tipi, iki yana hizalama, sayfa/satır boşluğu, lugat/meâl/haşiye/sayfa numarası aç-kapa
@@ -51,4 +53,4 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
   güvenilmez tahminler (güven %0–47, sıra sık sık başa dönüyor), o yüzden kullanılmadı. Basılı sayfa için sayfa
   numarası basılı bir kaynak (taranmış PDF) gerekiyor.
 - Souvenir ticari bir yazı tipi; kullanım izni kullanıcının sorumluluğunda.
-- Arapça meâllerin geri kalanı (~%44) için güvenilir bir meâl kaynağı gerekiyor.
+- Arapça satırların ~%80'inde meal var (ayet %41, hazır ifadeler, çalışma tercümesi). Kalan ~%20 çoğunlukla tek geçen uzun Arapça metinler (Hizb, Arabî Mesnevî) ve Celcelutiye'nin şifreli isimleri. Çalışma tercümeleri yaklaşık; bir hocanın gözden geçirmesi iyi olur.

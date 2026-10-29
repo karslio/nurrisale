@@ -15,6 +15,7 @@ Site: https://karslio.github.io/nurrisale
   [quran-json](https://github.com/risan/quran-json) verisinden: Tanzil metni CC BY 3.0, meal: Rowwad Tercüme Merkezi, QuranEnc.com)
 - `books/stats.json` — kitaplara göre kelime istatistikleri (`tools/build_stats.py`)
 - `books/konular.json` — konu dizini: 28 konunun en çok işlendiği bölümler (`tools/build_konular.py`)
+- `books/arapca.json` — ayet olmayan Arapça/Farsça satırların yaklaşık meali (`tools/build_arapca.py`, kaynak `tools/arapca_tercume.json`)
 - `tools/epub_to_json.py` — EPUB dosyasını `books/` için JSON'a çeviren araç
 
 ## Yeni kitap eklemek

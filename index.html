@@ -930,12 +930,22 @@ function loadKonu() {
   if (!KONU_P) KONU_P = fetch("books/konular.json").then((r) => r.ok ? r.json() : null).then((x) => { KONU = x; }).catch(() => { KONU = null; KONU_P = null; });
   return KONU_P;
 }
+/* Ayet olmayan Arapça/Farsça satırların meali: books/arapca.json (NurRisale çalışma tercümesi) */
+let ARM = null, ARM_P = null;
+function loadArm() {
+  if (!ARM_P) ARM_P = fetch("books/arapca.json").then((r) => r.ok ? r.json() : null).then((x) => { ARM = x; }).catch(() => { ARM = null; });
+  return ARM_P;
+}
 const refText = ([s, a1, a2]) => `${AY.sure[s - 1]} ${s}:${a1}${a2 !== a1 ? "-" + a2 : ""}`;
 function blockHtml(book, p, i, b, highlight) {
   let html = renderBlock(b, highlight).replace(/^<(\w+)/, `<$1 data-b="${p}:${i}"`);
   const refs = b[0] === "ar" && AY && AY.bloklar[book.id] && AY.bloklar[book.id][`${p}:${i}`];
   // Yalnız Besmele olan satırlara etiket koyma (her bölüm başında var)
   if (refs && !(refs.length === 1 && refs[0][0] === 1 && refs[0][1] === 1 && refs[0][2] === 1)) html += `<div class="ayref">${refs.map((r, n) => `<button class="ay" data-ay="${r.join(",")}">${escapeHtml(refText(r))}</button>`).join("")}</div>`;
+  else if (!refs && b[0] === "ar" && ARM && ARM.bloklar[book.id]) {
+    const j = ARM.bloklar[book.id][`${p}:${i}`];
+    if (j != null) html += `<div class="ayref"><button class="ay arm" data-arm="${j}">Türkçesi</button></div>`;
+  }
   return html;
 }
 function renderBlock([k, t], highlight) {
@@ -1136,6 +1146,7 @@ function showLibrary() {
       <div>${LIBRARY.length} kitap · ${LIBRARY.reduce((n, b) => n + b.pages, 0).toLocaleString("tr")} sayfa · 40.000+ kelime ve tamlamalık lugat</div>
       <div>Bir öğrenme projesi · <a href="https://github.com/karslio/nurrisale" target="_blank" rel="noopener">Kaynak kodu</a></div>
       <div>Ayet mealleri: Rowwad Tercüme Merkezi (<a href="https://quranenc.com/tr/browse/turkish_rwwad" target="_blank" rel="noopener">QuranEnc.com</a>, 1.0.4) · Kur'an metni: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil</a> (CC BY 3.0)</div>
+      <div>Ayet olmayan Arapça ve Farsça satırların Türkçesi: NurRisale çalışma tercümesi (yaklaşık meal)</div>
       <div>Lugat ve kelime sıklıkları: <a href="https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans" target="_blank" rel="noopener">Risale-i Nur Kelime Frekansı</a> (Ali Tekdemir, CC0)</div>
     </footer>
     </div>`;
@@ -1193,12 +1204,14 @@ function appendMore() {
   const cur = book.chapters[rendered.hi];
   if (rendered.until < cur.end) {             // aynı bölümün kalan sayfaları
     const to = Math.min(cur.end, rendered.until + CHUNK);
-    app.querySelector(`.chap-sec[data-ch="${cur.idx}"] .text`).insertAdjacentHTML("beforeend", pagesHtml(book, rendered.until + 1, to));
+    const box = app.querySelector(`.chap-sec[data-ch="${cur.idx}"] .text`); if (!box) return false;   // ekran değişmiş
+    box.insertAdjacentHTML("beforeend", pagesHtml(book, rendered.until + 1, to));
     rendered.until = to;
   } else {                                     // sonraki bölüm
     const next = book.chapters[rendered.hi + 1];
     if (!next) return false;
     const to = Math.min(next.end, next.start + CHUNK - 1);
+    if (!$("#more")) return false;
     $("#more").insertAdjacentHTML("beforebegin", `<div class="chap-sep" aria-hidden="true">✦ ✦ ✦</div>` + chapterHtml(book, next, to));
     rendered.hi = next.idx; rendered.until = to;
   }
@@ -1220,7 +1233,7 @@ async function showChapter(bookId, pageNo, highlight) {
     app.innerHTML = `<div class="loading">${escapeHtml(meta.title)} açılıyor…</div>`;
     try { await loadBook(bookId); } catch { app.innerHTML = `<div class="loading">Kitap açılamadı. Bağlantını kontrol edip sayfayı yenile.</div>`; return; }
   }
-  if (!BIG || !AY_P) { app.innerHTML = `<div class="loading">Lugat hazırlanıyor…</div>`; await Promise.all([loadBig(), loadAyet()]); }
+  if (!BIG || !AY || !ARM) { if (!BIG) app.innerHTML = `<div class="loading">Lugat hazırlanıyor…</div>`; await Promise.all([loadBig(), loadAyet(), loadArm()]); }
   const book = BOOKS.get(bookId);
   pageNo = Math.min(Math.max(1, pageNo), book.pages.length);
   const chap = chapterOf(book, pageNo);
@@ -1572,7 +1585,10 @@ function showPop(el, html) {
 }
 function openFor(el) {
   if (popFor === el && !pop.hidden) return;
-  if (el.classList.contains("ay")) {
+  if (el.classList.contains("arm")) {
+    const m = ARM && ARM.meal[+el.dataset.arm];
+    showPop(el, `<div class="lbl">Türkçesi · yaklaşık meal</div><div class="ayl">${escapeHtml(m || "")}</div><div class="ref">NurRisale çalışma tercümesidir; kelime kelime değil, mânâca verilmiştir.</div>`);
+  } else if (el.classList.contains("ay")) {
     const [s0, a1, a2] = el.dataset.ay.split(",").map(Number);
     let body = "";
     for (let a = a1; a <= Math.min(a2, a1 + 9); a++) {
@@ -2509,7 +2525,7 @@ function mergeBackup(d) {
 applySettings();
 loadRank();
 // Lugat ve ayetler hemen arka planda inmeye başlasın; kitap açıldığında hazır olsunlar
-loadBig(); loadAyet();
+loadBig(); loadAyet(); loadArm();
 Promise.all([loadLibrary(), loadLugat()]).then(async () => {
   // Açık kalan kitapların bölümlerini yükle
   await Promise.all([...openNodes].filter((k) => k.startsWith("book:")).map((k) => loadBook(k.slice(5)).catch(() => {})));
