@@ -5,7 +5,7 @@
 <title>NurRisale</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=Amiri:wght@400;700&family=UnifrakturMaguntia&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=Amiri:wght@400;700&family=UnifrakturMaguntia&family=Poppins:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap">
 <style>
 /* Düzen: üst çubuk + ikinci çubuk (Kitaplar | yol + sayfa); solda kitap ağacı (telefonda açılır), sağda okuma alanı.
    Bölümler tek parça kaydırılarak okunur; sayfa kutusu görünen sayfayı gösterir. */
@@ -144,6 +144,32 @@ main { margin-left: var(--side-w); padding-top: calc(env(safe-area-inset-top, 0p
 .cv img { max-height: 168px; max-width: 100%; border-radius: 3px; box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 8px 18px -8px rgba(0,0,0,.4); transition: transform .2s ease; }
 .cv:hover img { transform: translateY(-3px); }
 .cv span { font-size: 13.5px; line-height: 1.25; }
+
+/* Ana sayfa: rnk tarzı bölümler */
+.home-wrap { margin-left: calc(-1 * max(20px, env(safe-area-inset-left, 0px))); margin-right: calc(-1 * max(20px, env(safe-area-inset-right, 0px))); }
+@media (max-width: 960px) { .home-wrap { margin-left: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px))); } }
+.hero-band { background: color-mix(in srgb, var(--red) 5%, var(--paper)); padding: 0 20px; }
+.wave { display: block; width: 100%; height: 46px; color: var(--paper); margin-top: -1px; }
+.sec { max-width: 1000px; margin: 0 auto; padding: 18px 20px 8px; }
+.sec-h { text-align: center; font-family: "Poppins", var(--font-ui); font-weight: 700; font-size: clamp(22px, 3vw, 30px); margin: 18px 0 0; letter-spacing: -.01em; }
+.sec-h::after { content: ""; display: block; width: 120px; height: 2px; margin: 14px auto 22px; background: linear-gradient(90deg, transparent, var(--red), transparent); }
+.groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; }
+.group { background: var(--side); border: 1px solid var(--rule); border-radius: 16px; overflow: hidden; cursor: pointer; text-align: left; padding: 0; display: grid; }
+.group:hover .fan img { transform: translateY(-4px) rotate(var(--r)); }
+.fan { height: 190px; position: relative; background: linear-gradient(color-mix(in srgb, var(--rule) 40%, var(--side)), var(--side)); overflow: hidden; }
+.fan img { position: absolute; bottom: 14px; left: 50%; height: 150px; margin-left: -48px; border-radius: 3px; box-shadow: 0 8px 18px -6px rgba(0,0,0,.45); transform: rotate(var(--r)); transform-origin: 50% 120%; transition: transform .25s ease; }
+.group .gt { padding: 16px 20px 18px; display: grid; gap: 6px; }
+.group .gt strong { font-family: "Poppins", var(--font-ui); color: var(--red); font-size: 19px; }
+.group .gt span { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.quote { display: grid; grid-template-columns: 200px 1fr; gap: 32px; align-items: center; }
+.quote .qimg { justify-self: center; }
+.quote .qimg img { width: 180px; border-radius: 4px; box-shadow: 0 18px 30px -14px rgba(0,0,0,.5); transform: perspective(600px) rotateY(10deg); }
+.quote h3 { font-family: "Poppins", var(--font-ui); font-size: 24px; margin: 0; }
+.quote h3::after { content: ""; display: block; width: 60px; height: 2px; background: var(--red); margin: 12px 0 16px; }
+.quote blockquote { margin: 0; font-family: var(--font-body); font-size: 17px; line-height: 1.7; color: var(--ink); }
+.quote .src { margin-top: 12px; font-size: 13.5px; color: var(--muted); display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.quote .src a { color: var(--red); font-weight: 600; text-decoration: none; }
+@media (max-width: 640px) { .quote { grid-template-columns: 1fr; gap: 18px; } .quote .qimg img { width: 130px; } }
 
 /* Okuma */
 .reader { max-width: 760px; margin: 0 auto; padding-top: 36px; }
@@ -582,8 +608,16 @@ function showLibrary() {
   renderCrumbs(); renderSide();
   const last = store.get("nr-last", null);
   const lastMeta = last && metaOf(last.book);
+  const groupCard = (sh, desc) => {
+    const list = LIBRARY.filter((b) => (b.shelf || "kulliyat") === sh.id);
+    const picks = list.slice(0, 5), mid = (picks.length - 1) / 2;
+    return `<button class="group" data-jump="shelf-${sh.id}">
+      <div class="fan">${picks.map((b, i) => `<img src="${b.cover}" alt="" style="--r:${(i - mid) * 9}deg; margin-left:${-48 + (i - mid) * 34}px; z-index:${10 - Math.abs(i - mid)}">`).join("")}</div>
+      <div class="gt"><strong>${sh.title} →</strong><span>${desc(list)}</span></div></button>`;
+  };
   app.innerHTML = `
-    <section class="home">
+    <div class="home-wrap">
+    <div class="hero-band"><section class="home" style="padding-bottom:10px">
       <div class="emblem" lang="ar">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ</div>
       <h1>Risale-i Nur</h1>
       <form class="home-search" id="home-form">
@@ -593,13 +627,25 @@ function showLibrary() {
       <div class="chips-h">Örnek aramalar</div>
       <div class="chips">${EXAMPLES.map((x) => `<button class="chip" data-q="${x}">${x}</button>`).join("")}</div>
       <div class="home-results" id="home-results"></div>
-      ${lastMeta ? `<div class="card"><div class="h">Kaldığın yer</div><div class="row2"><div><strong>${escapeHtml(lastMeta.title)}</strong> <span style="color:var(--muted)">· Sayfa ${last.page}</span></div><button class="btn" id="resume">Devam et</button></div></div>` : ""}
-      ${SHELVES.map((sh) => {
-        const list = LIBRARY.filter((b) => (b.shelf || "kulliyat") === sh.id);
-        return list.length ? `<div><div class="shelf-h"><h2>${sh.title}</h2><span>${list.length} kitap</span></div>
-          <div class="covers">${list.map((b) => `<button class="cv" data-open="${b.id}"><span class="img"><img src="${b.cover}" alt="" loading="lazy"></span><span>${escapeHtml(b.title)}</span></button>`).join("")}</div></div>` : "";
-      }).join("")}
-    </section>`;
+    </section></div>
+    <svg class="wave" viewBox="0 0 1440 46" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h1440v18c-160 22-320 30-520 14S520 4 360 12 120 40 0 30z" fill="color-mix(in srgb, var(--red) 5%, var(--paper))" style="fill: color-mix(in srgb, var(--red) 5%, var(--paper))"/></svg>
+    ${lastMeta ? `<div class="sec"><div class="card"><div class="h">Kaldığın yer</div><div class="row2"><div><strong>${escapeHtml(lastMeta.title)}</strong> <span style="color:var(--muted)">· Sayfa ${last.page}</span></div><button class="btn" id="resume">Devam et</button></div></div></div>` : ""}
+    <div class="sec">
+      <h2 class="sec-h">Eser Grupları</h2>
+      <div class="groups">
+        ${groupCard(SHELVES[0], (l) => `Sözler, Mektubat, Lem'alar, Şualar, Lâhikalar ve diğerleri. ${l.length} kitap.`)}
+        ${groupCard(SHELVES[1], (l) => `Farklı konularda müstakil risaleler; küçük kitaplarda büyük hakikatler. ${l.length} kitap.`)}
+      </div>
+    </div>
+    <div class="sec" id="daily"></div>
+    ${SHELVES.map((sh) => {
+      const list = LIBRARY.filter((b) => (b.shelf || "kulliyat") === sh.id);
+      return list.length ? `<div class="sec" id="shelf-${sh.id}"><h2 class="sec-h">${sh.title}</h2>
+        <div class="covers">${list.map((b) => `<button class="cv" data-open="${b.id}"><span class="img"><img src="${b.cover}" alt="" loading="lazy"></span><span>${escapeHtml(b.title)}</span></button>`).join("")}</div></div>` : "";
+    }).join("")}
+    </div>`;
+  app.querySelectorAll("[data-jump]").forEach((el) => el.onclick = () => document.getElementById(el.dataset.jump)?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  renderDaily();
   app.querySelectorAll("[data-open]").forEach((el) => el.onclick = () => go(el.dataset.open, 1));
   if (lastMeta) $("#resume").onclick = () => go(last.book, last.page);
   const hq = $("#home-q");
@@ -607,6 +653,21 @@ function showLibrary() {
   app.querySelectorAll(".chip").forEach((c) => c.onclick = () => { hq.value = c.dataset.q; homeSearch(c.dataset.q); });
   document.title = "NurRisale";
   window.scrollTo(0, 0);
+}
+
+/* Günün vecizesi: her gün Küçük Sözler'den kısa bir paragraf */
+async function renderDaily() {
+  const box = $("#daily"); if (!box) return;
+  const id = metaOf("kucuksozler") ? "kucuksozler" : LIBRARY[0]?.id; if (!id) return;
+  try { await loadBook(id); } catch { return; }
+  const book = BOOKS.get(id), pool = [];
+  book.pages.forEach((p, i) => p.b.forEach(([k, t]) => { const x = stripFn(t); if (k === "p" && x.length > 160 && x.length < 420) pool.push({ t, page: i + 1 }); }));
+  if (!pool.length || !$("#daily")) return;
+  const day = Math.floor(Date.now() / 86400000), pick = pool[day % pool.length], chap = chapterOf(book, pick.page);
+  box.innerHTML = `<h2 class="sec-h">Günün Vecizesi</h2><div class="quote">
+    <div class="qimg"><img src="${metaOf(id).cover}" alt="${escapeHtml(book.title)} kapağı"></div>
+    <div><h3>${escapeHtml(chap.title)}</h3><blockquote class="text" style="text-align:left">${renderText(pick.t)}</blockquote>
+    <div class="src"><span>${escapeHtml(book.title)} · Sayfa ${pick.page}</span><a href="#${id}-${pick.page}">Devamını oku →</a></div></div></div>`;
 }
 
 let pageObserver = null;
