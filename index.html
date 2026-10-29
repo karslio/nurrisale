@@ -1956,7 +1956,7 @@ $("#btn-theme").onclick = () => {
 $("#btn-smaller").onclick = () => { settings.size = Math.max(70, settings.size - 10); applySettings(); };
 $("#btn-bigger").onclick = () => { settings.size = Math.min(180, settings.size + 10); applySettings(); };
 const settingsPanel = $("#settings");
-function toggleSettings(open = settingsPanel.hidden) { if (open) closeMenu(); settingsPanel.hidden = !open; $("#btn-settings").setAttribute("aria-expanded", open); }
+function toggleSettings(open = settingsPanel.hidden) { if (open) { closeMenu(); if (!$("#modal").hidden) closeModal(); hidePop(); } settingsPanel.hidden = !open; $("#btn-settings").setAttribute("aria-expanded", open); }
 $("#btn-settings").onclick = (e) => { e.stopPropagation(); toggleSettings(); };
 $("#set-close").onclick = () => toggleSettings(false);
 document.addEventListener("click", (e) => { if (!settingsPanel.hidden && !e.target.closest("#settings, #btn-settings")) toggleSettings(false); });
@@ -2417,7 +2417,7 @@ async function openLearn(mode = "learn") {
 }
 // Pencere kapanınca okunan bölümü yeniden çiz ki bilinen kelimeler güncellensin
 const _knownAtOpen = { size: KNOWN.size };
-function showModal(html) { $("#modal-body").innerHTML = html; $("#modal").hidden = false; }
+function showModal(html) { toggleSettings(false); closeMenu(); $("#modal-body").innerHTML = html; $("#modal").hidden = false; }
 function closeModal() {
   $("#modal").hidden = true;
   if (current.id && KNOWN.size !== _knownAtOpen.size) { _knownAtOpen.size = KNOWN.size; rendered = null; current.chapter = null; showChapter(current.id, current.page); }
