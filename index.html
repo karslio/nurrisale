@@ -90,6 +90,7 @@ button { font: inherit; color: inherit; }
 .crumbs a { color: var(--ink); text-decoration: none; }
 .crumb-btn { background: none; border: none; padding: 2px 4px; margin: 0 -4px; border-radius: 6px; cursor: pointer; color: var(--ink); font-size: 15px; white-space: nowrap; }
 .crumb-btn.cur { color: var(--muted); overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.crumb-btn.mid { overflow: hidden; text-overflow: ellipsis; min-width: 0; max-width: 32ch; }
 .crumb-btn:hover { background: var(--soft); }
 .crumbs svg { width: 15px; height: 15px; color: var(--muted); flex: none; }
 .crumbs .cur { overflow: hidden; text-overflow: ellipsis; }
@@ -804,8 +805,9 @@ function renderSide() {
         const key = `chap:${b.id}:${c.idx}`;
         const cOpen = openNodes.has(key);
         const isCur = b.id === current.id && curChap && curChap.idx === c.idx;
-        html += row(2, key, c.title, c.subs.length > 0, cOpen, "", isCur ? "cur" : "", "", `${b.id}-${c.start}`);
-        if (cOpen) for (const s of c.subs) html += row(s.l === 2 ? 3 : 4, "", s.t, false, false, "", "", "", `${b.id}-${s.p}`);
+        const chapCls = isCur && (current.sub == null || !openNodes.has(key)) ? "cur" : "";
+        html += row(2, key, c.title, c.subs.length > 0, cOpen, "", chapCls, "", `${b.id}-${c.start}`);
+        if (cOpen) c.subs.forEach((s, i) => { html += row(s.l === 2 ? 3 : 4, `sub:${b.id}:${c.idx}:${i}`, s.t, false, false, "", isCur && current.sub === i ? "cur" : "", "", `${b.id}-${s.p}`); });
       }
     }
   }
@@ -862,14 +864,27 @@ function renderCrumbs() {
   const c = $("#crumbs");
   if (!current.id) { c.innerHTML = `<span>Risale-i Nur Külliyatı</span>`; return; }
   const book = BOOKS.get(current.id), chap = chapterOf(book, current.page);
-  c.innerHTML = `${ICON_BOOK.replace('class="ic"', "")}<button class="crumb-btn" data-crumb="book">${escapeHtml(book.title)}</button><span>/</span><button class="crumb-btn cur" data-crumb="chap">${escapeHtml(chap.title)}</button>
+  // Alt başlık zinciri: geçerli alt başlık ve (3. seviyeyse) üstündeki 2. seviye başlık
+  const chain = [];
+  if (current.sub != null && chap.subs[current.sub]) {
+    const sub = chap.subs[current.sub];
+    if (sub.l === 3) { for (let i = current.sub - 1; i >= 0; i--) if (chap.subs[i].l === 2) { chain.push([i, chap.subs[i]]); break; } }
+    chain.push([current.sub, sub]);
+  }
+  const last = chain.length ? chain.length - 1 : -1;
+  c.innerHTML = `${ICON_BOOK.replace('class="ic"', "")}<button class="crumb-btn" data-crumb="book">${escapeHtml(book.title)}</button><span>/</span><button class="crumb-btn ${last < 0 ? "cur" : "mid"}" data-crumb="chap">${escapeHtml(chap.title)}</button>` +
+    chain.map(([i, x], n) => `<span>/</span><button class="crumb-btn ${n === last ? "cur" : "mid"}" data-crumb="sub:${i}">${escapeHtml(x.t)}</button>`).join("") + `
     <span class="pagebox">
       <button class="bar-btn ${isMarked(book.id, current.page) ? "on" : ""}" id="crumb-mark" aria-label="Sayfayı işaretle"><svg viewBox="0 0 24 24" fill="${isMarked(book.id, current.page) ? "currentColor" : "none"}" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 4h12v16l-6-4-6 4z"/></svg></button>
       <input id="pageinput" type="number" min="1" max="${book.pages.length}" value="${current.page}" aria-label="Sayfa"><span class="tot">/ ${book.pages.length}</span>
     </span>`;
   $("#pageinput").onchange = (e) => go(book.id, +e.target.value || 1);
   $("#crumb-mark").onclick = () => toggleMarkHere();
-  c.querySelectorAll("[data-crumb]").forEach((b) => b.onclick = () => jumpTree(b.dataset.crumb));
+  c.querySelectorAll("[data-crumb]").forEach((b) => b.onclick = () => {
+    const v = b.dataset.crumb;
+    if (v.startsWith("sub:")) { const sub = chap.subs[+v.slice(4)]; jumpTree("chap"); setTimeout(() => side.querySelector(`.row[data-key="sub:${book.id}:${chap.idx}:${v.slice(4)}"]`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 120); return; }
+    jumpTree(v);
+  });
 }
 
 /* =========================================================
@@ -978,7 +993,6 @@ function appendNextChapter() {
   $("#more").insertAdjacentHTML("beforebegin", `<div class="chap-sep" aria-hidden="true">✦ ✦ ✦</div>` + chapterHtml(book, next));
   rendered.hi = next.idx;
   applyHighlights(book);
-  observePages(book);
   if (!book.chapters[rendered.hi + 1]) $("#more").innerHTML = `<div class="book-end">${escapeHtml(book.title)} burada bitti.</div>`;
   return true;
 }
@@ -1044,27 +1058,47 @@ async function showChapter(bookId, pageNo, highlight) {
   document.title = `${chap.title} · ${book.title} · NurRisale`;
   renderTabs();
   if (speaking && !same) setTimeout(speakFrom, 300);
+  setTimeout(() => updateSub(book, $("#bars").getBoundingClientRect().bottom + 40), 50);
 }
 
 /* Görünen sayfayı takip et: sayfa kutusu, ilerleme, bölüm adı; sona yaklaşınca sonraki bölümü ekle */
 function observePages(book) {
   if (pageObserver) pageObserver.disconnect();
-  const marks = [...app.querySelectorAll("[data-p]")];
   let ticking = false;
   const onScroll = () => {
     if (ticking) return; ticking = true;
     requestAnimationFrame(() => {
       ticking = false;
-      if (document.documentElement.scrollHeight - (scrollY + innerHeight) < 1600 && appendNextChapter()) return;
+      if (document.documentElement.scrollHeight - (scrollY + innerHeight) < 1600) appendNextChapter();
+      const marks = [...app.querySelectorAll("[data-p]")]; if (!marks.length) return;
       const top = $("#bars").getBoundingClientRect().bottom + 40;
       let p = +marks[0].dataset.p;
       for (const m of marks) { if (m.getBoundingClientRect().top <= top) p = +m.dataset.p; else break; }
       if (settings.mode === "page" && innerHeight + scrollY >= document.documentElement.scrollHeight - 4) p = +marks[marks.length - 1].dataset.p;
       if (p !== current.page) updatePage(p);
+      updateSub(book, top);
     });
   };
   pageObserver = { disconnect() { window.removeEventListener("scroll", onScroll); } };
   window.addEventListener("scroll", onScroll, { passive: true });
+}
+/* Ekranın üstündeki alt başlığı bul; değişince yol ve sol liste güncellenir */
+function updateSub(book, top) {
+  const chap = book.chapters[current.chapter]; if (!chap) return;
+  let idx = null;
+  const sec = app.querySelector(`.chap-sec[data-ch="${chap.idx}"]`);
+  if (sec) {
+    const hs = [...sec.querySelectorAll(".text > h4")];
+    hs.forEach((h, k) => { if (h.getBoundingClientRect().top <= top) idx = k; });
+    if (idx != null && idx >= chap.subs.length) idx = chap.subs.length - 1;
+  } else {
+    chap.subs.forEach((x, k) => { if (x.p <= current.page) idx = k; });   // sayfa modunda sayfaya göre
+  }
+  if (idx === current.sub) return;
+  current.sub = idx;
+  if (idx != null) { openNodes.add(`chap:${book.id}:${chap.idx}`); saveOpen(); }
+  renderCrumbs(); renderSide();
+  if (!narrow()) { const r = side.querySelector(".row.cur"); if (r) { const sr = side.getBoundingClientRect(), rr = r.getBoundingClientRect(); if (rr.top < sr.top + 40 || rr.bottom > sr.bottom - 40) r.scrollIntoView({ block: "center" }); } }
 }
 let pageTimer;
 function updatePage(p) {
@@ -1073,7 +1107,7 @@ function updatePage(p) {
   trackRead(book.id, p);
   const ch = chapterOf(book, p);
   if (ch.idx !== current.chapter) {
-    current.chapter = ch.idx;
+    current.chapter = ch.idx; current.sub = null;
     document.title = `${ch.title} · ${book.title} · NurRisale`;
     const t = tabs.find((x) => x.k === activeTab); if (t) { t.h = `#${book.id}-${p}`; saveTabs(); }
     addRecent(book, ch, p); renderSide(); renderTabs();
