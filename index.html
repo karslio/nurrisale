@@ -3,6 +3,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NurRisale</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#C81E2B">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=Amiri:wght@400;700&family=UnifrakturMaguntia&family=Poppins:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap">
@@ -272,7 +276,28 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; }
 
 .seltool { position: fixed; z-index: 42; display: flex; gap: 2px; background: var(--ink); color: var(--paper); border-radius: 8px; padding: 4px; box-shadow: 0 8px 20px rgba(0,0,0,.25); }
 .seltool button { background: none; border: none; color: inherit; padding: 6px 10px; cursor: pointer; font-size: 13px; border-radius: 6px; }
+.seltool { align-items: center; }
+.seltool .sep { width: 1px; height: 18px; background: color-mix(in srgb, var(--paper) 30%, transparent); margin: 0 4px; }
+.hl-dot { width: 22px !important; height: 22px; padding: 0 !important; border-radius: 50% !important; background: var(--c) !important; margin: 0 2px; border: 2px solid color-mix(in srgb, var(--paper) 60%, transparent) !important; }
+.hl { border-radius: 3px; padding: 1px 0; cursor: pointer; color: inherit; }
+.hl.y { background: color-mix(in srgb, #F7D774 60%, transparent); } .hl.g { background: color-mix(in srgb, #9BD99B 55%, transparent); }
+.hl.b { background: color-mix(in srgb, #98C7F0 55%, transparent); } .hl.r { background: color-mix(in srgb, #F2A7B5 55%, transparent); }
+.hl.note { box-shadow: inset 0 -2px 0 var(--red); }
+.pop textarea { width: 100%; min-height: 80px; margin-top: 8px; font: 14px var(--font-ui); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 8px; resize: vertical; }
+.pop .acts { display: flex; gap: 8px; margin-top: 8px; justify-content: flex-end; flex-wrap: wrap; }
+.pop .acts button { border: 1px solid var(--rule); background: var(--paper); border-radius: 8px; padding: 5px 10px; cursor: pointer; font-size: 13px; }
+.pop .acts .pri { background: var(--red); border-color: var(--red); color: #fff; }
+.pop .q { font-family: var(--font-body); font-size: 14px; color: var(--muted); border-left: 3px solid var(--rule); padding-left: 8px; margin-top: 4px; }
 .toast { position: fixed; z-index: 50; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 99px; font-size: 14px; box-shadow: 0 8px 20px rgba(0,0,0,.25); }
+
+/* Odak modu: yalnız metin */
+body.focus .side, body.focus .bars { display: none; }
+body.focus main { margin-left: 0; padding-top: env(safe-area-inset-top, 0px); }
+body.focus .reader { padding-top: 48px; }
+body.focus #fab-focus { color: var(--red); border-color: var(--red); }
+.offline-row { display: grid; gap: 6px; }
+.offline-row button { border: 1px solid var(--rule); background: var(--paper); border-radius: 8px; padding: 8px 10px; cursor: pointer; font-size: 13.5px; text-align: left; }
+.offline-row small { color: var(--muted); font-size: 12px; line-height: 1.4; }
 
 /* ---------- Telefon ve tablet ---------- */
 @media (max-width: 960px) {
@@ -326,6 +351,7 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; }
 <div class="fab" id="fab" hidden>
   <button id="fab-mark" aria-label="Bu sayfayı işaretle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 4h12v16l-6-4-6 4z"/></svg></button>
   <button id="fab-listen" aria-label="Sesli dinle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
+  <button id="fab-focus" aria-label="Odak modu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V5h4M20 9V5h-4M4 15v4h4M20 15v4h-4"/></svg></button>
   <button id="fab-top" aria-label="Bölümün başına dön"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l6-6 6 6"/></svg></button>
 </div>
 
@@ -339,8 +365,16 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; }
     <button id="btn-smaller" aria-label="Küçült">A−</button><output id="size-out">19</output><button id="btn-bigger" aria-label="Büyüt">A+</button></div></div>
   <div><div class="lbl">Satır aralığı</div><div class="seg" id="set-lh">
     <button data-v="1.5">Dar</button><button data-v="1.7">Normal</button><button data-v="2">Geniş</button></div></div>
+  <div class="offline-row" id="offline-row" hidden><div class="lbl" style="margin:0">Çevrimdışı okuma</div>
+    <button id="btn-offline">Bütün kitapları bu cihaza kaydet</button><small id="offline-msg">Açtığın kitaplar zaten kaydediliyor. İnternet olmadan da okuyabilirsin.</small></div>
 </div>
-<div class="seltool" id="seltool" hidden><button id="sel-copy">Kopyala</button><button id="sel-search">Ara</button></div>
+<div class="seltool" id="seltool" hidden>
+  <button class="hl-dot" data-hl-color="y" aria-label="Sarı vurgula" style="--c:#F7D774"></button>
+  <button class="hl-dot" data-hl-color="g" aria-label="Yeşil vurgula" style="--c:#9BD99B"></button>
+  <button class="hl-dot" data-hl-color="b" aria-label="Mavi vurgula" style="--c:#98C7F0"></button>
+  <button class="hl-dot" data-hl-color="r" aria-label="Pembe vurgula" style="--c:#F2A7B5"></button>
+  <span class="sep"></span>
+  <button id="sel-note">Not</button><button id="sel-copy">Kopyala</button><button id="sel-link">Bağlantı</button><button id="sel-search">Ara</button></div>
 <div class="toast" id="toast" hidden role="status"></div>
 
 <div class="search-panel" id="search" hidden>
@@ -569,6 +603,13 @@ function renderSide() {
       <button data-unmark="${i}" aria-label="Yer imini kaldır">✕</button></div>`).join("");
     html += `<div class="marks-h">Kitaplar</div>`;
   }
+  const hls = getHls();
+  if (hls.length) {
+    html += `<div class="marks-h">Vurgu ve notlarım</div>` + hls.slice(0, 8).map((h) => `
+      <div class="mk"><a href="#${h.book}-${h.p}"><span class="hl ${h.c}" style="padding:0 3px">${escapeHtml(h.text.slice(0, 60))}${h.text.length > 60 ? "…" : ""}</span>${h.note ? `<small>📝 ${escapeHtml(h.note.slice(0, 50))}</small>` : ""}<small>${escapeHtml(h.title)} · Sayfa ${h.p}</small></a>
+      <button data-unhl="${h.id}" aria-label="Vurguyu sil">✕</button></div>`).join("");
+    if (!marks.length) html += `<div class="marks-h">Kitaplar</div>`;
+  }
   html += `<ul class="tree">`;
   for (const sh of SHELVES) {
     const list = LIBRARY.filter((b) => (b.shelf || "kulliyat") === sh.id);
@@ -594,6 +635,7 @@ function renderSide() {
   html += `</ul>`;
   side.innerHTML = html;
   bindMarks(side, renderSide);
+  side.querySelectorAll("[data-unhl]").forEach((b) => b.onclick = (e) => { e.stopPropagation(); removeHl(b.dataset.unhl); });
 }
 function row(depth, key, label, hasKids, open, icon = "", cls = "", tail = "", href = "") {
   return `<li class="row d${depth} ${cls}" data-key="${escapeHtml(key)}" ${href ? `data-href="${href}"` : ""}>
@@ -755,7 +797,7 @@ async function showChapter(bookId, pageNo, highlight) {
     for (let p = chap.start; p <= chap.end; p++) {
       if (p > chap.start) html += `<div class="pmark" data-p="${p}">${p}</div>`;
       else html += `<div data-p="${p}"></div>`;
-      html += book.pages[p - 1].b.map((b) => renderBlock(b, highlight)).join("");
+      html += book.pages[p - 1].b.map((b, i) => renderBlock(b, highlight).replace(/^<(\w+)/, `<$1 data-b="${p}:${i}"`)).join("");
     }
     const prev = book.chapters[chap.idx - 1], next = book.chapters[chap.idx + 1];
     html += `</div><nav class="chap-nav">
@@ -766,6 +808,7 @@ async function showChapter(bookId, pageNo, highlight) {
     if (prev) $("#prev-ch").onclick = () => go(bookId, prev.start);
     if (next) $("#next-ch").onclick = () => go(bookId, next.start);
     observePages(book);
+    applyHighlights(book, chap);
   }
   // İstenen sayfaya kaydır
   const target = pageNo === chap.start ? null : app.querySelector(`[data-p="${pageNo}"]`);
@@ -928,9 +971,11 @@ function openFor(el) {
   el.classList.add("on"); popFor = el;
 }
 document.addEventListener("click", (e) => {
-  if (e.target.closest("#pop")) return;
+  if (e.target.closest("#pop, #seltool")) return;
   const el = e.target.closest(".w, .fn, .aw");
   if (el) return openFor(el);
+  const hl = e.target.closest("span.hl[data-hl]");
+  if (hl && !selectedText()) return openHl(hl);
   hidePop();
 });
 const canHover = matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -1157,9 +1202,122 @@ $("#sel-copy").onclick = async () => {
   try { await navigator.clipboard.writeText(cite); toast("Kaynağıyla kopyalandı"); } catch { toast("Kopyalanamadı; Ctrl+C ile kopyalayabilirsin"); }
   seltool.hidden = true;
 };
+/* ---------- Vurgular ve notlar ---------- */
+const getHls = () => store.get("nr-hl", []);
+const saveHls = (x) => store.set("nr-hl", x);
+function selectionInfo() {
+  const sel = getSelection(); if (!sel || sel.isCollapsed || !sel.rangeCount) return null;
+  const range = sel.getRangeAt(0);
+  const startEl = (range.startContainer.nodeType === 1 ? range.startContainer : range.startContainer.parentElement).closest("[data-b]");
+  if (!startEl) return null;
+  const pre = document.createRange(); pre.setStart(startEl, 0); pre.setEnd(range.startContainer, range.startOffset);
+  const s = pre.toString().length;
+  let e = s + range.toString().length;
+  e = Math.min(e, startEl.textContent.length);         // vurgu tek paragrafta kalır
+  const [p, bi] = startEl.dataset.b.split(":").map(Number);
+  return { p, bi, s, e, text: startEl.textContent.slice(s, e).trim() };
+}
+function addHl(color, note = "") {
+  const info = selectionInfo(); if (!info || !info.text) return null;
+  const book = BOOKS.get(current.id);
+  const h = { id: Date.now().toString(36), book: book.id, title: book.title, c: color, note, at: Date.now(), ...info };
+  const all = getHls(); all.unshift(h); saveHls(all.slice(0, 500));
+  getSelection().removeAllRanges(); seltool.hidden = true;
+  applyHighlights(book, chapterOf(book, info.p)); renderSide();
+  return h;
+}
+function removeHl(id) {
+  saveHls(getHls().filter((h) => h.id !== id));
+  hidePop(); toast("Vurgu silindi");
+  if (current.id) { const book = BOOKS.get(current.id); unwrapHls(); applyHighlights(book, chapterOf(book, current.page)); }
+  renderSide();
+}
+function unwrapHls() { app.querySelectorAll("span.hl[data-hl]").forEach((m) => m.replaceWith(...m.childNodes)); }
+/* Kayıtlı vurguları metne uygula: paragrafın metin düğümlerinde [s, e) aralığını sar */
+function applyHighlights(book, chap) {
+  unwrapHls();
+  for (const h of getHls()) {
+    if (h.book !== book.id || h.p < chap.start || h.p > chap.end) continue;
+    const el = app.querySelector(`[data-b="${h.p}:${h.bi}"]`); if (!el) continue;
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const nodes = []; let pos = 0, n;
+    while ((n = walker.nextNode())) { nodes.push([n, pos]); pos += n.nodeValue.length; }
+    for (const [node, start] of nodes) {
+      const end = start + node.nodeValue.length;
+      const a = Math.max(h.s, start), b = Math.min(h.e, end);
+      if (a >= b) continue;
+      const r = document.createRange(); r.setStart(node, a - start); r.setEnd(node, b - start);
+      const span = document.createElement("span");
+      span.className = `hl ${h.c}${h.note ? " note" : ""}`; span.dataset.hl = h.id;
+      try { r.surroundContents(span); } catch {}
+    }
+  }
+}
+function openHl(el) {
+  const h = getHls().find((x) => x.id === el.dataset.hl); if (!h) return;
+  showPop(el, `<div class="lbl">${h.note ? "Not" : "Vurgu"}</div>
+    ${h.note ? `<div style="white-space:pre-wrap">${escapeHtml(h.note)}</div>` : ""}
+    <div class="acts"><button data-act="note">${h.note ? "Notu düzenle" : "Not ekle"}</button><button data-act="del">Sil</button></div>`);
+  pop.querySelector('[data-act="del"]').onclick = () => removeHl(h.id);
+  pop.querySelector('[data-act="note"]').onclick = () => editNote(el, h);
+}
+function editNote(anchor, h) {
+  showPop(anchor, `<div class="lbl">Not</div><div class="q">${escapeHtml(h.text.slice(0, 120))}</div>
+    <textarea id="note-ta" placeholder="Notunu yaz">${escapeHtml(h.note || "")}</textarea>
+    <div class="acts"><button data-act="cancel">Vazgeç</button><button class="pri" data-act="save">Kaydet</button></div>`);
+  const ta = $("#note-ta"); ta.focus();
+  pop.querySelector('[data-act="cancel"]').onclick = hidePop;
+  pop.querySelector('[data-act="save"]').onclick = () => {
+    const all = getHls(), x = all.find((y) => y.id === h.id); if (x) x.note = ta.value.trim(); saveHls(all);
+    hidePop(); toast("Not kaydedildi");
+    const book = BOOKS.get(current.id); applyHighlights(book, chapterOf(book, current.page)); renderSide();
+  };
+}
+seltool.addEventListener("mousedown", (e) => e.preventDefault()); // seçim kaybolmasın
+seltool.querySelectorAll("[data-hl-color]").forEach((b) => b.onclick = () => { if (addHl(b.dataset.hlColor)) toast("Vurgulandı"); });
+$("#sel-note").onclick = () => {
+  const r = getSelection().rangeCount ? getSelection().getRangeAt(0).getBoundingClientRect() : null;
+  const h = addHl("y"); if (!h) return;
+  const el = app.querySelector(`span.hl[data-hl="${h.id}"]`); if (el) editNote(el, h);
+};
+$("#sel-link").onclick = async () => {
+  const info = selectionInfo(); const page = info ? info.p : current.page;
+  const url = location.href.split("#")[0] + `#${current.id}-${page}`;
+  try { await navigator.clipboard.writeText(url); toast("Bağlantı kopyalandı"); } catch { toast(url); }
+  seltool.hidden = true;
+};
 $("#sel-search").onclick = () => { const t = selectedText(); seltool.hidden = true; q.value = t.slice(0, 60); openSearch(); };
 let toastTimer;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.hidden = true, 2200); }
+
+/* ---------- Odak modu ---------- */
+function toggleFocus(on = !document.body.classList.contains("focus")) {
+  document.body.classList.toggle("focus", on);
+  if (on) toast("Odak modu: çıkmak için Esc ya da sağ alttaki düğme");
+}
+$("#fab-focus").onclick = () => toggleFocus();
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && document.body.classList.contains("focus")) toggleFocus(false);
+  if ((e.key === "f" || e.key === "F") && current.id && !e.target.closest("input, textarea") && $("#search").hidden) toggleFocus();
+});
+
+/* ---------- Uygulama ve çevrimdışı (yalnız GitHub Pages'te) ---------- */
+if ("serviceWorker" in navigator && /github\.io$/.test(location.hostname)) {
+  navigator.serviceWorker.register("sw.js").then(() => { $("#offline-row").hidden = false; }).catch(() => {});
+}
+$("#btn-offline").onclick = async () => {
+  const btn = $("#btn-offline"), msg = $("#offline-msg");
+  btn.disabled = true;
+  let done = 0;
+  const urls = [...LIBRARY.map((b) => `books/${b.id}.json`), ...LIBRARY.map((b) => b.cover)];
+  for (let i = 0; i < urls.length; i += 6) {
+    await Promise.all(urls.slice(i, i + 6).map((u) => fetch(u).catch(() => {})));
+    done = Math.min(urls.length, i + 6);
+    msg.textContent = `Kaydediliyor: ${done} / ${urls.length}`;
+  }
+  msg.textContent = "Bütün kitaplar bu cihaza kaydedildi. Artık internetsiz de okuyabilirsin.";
+  btn.disabled = false;
+};
 
 /* =========================================================
    BAŞLAT

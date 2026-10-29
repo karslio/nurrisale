@@ -1,0 +1,16 @@
+{
+  "name": "NurRisale",
+  "short_name": "NurRisale",
+  "description": "Risale-i Nur Külliyatı okuma sitesi: lugat, Arapça meal, haşiyeler, yer imleri ve arama.",
+  "lang": "tr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FDFCF8",
+  "theme_color": "#C81E2B",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
