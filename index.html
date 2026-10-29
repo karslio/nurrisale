@@ -84,6 +84,9 @@ button { font: inherit; color: inherit; }
 .bar2 .side-title svg { width: 22px; height: 22px; }
 .crumbs { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 0 16px; font-size: 15px; color: var(--muted); white-space: nowrap; overflow: hidden; }
 .crumbs a { color: var(--ink); text-decoration: none; }
+.crumb-btn { background: none; border: none; padding: 2px 4px; margin: 0 -4px; border-radius: 6px; cursor: pointer; color: var(--ink); font-size: 15px; white-space: nowrap; }
+.crumb-btn.cur { color: var(--muted); overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.crumb-btn:hover { background: var(--soft); }
 .crumbs svg { width: 15px; height: 15px; color: var(--muted); flex: none; }
 .crumbs .cur { overflow: hidden; text-overflow: ellipsis; }
 .pagebox { margin-left: auto; flex: none; display: flex; align-items: center; gap: 6px; }
@@ -198,6 +201,11 @@ main { margin-left: var(--side-w); padding-top: calc(env(safe-area-inset-top, 0p
 .pick svg { width: 220px; height: 220px; }
 .pick p { margin: 0; font-size: 19px; line-height: 1.5; }
 .pick small { color: var(--muted); font-size: 14px; }
+
+.foot { border-top: 1px solid var(--rule); margin-top: 48px; padding: 22px 20px 6px; text-align: center; color: var(--muted); font-size: 13.5px; line-height: 1.7; }
+.foot a { color: var(--red); text-decoration: none; }
+.foot .logo-s { font-family: var(--font-body); font-weight: 700; font-size: 18px; color: var(--ink); }
+.foot .logo-s b { color: var(--red); }
 
 /* Okuma */
 .reader { max-width: 760px; margin: 0 auto; padding-top: 36px; }
@@ -607,6 +615,20 @@ side.addEventListener("click", async (e) => {
     location.hash = href;
   }
 });
+/* Hızlı gezinme: yoldaki seviyeye tıklayınca listede o yeri aç ve göster */
+function jumpTree(level) {
+  const book = BOOKS.get(current.id); if (!book) return;
+  const meta = metaOf(book.id), chap = chapterOf(book, current.page);
+  openNodes.add("shelf:" + (meta.shelf || "kulliyat")); openNodes.add("book:" + book.id);
+  if (level === "chap" && chap.subs.length) openNodes.add(`chap:${book.id}:${chap.idx}`);
+  saveOpen();
+  if (narrow()) openSide(); else renderSide();
+  const key = level === "book" ? `book:${book.id}` : `chap:${book.id}:${chap.idx}`;
+  setTimeout(() => {
+    const row = side.querySelector(`.row[data-key="${key}"]`);
+    if (row) { row.scrollIntoView({ block: level === "book" ? "start" : "center", behavior: "smooth" }); row.animate([{ background: "var(--select)" }, { background: "transparent" }], { duration: 1200 }); }
+  }, 60);
+}
 function scrollSideToCurrent() {
   const c = side.querySelector(".row.cur");
   if (c) c.scrollIntoView({ block: "center" });
@@ -621,13 +643,14 @@ function renderCrumbs() {
   const c = $("#crumbs");
   if (!current.id) { c.innerHTML = `<span>Risale-i Nur Külliyatı</span>`; return; }
   const book = BOOKS.get(current.id), chap = chapterOf(book, current.page);
-  c.innerHTML = `${ICON_BOOK.replace('class="ic"', "")}<a href="#${book.id}-1">${escapeHtml(book.title)}</a><span>/</span><span class="cur">${escapeHtml(chap.title)}</span>
+  c.innerHTML = `${ICON_BOOK.replace('class="ic"', "")}<button class="crumb-btn" data-crumb="book">${escapeHtml(book.title)}</button><span>/</span><button class="crumb-btn cur" data-crumb="chap">${escapeHtml(chap.title)}</button>
     <span class="pagebox">
       <button class="bar-btn ${isMarked(book.id, current.page) ? "on" : ""}" id="crumb-mark" aria-label="Sayfayı işaretle"><svg viewBox="0 0 24 24" fill="${isMarked(book.id, current.page) ? "currentColor" : "none"}" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 4h12v16l-6-4-6 4z"/></svg></button>
       <input id="pageinput" type="number" min="1" max="${book.pages.length}" value="${current.page}" aria-label="Sayfa"><span class="tot">/ ${book.pages.length}</span>
     </span>`;
   $("#pageinput").onchange = (e) => go(book.id, +e.target.value || 1);
   $("#crumb-mark").onclick = () => toggleMarkHere();
+  c.querySelectorAll("[data-crumb]").forEach((b) => b.onclick = () => jumpTree(b.dataset.crumb));
 }
 
 /* =========================================================
@@ -679,6 +702,11 @@ function showLibrary() {
       return list.length ? `<div class="sec" id="shelf-${sh.id}"><h2 class="sec-h">${sh.title}</h2>
         <div class="covers">${list.map((b) => `<button class="cv" data-open="${b.id}"><span class="img">${coverHtml(b)}</span><span>${escapeHtml(b.title)}</span></button>`).join("")}</div></div>` : "";
     }).join("")}
+    <footer class="foot">
+      <div class="logo-s">Nur<b>Risale</b></div>
+      <div>${LIBRARY.length} kitap · ${LIBRARY.reduce((n, b) => n + b.pages, 0).toLocaleString("tr")} sayfa · ${Object.keys(LUGAT).length.toLocaleString("tr")} kelimelik lugat</div>
+      <div>Bir öğrenme projesi · <a href="https://github.com/karslio/nurrisale" target="_blank" rel="noopener">Kaynak kodu</a></div>
+    </footer>
     </div>`;
   app.querySelectorAll("[data-jump]").forEach((el) => el.onclick = () => document.getElementById(el.dataset.jump)?.scrollIntoView({ behavior: "smooth", block: "start" }));
   renderDaily();
