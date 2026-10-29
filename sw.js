@@ -1,8 +1,8 @@
 /* NurRisale service worker: siteyi ve açılan kitapları çevrimdışı okunabilir kılar.
    Sayfa (index.html) önce ağdan denenir, olmazsa önbellekten gelir.
    Kitaplar, kapaklar ve yazı tipleri önbellekten gelir; yoksa indirilip saklanır. */
-const CACHE = "nurrisale-v7";
-const SHELL = ["./", "index.html", "books/index.json", "books/lugat.json", "books/lugat-big.json", "books/kelime-sira.json", "books/stats.json", "books/ayetler.json", "manifest.webmanifest",
+const CACHE = "nurrisale-v8";
+const SHELL = ["./", "index.html", "books/index.json", "books/lugat.json", "books/lugat-big.json", "books/kelime-sira.json", "books/stats.json", "books/ayetler.json", "books/konular.json", "manifest.webmanifest",
   "fonts/souvenir-regular.woff", "fonts/souvenir-bold.woff", "fonts/souvenir-italic.woff", "fonts/hamdullah.woff", "icon-192.png"];
 
 self.addEventListener("install", (e) => {
@@ -16,7 +16,7 @@ self.addEventListener("fetch", (e) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   const isPage = req.mode === "navigate" || url.pathname.endsWith("/index.html") || url.pathname.endsWith("/");
-  const isListOrLugat = /books\/(index|lugat|lugat-big|kelime-sira|stats|ayetler)\.json$/.test(url.pathname);
+  const isListOrLugat = /books\/(index|lugat|lugat-big|kelime-sira|stats|ayetler|konular)\.json$/.test(url.pathname);
   if (isPage || isListOrLugat) {
     // Önce ağ: yeni sürüm hemen gelsin; çevrimdışıysa önbellek
     e.respondWith(fetch(req, { cache: "no-cache" }).then((res) => { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); return res; })

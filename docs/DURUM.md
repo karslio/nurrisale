@@ -14,6 +14,7 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 - `books/lugat-big.json` — 31 bin kayıtlık büyük lugat (11 bin kelime + 20 bin tamlama; kitaplarda geçmeyenler atıldı), `books/kelime-sira.json` — en sık 1000 kelime
   - `tools/build_lugat.py` ile [Risale-i Nur Kelime Frekansı](https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans) verisinden (Ali Tekdemir, CC0); sitede kaynak belirtildi
 - `books/ayetler.json` — ayet eşleşmeleri (3.810 Arapça satırın %41'i, 501 farklı ayet) ve Türkçe meal (Rowwad, QuranEnc.com 1.0.4; metne dokunmadan, kaynakla) — `tools/build_ayet.py /yol/quran-json`
+- `books/konular.json` — konu dizini: 28 konu (haşir, kader, namaz, ihlas, gençlik…), her biri için anahtar kelimelerin en yoğun geçtiği 30 bölüm/alt başlık ve kitaplara göre sayılar (`tools/build_konular.py`)
 - `books/stats.json` — kitaplara göre kelime sayısı, farklı kelime, en sık kelimeler (`tools/build_stats.py`; kitap eklenince yeniden çalıştır)
 - `books/covers/` — kapaklar (EPUB'lardan; külliyat kitapları sitede çizilmiş cilt kapağıyla görünür)
 - `fonts/` — Souvenir (metin; eksik â î û Â Î Û harfleri eklendi) ve Hamdullah (Arapça), WOFF
@@ -31,6 +32,7 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 - İstatistik sekmesi (#istatistik, #istatistik-<kitap>): toplam/farklı kelime, en sık kelimeler (bağlaçlar hariç seçeneği), kitaplara göre tablo, istenen kelime/ifadenin kitaplara göre sayısı ve payları (ekli hâller dahil ya da tam kelime)
 - Ayetler: Arapça satırın altında sure:ayet etiketi, üstüne gelince meal; Ayet dizini (#ayetler, #ayetler-<kitap>): sure sırasıyla, en çok geçenler, geçtiği yerler, arama
 - Hız: uzun bölümler 10'ar sayfa çizilir (Onuncu Söz 0,7 sn → 0,06 sn); lugat ve ayet dosyaları açılışta arka planda iner; lugat kitaplarda geçmeyen kayıtlardan ayıklandı (31 bin kayıt)
+- Konu dizini (#konular, #konular-<konu>): konu kartları ve arama; konu sayfasında en çok işlendiği yerler (tıklayınca açılır, anahtar kelimeler işaretli), kitaplara göre çubuk grafik. İstatistik sekmesinde Kelimeler / Ayetler / Konular geçişi; menüde ve ana sayfada bağlantı
 - Arapça: kırmızı, Hamdullah yazı tipi; sık geçen ifade ve ayetlerin meâli (~%56 satır)
 - Haşiyeler: kırmızı numara, tıklayınca metni
 - Ayarlar paneli: tema (sistem/açık/sepya/gece), sürekli ya da sayfa sayfa okuma, yazı boyutu, yazı tipi, iki yana hizalama, sayfa/satır boşluğu, lugat/meâl/haşiye/sayfa numarası aç-kapa
