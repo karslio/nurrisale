@@ -1072,6 +1072,12 @@ function go(bookId, page) { location.hash = `${bookId}-${page}`; }
 /* ---------- Sekmeler (Arama + okuma sekmeleri) ---------- */
 let tabs = store.get("nr-tabs", []);        // [{k, h}] h: "#sozler-27" ya da "" (yeni sekme)
 let activeTab = store.get("nr-tab", "search");
+// Eski sürümlerden kalan fazla boş sekmeleri temizle: en fazla bir boş sekme kalsın
+{
+  const blanks = tabs.filter((t) => !t.h);
+  const keep = blanks.find((t) => t.k === activeTab) || blanks[blanks.length - 1];
+  tabs = tabs.filter((t) => t.h || t === keep);
+}
 if (tabs.length > 6) tabs = tabs.slice(-6);
 let tabSeq = tabs.reduce((m, t) => Math.max(m, t.k), 0);
 const saveTabs = () => { store.set("nr-tabs", tabs); store.set("nr-tab", activeTab); };
