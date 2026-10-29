@@ -344,6 +344,11 @@ body.no-hls span.hl { background: none !important; box-shadow: none !important; 
 .hl.b { background: color-mix(in srgb, #98C7F0 55%, transparent); } .hl.r { background: color-mix(in srgb, #F2A7B5 55%, transparent); }
 .hl.note { box-shadow: inset 0 -2px 0 var(--red); }
 .pop textarea { width: 100%; min-height: 80px; margin-top: 8px; font: 14px var(--font-ui); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 8px; resize: vertical; }
+.pop .lgrow { display: flex; align-items: flex-start; gap: 10px; }
+.pop .lgm { flex: 1; min-width: 0; }
+.pop .kn { flex: none; width: 28px; height: 28px; border-radius: 99px; border: 1px solid var(--rule); background: var(--paper); color: var(--muted); cursor: pointer; font-size: 14px; line-height: 1; display: grid; place-items: center; }
+.pop .kn:hover { border-color: var(--red); color: var(--red); }
+.pop .kn.on { background: var(--red); border-color: var(--red); color: #fff; }
 .pop .acts { display: flex; gap: 8px; margin-top: 8px; justify-content: flex-end; flex-wrap: wrap; }
 .pop .acts button { border: 1px solid var(--rule); background: var(--paper); border-radius: 8px; padding: 5px 10px; cursor: pointer; font-size: 13px; }
 .pop .acts .pri { background: var(--red); border-color: var(--red); color: #fff; }
@@ -360,7 +365,9 @@ body.focus #fab-focus { color: var(--red); border-color: var(--red); }
 .offline-row small { color: var(--muted); font-size: 12px; line-height: 1.4; }
 
 /* Uygulama menüsü, açık sekmeler, pencere */
-.menu { position: fixed; z-index: 36; top: calc(env(safe-area-inset-top, 0px) + var(--bar1) - 4px); right: max(12px, env(safe-area-inset-right, 0px)); width: min(340px, calc(100vw - 24px)); max-height: 75vh; overflow-y: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; box-shadow: 0 14px 34px rgba(0,0,0,.18); padding: 8px; display: grid; gap: 6px; }
+#menu-scrim { position: fixed; inset: 0; z-index: 35; background: transparent; touch-action: none; overscroll-behavior: contain; }
+#menu-scrim[hidden] { display: none; }
+.menu { overscroll-behavior: contain; position: fixed; z-index: 36; top: calc(env(safe-area-inset-top, 0px) + var(--bar1) - 4px); right: max(12px, env(safe-area-inset-right, 0px)); width: min(340px, calc(100vw - 24px)); max-height: 75vh; overflow-y: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; box-shadow: 0 14px 34px rgba(0,0,0,.18); padding: 8px; display: grid; gap: 6px; }
 .menu .it { display: flex; gap: 12px; align-items: flex-start; text-align: left; border: 1px solid var(--rule); background: var(--paper); border-radius: 12px; padding: 11px 12px; cursor: pointer; text-decoration: none; color: var(--ink); }
 .menu .it:hover { border-color: var(--lugat); }
 .menu .it svg { width: 20px; height: 20px; flex: none; color: var(--red); margin-top: 1px; }
@@ -714,6 +721,7 @@ body.lesson .pmark { opacity: .35; }
   <button id="fab-top" aria-label="Bölümün başına dön"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l6-6 6 6"/></svg></button>
 </div>
 
+<div id="menu-scrim" hidden></div>
 <div class="menu" id="menu" hidden role="menu"></div>
 <div class="modal-wrap" id="modal" hidden><div class="modal" role="dialog" aria-modal="true"><button class="modal-x" id="modal-x" aria-label="Kapat">✕</button><div id="modal-body"></div></div></div>
 <div class="pop" id="pop" hidden role="dialog" aria-live="polite"></div>
@@ -1764,11 +1772,9 @@ function openFor(el) {
     showPop(el, `<div class="lbl">Meâl</div><div>${escapeHtml(x.m)}</div>${x.r ? `<div class="ref">${escapeHtml(x.r)}</div>` : ""}`);
   } else if (el.classList.contains("w")) {
     if (el.dataset.l && BIG && BIG[el.dataset.l]) {
-      const key = el.dataset.l, [disp, m] = BIG[key].split("|");
-      const rk = RANK && RANK.get(key), known = KNOWN.has(key);
-      showPop(el, `<div class="lw">${escapeHtml(disp)}</div><div>${escapeHtml(m)}</div>
-        ${rk ? `<div class="ref">En sık geçen ${rk[0]}. kelime · ${rk[1].toLocaleString("tr")} kez geçiyor</div>` : ""}
-        <div class="acts"><button data-know class="${known ? "" : "pri"}">${known ? "Bilmiyorum" : "Biliyorum ✓"}</button></div>`);
+      const key = el.dataset.l, m = BIG[key].split("|")[1];
+      const known = KNOWN.has(key);
+      showPop(el, `<div class="lgrow"><div class="lgm">${escapeHtml(m)}</div><button data-know class="kn ${known ? "on" : ""}" aria-label="${known ? "Bildiklerimden çıkar" : "Biliyorum"}" title="${known ? "Bildiklerimden çıkar" : "Biliyorum"}">✓</button></div>`);
       pop.querySelector("[data-know]").onclick = () => { toggleKnown(key); hidePop(); };
     } else showPop(el, escapeHtml(LUGAT[el.dataset.k] || ""));
   } else {
@@ -2271,9 +2277,17 @@ function openMenu(kind) {
       tabs.map((t) => `<div class="tab-it ${activeTab === t.k ? "on" : ""}" data-go="${t.k}"><span>${escapeHtml(tabLabel(t.h))}</span><small>${t.h ? escapeHtml(metaOf(t.h.slice(1).split("-")[0])?.title || "") : ""}</small><button data-x="${t.k}" aria-label="Kapat">✕</button></div>`).join("") +
       `<button class="it" data-m="newtab">${MI('<path d="M12 5v14M5 12h14"/>')}<span><b>Yeni sekme</b></span></button>`;
   }
-  menu.hidden = false;
+  menu.hidden = false; $("#menu-scrim").hidden = false;
 }
-function closeMenu() { menu.hidden = true; }
+function closeMenu() { menu.hidden = true; $("#menu-scrim").hidden = true; }
+/* Menü açıkken arkadaki sayfa kilitli: tıklama menüyü kapatır, kaydırma ve ok/boşluk tuşları arkaya geçmez */
+{
+  const sc = $("#menu-scrim");
+  sc.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); closeMenu(); });
+  ["wheel", "touchmove"].forEach((ev) => sc.addEventListener(ev, (e) => e.preventDefault(), { passive: false }));
+  menu.addEventListener("wheel", (e) => { if (menu.scrollHeight <= menu.clientHeight) e.preventDefault(); }, { passive: false });
+  document.addEventListener("keydown", (e) => { if (!menu.hidden && [" ", "PageDown", "PageUp", "ArrowDown", "ArrowUp", "Home", "End"].includes(e.key) && !e.target.closest("#menu")) e.preventDefault(); }, true);
+}
 $("#btn-apps").onclick = (e) => { e.stopPropagation(); openMenu("apps"); };
 $("#btn-tabs").onclick = (e) => { e.stopPropagation(); openMenu("tabs"); };
 document.addEventListener("click", (e) => { if (!menu.hidden && !e.target.closest("#menu, #btn-apps, #btn-tabs")) closeMenu(); });
