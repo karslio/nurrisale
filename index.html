@@ -2513,6 +2513,11 @@ async function showAyetler(bookId) {
     }
   }
   const keys = [...where.keys()].sort((x, y) => { const [s1, a1] = x.split(":").map(Number), [s2, a2] = y.split(":").map(Number); return s1 - s2 || a1 - a2; });
+  // Kitaptaki sıra: kitapların kütüphane sırası, sonra sayfa; her ayet ilk geçtiği yere göre
+  const bIdx = new Map(LIBRARY.map((b, i) => [b.id, i])), rank = (x) => (bIdx.get(x.b) ?? 999) * 1e5 + x.p;
+  for (const l of where.values()) l.sort((x, y) => rank(x) - rank(y));
+  const bookKeys = [...keys].sort((x, y) => rank(where.get(x)[0]) - rank(where.get(y)[0]) || keys.indexOf(x) - keys.indexOf(y));
+  let order = store.get("nr-ay-order", "sure");
   const places = [...where.values()].reduce((n, l) => n + l.length, 0);
   const surahs = new Set(keys.map((k) => k.split(":")[0]));
   const top = [...where.entries()].filter(([k]) => k !== "1:1").sort((a, b) => b[1].length - a[1].length).slice(0, 10);
@@ -2531,24 +2536,29 @@ async function showAyetler(bookId) {
     </div>
     <div class="stv-head"><h2>En çok geçen ayetler</h2></div>
     <div class="ay-top">${top.map(([k, l]) => { const [s0, a] = k.split(":").map(Number); return `<button class="ay" data-ay="${s0},${a},${a}">${escapeHtml(refText([s0, a, a]))} · ${l.length} yerde</button>`; }).join("")}</div>
-    <div class="stv-head"><h2>Sure sırasıyla</h2><input id="ay-q" class="ay-q" type="search" placeholder="Sure adı, sure:ayet ya da meal içinde ara" autocomplete="off"></div>
+    <div class="stv-head"><div class="dz-tabs" id="ay-order"><a href="#" data-o="sure">Sure sırasıyla</a><a href="#" data-o="kitap">${bookId ? "Kitaptaki sırasıyla" : "Kitaplardaki sırasıyla"}</a></div><input id="ay-q" class="ay-q" type="search" placeholder="Sure adı, sure:ayet ya da meal içinde ara" autocomplete="off"></div>
     <div id="ay-list" class="ay-list"></div>
   </section>`;
   const draw = () => {
     const t = plain($("#ay-q").value.trim());
     const ref = t.match(/^(\d+)(?::(\d+))?$/);
-    let html = "", last = 0, shown = 0;
-    for (const k of keys) {
+    let html = "", last = null, shown = 0;
+    app.querySelectorAll("#ay-order [data-o]").forEach((x) => x.classList.toggle("on", x.dataset.o === order));
+    for (const k of order === "kitap" ? bookKeys : keys) {
       const [s0, a] = k.split(":").map(Number);
       const name = AY.sure[s0 - 1], m = AY.meal[k] || [""];
       if (t && !(ref ? (s0 === +ref[1] && (!ref[2] || a === +ref[2])) : plain(name).includes(t) || plain(m[0]).includes(t))) continue;
-      if (s0 !== last) { html += `<h3 class="ay-s">${s0}. ${escapeHtml(name)} Sûresi</h3>`; last = s0; }
-      html += `<div class="ay-row"><div class="ay-n">${s0}:${a}</div><div><div class="ay-m">${escapeHtml(m[0])}</div><div class="ay-w">${where.get(k).slice(0, 12).map(place).join("")}${where.get(k).length > 12 ? `<span class="pl">+${where.get(k).length - 12}</span>` : ""}</div></div></div>`;
+      let grp, label;
+      if (order === "kitap") { const f = where.get(k)[0]; grp = bookId ? chapterOf(book, f.p).title : f.b; label = bookId ? `${escapeHtml(grp)} <small style="color:var(--muted);font-weight:500">· s. ${chapterOf(book, f.p).start}</small>` : escapeHtml(metaOf(f.b).title); }
+      else { grp = s0; label = `${s0}. ${escapeHtml(name)} Sûresi`; }
+      if (grp !== last) { html += `<h3 class="ay-s">${label}</h3>`; last = grp; }
+      html += `<div class="ay-row"><div class="ay-n">${order === "kitap" ? `<span style="display:block;font-size:11.5px;font-weight:500">${escapeHtml(name)}</span>` : ""}${s0}:${a}</div><div><div class="ay-m">${escapeHtml(m[0])}</div><div class="ay-w">${where.get(k).slice(0, 12).map(place).join("")}${where.get(k).length > 12 ? `<span class="pl">+${where.get(k).length - 12}</span>` : ""}</div></div></div>`;
       if (++shown >= 400) { html += `<div class="stq-note">İlk 400 ayet gösteriliyor; aramayla daralt.</div>`; break; }
     }
     $("#ay-list").innerHTML = html || `<div class="empty">Sonuç yok.</div>`;
   };
   let tm; $("#ay-q").oninput = () => { clearTimeout(tm); tm = setTimeout(draw, 150); };
+  app.querySelectorAll("#ay-order [data-o]").forEach((x) => x.onclick = (e) => { e.preventDefault(); order = x.dataset.o; store.set("nr-ay-order", order); draw(); });
   $("#ay-book").onchange = (e) => { location.hash = e.target.value ? "#ayetler-" + e.target.value : "#ayetler"; };
   draw(); window.scrollTo(0, 0);
 }
