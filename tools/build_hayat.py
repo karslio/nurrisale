@@ -259,7 +259,7 @@ STOPS = [
      ["munazarat"], [(f"{T}-72-3", "Tarihçe: Münâzarât")], (f"{T}-72-3", "Münazarat")),
     ("1911", ES, "sam", "Şam · Emevî Camii", "Hutbe-i Şâmiye",
      "Şam âlimlerinin ısrarıyla Emevî Camii'nde, içinde yüz âlimin bulunduğu on bine yakın bir cemaate hutbe okudu: İslâm âleminin geri kalışının altı hastalığı ve çareleri.",
-     ["hutbeisamiye"], [(f"{T}-80-14", "Tarihçe: Şam")], (f"{T}-80-14", "Câmi-ül Emevî")),
+     ["hutbeisamiye"], [(f"{T}-80-14", "Tarihçe: Şam"), ("hutbeisamiye-9-3", "Altı hastalık")], (f"{T}-80-14", "Câmi-ül Emevî")),
     ("1911", ES, "kosova", "Rumeli · Kosova", "19.000 altın Doğu'ya",
      "Sultan Reşad'ın Rumeli seyahatine doğu vilâyetleri adına katıldı. Kosova'da kurulması düşünülen üniversitenin tahsisatının Doğu'daki üniversiteye verilmesini istedi; 19.000 altın lira kabul edildi.",
      [], [(f"{T}-92-6", "Rumeli seyahati"), (f"{T}-97-3", "Kosova dârülfünunu"), (f"{T}-97-4", "On dokuz bin altın")], (f"{T}-97-4", "ondokuz bin altun")),
@@ -346,11 +346,11 @@ STOPS = [
     ("1956", US, "barla", "Barla", "Yirmi beş yıl sonra Barla",
      "Yirmi beş yıl önce ayrıldığı Barla'ya bu defa sürgünle değil, kendi isteğiyle ve serbest olarak bir bahar günü döndü. Barla, \"Risale-i Nur'un telif yeri olduğundan\" ona Nurs'tan da sevimliydi.",
      ["barlalahikasi"], [(f"{T}-714-1", "Barla'ya dönüş"), (f"{T}-714-2", "En tatlı hayat")], (f"{T}-714-2", "kendi rızası ile")),
-    ("1959", US, "ankara", "Ankara · İstanbul · Konya", "Son yolculuklar",
-     "1959'da Ankara, İstanbul ve Konya'ya gitti; gittiği yerlerde büyük kalabalıklar tarafından karşılandı. Tarihçe-i Hayat'ın mufassal baskısı da bu yıllarda Ankara'da yapıldı.",
+    ("1959", US, "ankara", "Ankara · İstanbul", "Son yolculuklar",
+     "1959'da İstanbul'a ve Ankara'ya gitti; Tarihçe-i Hayat'taki fotoğraflar bu ziyaretlerden kalmadır. Tarihçe-i Hayat'ın mufassal baskısı da bu yıllarda Ankara'da tamamlandı.",
      [], [(f"{T}-745-4", "1959 Ankara"), (f"{T}-743-2", "1959 İstanbul"), (f"{T}-745-0", "Tarihçe'nin baskısı")], None),
     ("1960", US, "urfa", "Urfa", "Vefat",
-     "Hastalığı ağırlaşmışken Urfa'ya gitti ve 23 Mart 1960'ta (25 Ramazan 1379) Urfa'da vefat etti. Halilürrahman Dergâhı'na defnedildi; aynı yılın Temmuz ayında kabri açılıp naaşı bilinmeyen bir yere götürüldü.",
+     "Hastalığı ağırlaşmışken Urfa'ya gitti ve 23 Mart 1960'ta (25 Ramazan 1379) Urfa'da vefat etti.",
      [], [], None),
 ]
 
