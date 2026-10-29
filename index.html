@@ -306,6 +306,13 @@ body.no-hls span.hl { background: none !important; box-shadow: none !important; 
 .result .where { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .result .snip { font-family: var(--font-body); margin-top: 3px; line-height: 1.5; }
 .empty { padding: 14px 18px; color: var(--muted); }
+.lug-box { margin: 12px 18px 0; padding: 10px 14px; border: 1px solid var(--rule); border-left: 3px solid var(--lugat); border-radius: 8px; background: var(--side); display: grid; gap: 4px; font-size: 14.5px; }
+.lug-box b { color: var(--lugat); }
+.book-chips { display: flex; gap: 6px; flex-wrap: wrap; padding: 12px 18px 0; }
+.book-chips button { border: 1px solid var(--rule); background: var(--paper); border-radius: 99px; padding: 4px 11px; font-size: 13px; cursor: pointer; color: var(--ink); }
+.book-chips button small { color: var(--muted); font-variant-numeric: tabular-nums; }
+.book-chips button.on { border-color: var(--red); color: var(--red); }
+.home-results .lug-box { margin-inline: 0; } .home-results .book-chips { padding-inline: 0; }
 .home-results .result { padding-inline: 4px; }
 .home-results .empty { padding-inline: 4px; }
 
@@ -656,7 +663,7 @@ function renderWords(text, highlight) {
   return text.split(WORD).map((part, i) => {
     if (i % 2 === 0) return escapeHtml(part);
     let html = escapeHtml(part);
-    if (highlight && plain(part).includes(highlight)) html = `<mark>${html}</mark>`;
+    if (highlight && (Array.isArray(highlight) ? highlight : [highlight]).some((h) => plain(part).includes(h))) html = `<mark>${html}</mark>`;
     const key = findLugat(part);
     return key ? `<span class="w" data-k="${escapeHtml(key)}">${html}</span>` : html;
   }).join("");
@@ -1114,41 +1121,64 @@ async function ensureBooks(ids, onProgress) {
   let done = 0;
   await Promise.all(ids.map(async (id) => { await loadBook(id); onProgress && onProgress(++done, ids.length); }));
 }
-function findHits(term, ids) {
-  const hits = []; let total = 0;
-  for (const id of ids) for (const r of indexOf(BOOKS.get(id))) {
-    const idx = r.plain.indexOf(term);
-    if (idx < 0) continue;
-    total++;
-    if (hits.length < 80) hits.push({ book: BOOKS.get(id), ...r, idx });
-  }
-  return { hits, total };
+/* Sorgu: "tırnaklı" ise tam ifade, değilse bütün kelimeler geçmeli */
+function parseQuery(raw) {
+  const r = raw.trim();
+  const m = r.match(/^["“](.+)["”]$/);
+  if (m) { const phrase = plain(m[1]).replace(/\s+/g, " ").trim(); return { phrase, words: phrase.split(" ").filter((w) => w.length > 1), raw: r }; }
+  const words = r.split(/\s+/).map(plain).map((w) => w.replace(/[^a-z0-9]/g, "")).filter((w) => w.length > 1);
+  return { phrase: null, words, raw: r };
 }
-function renderHits(container, term, raw, { hits, total }) {
-  if (!hits.length) { container.innerHTML = `<div class="empty">“${escapeHtml(raw)}” için sonuç yok.</div>`; return; }
-  container.innerHTML = `<div class="empty">${total.toLocaleString("tr")} paragrafta geçiyor${total > hits.length ? `, ilk ${hits.length} tanesi gösteriliyor` : ""}.</div>` +
-    hits.map((h, n) => {
-      const start = Math.max(0, h.idx - 60);
-      const snip = (start ? "…" : "") + h.text.slice(start, h.idx + term.length + 90) + "…";
-      return `<button class="result" data-n="${n}"><div class="where">${escapeHtml(h.book.title)} · ${escapeHtml(h.section)} · Sayfa ${h.page}</div>
-        <div class="snip">${renderWords(snip, term).replace(/<span[^>]*>|<\/span>/g, "")}</div></button>`;
-    }).join("");
+const queryOk = (qy) => (qy.phrase || qy.words.join("")).length >= 3;
+function findHits(qy, ids, onlyBook = null) {
+  const hits = [], perBook = {}; let total = 0;
+  for (const id of ids) for (const r of indexOf(BOOKS.get(id))) {
+    const ok = qy.phrase ? r.plain.includes(qy.phrase) : qy.words.every((w) => r.plain.includes(w));
+    if (!ok) continue;
+    perBook[id] = (perBook[id] || 0) + 1; total++;
+    if (onlyBook && id !== onlyBook) continue;
+    if (hits.length < 80) hits.push({ book: BOOKS.get(id), ...r, idx: r.plain.indexOf(qy.phrase || qy.words[0]) });
+  }
+  return { hits, total, perBook };
+}
+function lugatMatches(qy) {
+  if (qy.words.length !== 1) return [];
+  const w = qy.words[0];
+  return Object.keys(LUGAT).filter((k) => plain(k).replace(/[^a-z]/g, "").startsWith(w)).sort((a, b) => a.length - b.length).slice(0, 4);
+}
+function renderHits(container, qy, res, ids, onlyBook = null) {
+  const lug = lugatMatches(qy);
+  let html = lug.length ? `<div class="lug-box">${lug.map((k) => `<div><b>${escapeHtml(k)}</b> <span>${escapeHtml(LUGAT[k])}</span></div>`).join("")}</div>` : "";
+  if (!res.total) { container.innerHTML = html + `<div class="empty">“${escapeHtml(qy.raw)}” için sonuç yok.${qy.words.length > 1 && !qy.phrase ? " Kelimelerin hepsinin geçtiği paragraf bulunamadı." : ""}</div>`; return; }
+  const books = Object.entries(res.perBook).sort((a, b) => b[1] - a[1]);
+  if (books.length > 1) html += `<div class="book-chips"><button class="${onlyBook ? "" : "on"}" data-fb="">Hepsi <small>${res.total.toLocaleString("tr")}</small></button>${books.map(([id, n]) => `<button class="${onlyBook === id ? "on" : ""}" data-fb="${id}">${escapeHtml(metaOf(id).title)} <small>${n.toLocaleString("tr")}</small></button>`).join("")}</div>`;
+  const shown = onlyBook ? res.perBook[onlyBook] : res.total;
+  html += `<div class="empty">${shown.toLocaleString("tr")} paragrafta geçiyor${shown > res.hits.length ? `, ilk ${res.hits.length} tanesi gösteriliyor` : ""}.</div>`;
+  const hl = (qy.phrase ? qy.phrase.split(" ") : qy.words).filter((w) => w.length >= 3);
+  html += res.hits.map((h, n) => {
+    const start = Math.max(0, h.idx - 60);
+    const snip = (start ? "…" : "") + h.text.slice(start, h.idx + 140) + "…";
+    return `<button class="result" data-n="${n}"><div class="where">${escapeHtml(h.book.title)} · ${escapeHtml(h.section)} · Sayfa ${h.page}</div>
+      <div class="snip">${renderWords(snip, hl).replace(/<span[^>]*>|<\/span>/g, "")}</div></button>`;
+  }).join("");
+  container.innerHTML = html;
+  container.querySelectorAll("[data-fb]").forEach((b) => b.onclick = () => renderHits(container, qy, findHits(qy, ids, b.dataset.fb || null), ids, b.dataset.fb || null));
   container.querySelectorAll(".result").forEach((el) => el.onclick = () => {
-    const h = hits[+el.dataset.n];
-    pendingHighlight = term; closeSearch();
+    const h = res.hits[+el.dataset.n];
+    pendingHighlight = hl; closeSearch();
     const target = `#${h.book.id}-${h.page}`;
     current.chapter = null;
     if (location.hash === target) route(); else location.hash = target;
   });
 }
 async function homeSearch(raw) {
-  const term = plain(raw.trim()), box = $("#home-results");
-  if (term.length < 3) { box.innerHTML = `<div class="empty">En az 3 harf yaz.</div>`; return; }
+  const qy = parseQuery(raw), box = $("#home-results");
+  if (!queryOk(qy)) { box.innerHTML = `<div class="empty">En az 3 harf yaz.</div>`; return; }
   const ids = LIBRARY.map((b) => b.id);
   box.innerHTML = `<div class="empty">Kitaplar hazırlanıyor…</div>`;
   try { await ensureBooks(ids, (d, n) => { box.innerHTML = `<div class="empty">Kitaplar hazırlanıyor: ${d} / ${n}</div>`; }); }
   catch { box.innerHTML = `<div class="empty">Kitaplar yüklenemedi. Bağlantını kontrol et.</div>`; return; }
-  renderHits(box, term, raw, findHits(term, ids));
+  renderHits(box, qy, findHits(qy, ids), ids);
 }
 let scope = "book";
 $("#scope").addEventListener("click", (e) => {
@@ -1166,13 +1196,13 @@ function openSearch() {
 function closeSearch() { searchPanel.hidden = true; }
 let searchTimer;
 async function runSearch() {
-  const term = plain(q.value.trim());
-  if (term.length < 3) { results.innerHTML = `<div class="empty">En az 3 harf yaz.</div>`; return; }
+  const raw = q.value, qy = parseQuery(raw);
+  if (!queryOk(qy)) { results.innerHTML = `<div class="empty">En az 3 harf yaz. Birden çok kelime yazarsan hepsinin geçtiği yerler, "tırnak içinde" yazarsan tam ifade aranır.</div>`; return; }
   const ids = current.id && scope === "book" ? [current.id] : LIBRARY.map((b) => b.id);
   try { await ensureBooks(ids, (d, n) => { if (ids.length > 1) results.innerHTML = `<div class="empty">Kitaplar hazırlanıyor: ${d} / ${n}</div>`; }); }
   catch { results.innerHTML = `<div class="empty">Kitaplar yüklenemedi.</div>`; return; }
-  if (plain(q.value.trim()) !== term) return;
-  renderHits(results, term, q.value, findHits(term, ids));
+  if (q.value !== raw) return;
+  renderHits(results, qy, findHits(qy, ids), ids);
 }
 q.addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(runSearch, 220); });
 searchPanel.addEventListener("click", (e) => { if (e.target === searchPanel) closeSearch(); });
