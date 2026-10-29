@@ -1315,11 +1315,14 @@ function updateSub(book, top) {
   renderCrumbs(); renderSide();
   if (!narrow()) { const r = side.querySelector(".row.cur"); if (r) { const sr = side.getBoundingClientRect(), rr = r.getBoundingClientRect(); if (rr.top < sr.top + 40 || rr.bottom > sr.bottom - 40) r.scrollIntoView({ block: "center" }); } }
 }
-let pageTimer;
+let pageTimer, readTimer;
+const READ_MS = 4000;
 function updatePage(p) {
   const book = BOOKS.get(current.id); if (!book) return;
   current.page = p;
-  trackRead(book.id, p);
+  // Sayfa ekranda 4 saniye kalınca okunmuş sayılır; hızlıca kaydırıp geçilen sayfalar sayılmaz
+  clearTimeout(readTimer);
+  readTimer = setTimeout(() => { if (current.id === book.id && current.page === p && !document.hidden) trackRead(book.id, p); }, READ_MS);
   const ch = chapterOf(book, p);
   if (ch.idx !== current.chapter) {
     current.chapter = ch.idx; current.sub = null;
@@ -2072,6 +2075,7 @@ function openMenu(kind) {
       ["plan", MI('<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18M8 15l2.5 2.5L16 13"/>'), "Okuma planı", "Bir kitabı belirlediğin günde bitir"],
       ["learn", MI('<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/>'), "Kelime Öğren", "En sık geçen kelimelerden başlayarak öğren"],
       ["lugat", MI('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M8 7h8M8 11h6"/>'), "Lugat", "Bütün kelimeler ve anlamları, aranabilir"],
+      ["backup", MI('<path d="M12 3v12M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/>'), "Yedekle ve aktar", "Notlar, vurgular, plan ve kelimeleri başka cihaza taşı"],
       ["keys", MI('<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/>'), "Kısayollar ve yardım", "Klavye kısayolları, nasıl kullanılır"],
       ["about", MI('<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/>'), "NurRisale hakkında", "Proje, kaynaklar ve özellikler"],
     ];
@@ -2118,6 +2122,7 @@ menu.addEventListener("click", async (e) => {
       $("#lug-q").oninput = draw; draw(); $("#lug-q").focus();
     });
   }
+  if (m === "backup") openBackup();
   if (m === "keys") showModal(`<h2>Kısayollar ve yardım</h2><table>
       <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Önceki / sonraki bölüm (sayfa modunda sayfa)</td></tr>
       <tr><td><kbd>F</kbd></td><td>Odak modu</td></tr><tr><td><kbd>Esc</kbd></td><td>Açık pencereleri kapat</td></tr></table>
@@ -2456,6 +2461,46 @@ async function showKonular(topicId) {
   </section>`;
   app.querySelectorAll(".kn-row[data-hl]").forEach((a) => a.addEventListener("click", () => { pendingHighlight = hl.length ? hl : null; current.chapter = null; rendered = null; }));
   window.scrollTo(0, 0);
+}
+
+/* ---------- Yedekleme: kişisel veriler JSON dosyasına ---------- */
+const BACKUP_KEYS = ["nr-marks", "nr-hl", "nr-known", "nr-srs", "nr-plan", "nr-stats", "nr-read", "nr-recent", "nr-last", "nr-settings3", "nr-learn-level"];
+function backupData() { const d = {}; BACKUP_KEYS.forEach((k) => { const v = store.get(k, undefined); if (v !== undefined) d[k] = v; }); return d; }
+function openBackup() {
+  const d = backupData();
+  const cnt = [[(d["nr-marks"] || []).length, "yer imi"], [(d["nr-hl"] || []).length, "vurgu ve not"], [(d["nr-known"] || []).length, "bilinen kelime"], [Object.values(d["nr-stats"] || {}).reduce((n, a) => n + a.length, 0), "okunan sayfa kaydı"]];
+  showModal(`<h2>Yedekle ve aktar</h2>
+    <p style="margin:0 0 12px;color:var(--muted);font-size:14px">Verilerin yalnızca bu tarayıcıda saklanıyor. Yedek dosyasını indirip başka bir cihazda (telefon, bilgisayar) geri yükleyerek aynı yerden devam edebilirsin.</p>
+    <div class="srs-boxes">${cnt.map(([n, t]) => `<div><b>${fmtN(n)}</b>${t}</div>`).join("")}</div>
+    ${d["nr-plan"] ? `<p class="plan-note">Okuma planı da yedeğe dahil.</p>` : ""}
+    <div class="plan-acts" style="margin-top:14px"><button class="pri" id="bk-save">Yedeği indir</button><button id="bk-load">Yedekten geri yükle</button><input type="file" id="bk-file" accept=".json,application/json" hidden></div>
+    <p class="plan-note">Geri yükleme bu cihazdaki verilerle birleştirir: yer imleri ve vurgular eklenir, okuma kayıtları toplanır, plan ve ayarlar yedekteki hâliyle gelir.</p>`);
+  $("#bk-save").onclick = () => {
+    const blob = new Blob([JSON.stringify({ app: "NurRisale", v: 1, at: new Date().toISOString(), data: backupData() })], { type: "application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `nurrisale-yedek-${dayKey()}.json`;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    toast("Yedek dosyası indirildi");
+  };
+  $("#bk-load").onclick = () => $("#bk-file").click();
+  $("#bk-file").onchange = async (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const j = JSON.parse(await f.text());
+      if (j.app !== "NurRisale" || !j.data) throw 0;
+      mergeBackup(j.data); toast("Yedek geri yüklendi"); setTimeout(() => location.reload(), 700);
+    } catch { toast("Bu dosya bir NurRisale yedeği değil"); }
+  };
+}
+function mergeBackup(d) {
+  const uniq = (a, key) => { const m = new Map(); a.forEach((x) => m.set(key(x), x)); return [...m.values()]; };
+  if (d["nr-marks"]) store.set("nr-marks", uniq([...store.get("nr-marks", []), ...d["nr-marks"]], (x) => JSON.stringify([x.book, x.page])));
+  if (d["nr-hl"]) store.set("nr-hl", uniq([...store.get("nr-hl", []), ...d["nr-hl"]], (x) => x.id || JSON.stringify(x)));
+  if (d["nr-known"]) store.set("nr-known", [...new Set([...store.get("nr-known", []), ...d["nr-known"]])]);
+  if (d["nr-srs"]) { const cur = store.get("nr-srs", {}) || {}; for (const [k, v] of Object.entries(d["nr-srs"])) if (!cur[k] || cur[k].b < v.b) cur[k] = v; store.set("nr-srs", cur); }
+  if (d["nr-stats"]) { const cur = store.get("nr-stats", {}); for (const [k, a] of Object.entries(d["nr-stats"])) cur[k] = [...new Set([...(cur[k] || []), ...a])]; const days = Object.keys(cur).sort(); while (days.length > 90) delete cur[days.shift()]; store.set("nr-stats", cur); }
+  if (d["nr-read"]) store.set("nr-read", { ...store.get("nr-read", {}), ...d["nr-read"] });
+  if (d["nr-recent"]) store.set("nr-recent", uniq([...d["nr-recent"], ...store.get("nr-recent", [])].sort((a, b) => (b.at || 0) - (a.at || 0)), (x) => x.book + x.chap).slice(0, 8));
+  ["nr-plan", "nr-last", "nr-settings3", "nr-learn-level"].forEach((k) => { if (d[k] !== undefined) store.set(k, d[k]); });
 }
 
 /* =========================================================

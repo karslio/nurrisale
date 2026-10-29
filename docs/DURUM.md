@@ -41,6 +41,8 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 - Vurgu (4 renk) ve notlar, yer imleri, seçili metni kaynakla kopyalama, bağlantı, vecize kartı (kare görsel)
 - Arama: çok kelime (hepsi geçmeli), "tırnakla" tam ifade, lugat kutusu, kitaba göre süzme
 - Ana sayfa: arama, eser grupları, günün vecizesi, okuma takibi (bugün, üst üste gün, 7 gün grafiği), son okunanlar
+- Okunan sayfa: sayfa ekranda 4 saniye kalınca sayılır (hızlı kaydırılan sayfalar okuma takibine ve plana girmez)
+- Yedekle ve aktar (menü): yer imleri, vurgular, notlar, bilinen kelimeler, tekrar durumu, plan, okuma kayıtları ve ayarlar tek JSON dosyasına; geri yüklemede mevcut verilerle birleştirilir
 - Sesli okuma (tarayıcının Türkçe sesi), odak/tam ekran modu, uygulama menüsü, yardım ve kısayollar
 
 ## Bilinen sınırlar
