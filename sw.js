@@ -1,7 +1,7 @@
 /* NurRisale service worker: siteyi ve açılan kitapları çevrimdışı okunabilir kılar.
    Sayfa (index.html) önce ağdan denenir, olmazsa önbellekten gelir.
    Kitaplar, kapaklar ve yazı tipleri önbellekten gelir; yoksa indirilip saklanır. */
-const CACHE = "nurrisale-v1";
+const CACHE = "nurrisale-v2";
 const SHELL = ["./", "index.html", "books/index.json", "books/lugat.json", "manifest.webmanifest",
   "fonts/souvenir-regular.woff", "fonts/souvenir-bold.woff", "fonts/souvenir-italic.woff", "fonts/hamdullah.woff", "icon-192.png"];
 

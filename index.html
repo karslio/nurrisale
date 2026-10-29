@@ -365,12 +365,25 @@ body.focus #fab-focus { color: var(--red); border-color: var(--red); }
 .modal td { padding: 7px 4px; border-bottom: 1px solid var(--rule); }
 .modal kbd { font: 600 12px var(--font-ui); background: var(--soft); border: 1px solid var(--rule); border-bottom-width: 2px; border-radius: 6px; padding: 2px 7px; }
 .modal ul { padding-left: 20px; margin: 8px 0; }
+.card-prev { width: 100%; border-radius: 10px; box-shadow: 0 6px 20px -8px rgba(0,0,0,.4); display: block; margin: 6px 0 14px; }
+.card-acts { display: flex; gap: 8px; flex-wrap: wrap; }
+.card-acts a, .card-acts button { flex: 1; text-align: center; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); border-radius: 10px; padding: 10px; cursor: pointer; text-decoration: none; font-size: 14px; }
+.card-acts .pri { background: var(--red); border-color: var(--red); color: #fff; }
 .lug-q { width: 100%; font: 15px var(--font-ui); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); }
 .lug-list { margin-top: 10px; display: grid; gap: 0; }
 .lug-list > div { padding: 7px 2px; border-bottom: 1px solid var(--rule); font-size: 14.5px; }
 .lug-list b { color: var(--lugat); margin-right: 4px; }
 .lug-list .lug-n { color: var(--muted); font-size: 12.5px; border: none; }
 .recent { display: grid; gap: 8px; }
+.stats .st-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 6px 0 12px; }
+.stats .st-row b { display: block; font: 700 26px "Poppins", var(--font-ui); color: var(--red); font-variant-numeric: tabular-nums; }
+.stats .st-row span { font-size: 12.5px; color: var(--muted); }
+.stats .goal { height: 8px; border-radius: 99px; background: var(--rule); overflow: hidden; } .stats .goal div { height: 100%; background: var(--red); border-radius: 99px; }
+.stats small { color: var(--muted); font-size: 12.5px; }
+.stats .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; height: 90px; margin-top: 14px; align-items: end; }
+.stats .week div { display: grid; grid-template-rows: 1fr auto; height: 100%; gap: 4px; text-align: center; }
+.stats .week i { align-self: end; display: block; background: color-mix(in srgb, var(--red) 70%, var(--paper)); border-radius: 4px 4px 0 0; min-height: 2px; }
+.stats .week span { font-size: 11px; color: var(--muted); }
 .recent a { display: flex; justify-content: space-between; gap: 10px; text-decoration: none; color: var(--ink); padding: 8px 2px; border-bottom: 1px solid var(--rule); }
 .recent a span:last-child { color: var(--muted); font-size: 13px; white-space: nowrap; }
 
@@ -481,7 +494,7 @@ body.focus #fab-focus { color: var(--red); border-color: var(--red); }
   <button class="hl-dot" data-hl-color="b" aria-label="Mavi vurgula" style="--c:#98C7F0"></button>
   <button class="hl-dot" data-hl-color="r" aria-label="Pembe vurgula" style="--c:#F2A7B5"></button>
   <span class="sep"></span>
-  <button id="sel-note">Not</button><button id="sel-copy">Kopyala</button><button id="sel-link">Bağlantı</button><button id="sel-search">Ara</button></div>
+  <button id="sel-note">Not</button><button id="sel-copy">Kopyala</button><button id="sel-link">Bağlantı</button><button id="sel-card">Kart</button><button id="sel-search">Ara</button></div>
 <div class="toast" id="toast" hidden role="status"></div>
 
 <div class="search-panel" id="search" hidden>
@@ -576,12 +589,63 @@ const ARAPCA = [
   { a: "الله اكبر", m: "Allah en büyüktür." },
   { a: "ما شاء الله", m: "Allah'ın dilediği olur." },
   { a: "ان شاء الله", m: "Allah dilerse." },
-  { a: "بسم الله", m: "Allah'ın adıyla." }
+  { a: "بسم الله", m: "Allah'ın adıyla." },
+  { a: "ان الله اشتري من المؤمنين انفسهم واموالهم بان لهم الجنه", m: "Şüphesiz Allah, müminlerden canlarını ve mallarını, kendilerine cennet verilmesi karşılığında satın almıştır.", r: "Tevbe 9:111" },
+  { a: "لقد خلقنا الانسان في احسن تقويم", m: "Andolsun, biz insanı en güzel biçimde yarattık.", r: "Tîn 95:4" },
+  { a: "ثم رددناه اسفل سافلين", m: "Sonra onu aşağıların aşağısına indirdik.", r: "Tîn 95:5" },
+  { a: "الا الذين امنوا وعملوا الصالحات", m: "Ancak iman edip salih amel işleyenler müstesna.", r: "Tîn 95:6" },
+  { a: "ان في خلق السموات والارض واختلاف اليل والنهار", m: "Göklerin ve yerin yaratılışında, gece ile gündüzün birbiri ardınca gelişinde (akıl sahipleri için ayetler vardır).", r: "Bakara 2:164" },
+  { a: "لا يعلم الغيب الا الله", m: "Gaybı Allah'tan başkası bilmez." },
+  { a: "قل بفضل الله وبرحمته فبذلك فليفرحوا هو خير مما يجمعون", m: "De ki: Allah'ın lütfu ve rahmetiyle; işte yalnız bununla sevinsinler. Bu, onların biriktirdiklerinden daha hayırlıdır.", r: "Yûnus 10:58" },
+  { a: "الله نور السموات والارض", m: "Allah göklerin ve yerin nurudur.", r: "Nûr 24:35" },
+  { a: "ما خلقكم ولا بعثكم الا كنفس واحده", m: "Sizin yaratılmanız da diriltilmeniz de ancak tek bir kişinin yaratılıp diriltilmesi gibidir.", r: "Lokmân 31:28" },
+  { a: "ومن اياته ان خلق لكم من انفسكم ازواجا لتسكنوا اليها", m: "Kendileriyle huzur bulasınız diye size kendi cinsinizden eşler yaratması da O'nun ayetlerindendir.", r: "Rûm 30:21" },
+  { a: "ومن اياته منامكم باليل والنهار وابتغاؤكم من فضله", m: "Gece ve gündüz uyumanız ve O'nun lütfundan rızık aramanız da O'nun ayetlerindendir.", r: "Rûm 30:23" },
+  { a: "ومن اياته يريكم البرق خوفا وطمعا", m: "Size korku ve ümit veren şimşeği göstermesi de O'nun ayetlerindendir.", r: "Rûm 30:24" },
+  { a: "ومن اياته ان تقوم السماء والارض بامره", m: "Göğün ve yerin O'nun emriyle ayakta durması da O'nun ayetlerindendir.", r: "Rûm 30:25" },
+  { a: "وله من في السموات والارض كل له قانتون", m: "Göklerde ve yerde kim varsa O'nundur; hepsi O'na boyun eğmiştir.", r: "Rûm 30:26" },
+  { a: "وهو الذي يبدؤا الخلق ثم يعيده وهو اهون عليه", m: "Yaratmayı başlatan, sonra onu tekrarlayan O'dur; bu O'na daha kolaydır.", r: "Rûm 30:27" },
+  { a: "اذا الشمس كورت", m: "Güneş dürülüp karardığı zaman.", r: "Tekvîr 81:1" },
+  { a: "يا ايها الناس اتقوا ربكم ان زلزله الساعه شيء عظيم", m: "Ey insanlar! Rabbinizden sakının. Çünkü kıyametin sarsıntısı çok büyük bir şeydir.", r: "Hac 22:1" },
+  { a: "اذا زلزلت الارض زلزالها", m: "Yer o şiddetli sarsıntısıyla sarsıldığında.", r: "Zilzâl 99:1" },
+  { a: "رب اشرح لي صدري ويسر لي امري واحلل عقده من لساني يفقهوا قولي", m: "Rabbim! Göğsümü genişlet, işimi kolaylaştır, dilimdeki düğümü çöz ki sözümü anlasınlar.", r: "Tâhâ 20:25-28" },
+  { a: "وما مدحت محمدا بمقالتي", m: "Ben sözümle Muhammed'i (a.s.m.) övmedim;" },
+  { a: "ولكن مدحت مقالتي بمحمد", m: "bilakis O'nu anmakla sözümü güzelleştirdim." },
+  { a: "وما مدحت القران بكلماتي", m: "Ben sözlerimle Kur'an'ı övmedim;" },
+  { a: "ولكن مدحت كلماتي بالقران", m: "bilakis Kur'an'la sözlerimi güzelleştirdim." },
+  { a: "فان تولوا فقل حسبي الله لا اله الا هو عليه توكلت وهو رب العرش العظيم", m: "Eğer yüz çevirirlerse de ki: Allah bana yeter. O'ndan başka ilah yoktur. Ben yalnız O'na tevekkül ettim. O, büyük Arş'ın Rabbidir.", r: "Tevbe 9:129" },
+  { a: "هلك الناس الا العالمون", m: "İnsanlar helâk oldu, âlimler müstesna; âlimler helâk oldu, ilmiyle amel edenler müstesna; amel edenler helâk oldu, ihlaslılar müstesna; ihlaslılar ise büyük bir tehlike karşısındadır." },
+  { a: "جمله شيران جهان بستهء اين سلسله اند", m: "Dünyanın bütün aslanları bu zincire bağlıdır.", r: "Farsça beyit" },
+  { a: "روبه از حيله چه سان بگسلد اين سلسله را", m: "Tilki hileyle bu zinciri nasıl koparabilir?", r: "Farsça beyit" },
+  { a: "قال من يحيي العظام وهي رميم", m: "Çürümüş kemikleri kim diriltecek? dedi.", r: "Yâsîn 36:78" },
+  { a: "قل يحييها الذي انشاها اول مره وهو بكل خلق عليم", m: "De ki: Onları ilk defa yaratan diriltecek. O her yaratılışı hakkıyla bilendir.", r: "Yâsîn 36:79" },
+  { a: "رب اعوذ بك من همزات الشياطين", m: "Rabbim! Şeytanların vesveselerinden sana sığınırım.", r: "Mü'minûn 23:97" },
+  { a: "واعوذ بك رب ان يحضرون", m: "Rabbim! Onların yanımda bulunmalarından da sana sığınırım.", r: "Mü'minûn 23:98" },
+  { a: "سبحان الذي اسري بعبده ليلا من المسجد الحرام الي المسجد الاقصي", m: "Kulunu bir gece Mescid-i Haram'dan Mescid-i Aksâ'ya götüren Allah her türlü noksandan münezzehtir.", r: "İsrâ 17:1" },
+  { a: "افلم ينظروا الي السماء فوقهم كيف بنيناها وزيناها", m: "Üstlerindeki göğe bakmazlar mı; onu nasıl bina ettik ve süsledik?", r: "Kâf 50:6" },
+  { a: "فتبارك الله احسن الخالقين", m: "Yaratanların en güzeli olan Allah ne yücedir!", r: "Mü'minûn 23:14" },
+  { a: "اللهم اهدنا الصراط المستقيم", m: "Allah'ım! Bizi doğru yola ilet." },
+  { a: "اهدنا الصراط المستقيم", m: "Bizi doğru yola ilet.", r: "Fâtiha 1:6" },
+  { a: "تسبح له السموات السبع والارض ومن فيهن", m: "Yedi gök, yer ve bunlarda bulunanlar O'nu tesbih eder.", r: "İsrâ 17:44" },
+  { a: "ولكن لا تفقهون تسبيحهم", m: "Fakat siz onların tesbihini anlamazsınız.", r: "İsrâ 17:44" },
+  { a: "وما امر الساعه الا كلمح البصر او هو اقرب", m: "Kıyametin kopması göz açıp kapama gibidir, hatta daha yakındır.", r: "Nahl 16:77" },
+  { a: "والسلام علي من اتبع الهدي", m: "Selâm, hidayete uyanlara olsun.", r: "Tâhâ 20:47" },
+  { a: "الذين يؤمنون بالغيب", m: "Onlar gaybe iman ederler.", r: "Bakara 2:3" },
+  { a: "يا ايها الناس اعبدوا ربكم", m: "Ey insanlar! Rabbinize ibadet edin.", r: "Bakara 2:21" },
+  { a: "الصلاه عماد الدين", m: "Namaz dinin direğidir.", r: "Hadis" },
+  { a: "ان الله مع الذين اتقوا والذين هم محسنون", m: "Şüphesiz Allah, kendisinden sakınanlarla ve iyilik yapanlarla beraberdir.", r: "Nahl 16:128" },
+  { a: "الله لا اله الا هو الحي القيوم", m: "Allah, O'ndan başka ilah yoktur; diridir, her şeyi ayakta tutandır.", r: "Bakara 2:255" },
+  { a: "ان الدين عند الله الاسلام", m: "Şüphesiz Allah katında din İslâm'dır.", r: "Âl-i İmrân 3:19" },
+  { a: "اللهم اجعلنا من اهل السعاده والسلامه والقران والايمان", m: "Allah'ım! Bizi saadet, selâmet, Kur'an ve iman ehlinden eyle." },
+  { a: "والشمس وضحيها", m: "Andolsun güneşe ve onun parlaklığına.", r: "Şems 91:1" },
+  { a: "والقمر اذا تليها", m: "Ve onu takip eden aya.", r: "Şems 91:2" },
+  { a: "ومن يؤت الحكمه فقد اوتي خيرا كثيرا", m: "Kime hikmet verilmişse, ona pek çok hayır verilmiştir.", r: "Bakara 2:269" },
+  { a: "من كان همته نفسه فليس من الانسان", m: "Bütün derdi kendi nefsi olan kimse insanlıktan nasip almamıştır; çünkü insan yaratılıştan medenîdir." }
 ];
 // Her ifade için harekeyi ve harf çeşitlerini (أ إ آ, ى ي, ة ه) yok sayan bir kalıp kur
 const AR_MARKS = "[\\u064B-\\u065F\\u0670\\u0640\\u06D6-\\u06ED]*";
 const AR_VARIANTS = { "ا": "[اأإآٱ]", "ى": "[ىيئ]", "ي": "[يىئ]", "ة": "[ةته]", "ه": "[هة]", "و": "[وؤ]", "ت": "[تة]", "ك": "[كک]", "ء": "[ءئؤأ]?" };
-const arPattern = (key) => [...key].map((ch) => ch === " " ? "\\s*" : (AR_VARIANTS[ch] || ch) + AR_MARKS).join("");
+const arPattern = (key) => [...key].map((ch) => ch === " " ? "\\s*" : (AR_VARIANTS[ch] || ch) + AR_MARKS + (ch === "و" ? "\\s?" : "")).join("");
 const AR_ORDER = ARAPCA.map((x, i) => i).sort((a, b) => ARAPCA[b].a.length - ARAPCA[a].a.length);
 const AR_RE = new RegExp(AR_ORDER.map((i) => `(${arPattern(ARAPCA[i].a)})`).join("|"), "g");
 function renderArabic(text) {
@@ -837,6 +901,12 @@ function showLibrary() {
       <div class="home-results" id="home-results"></div>
     </section></div>
     <svg class="wave" viewBox="0 0 1440 46" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h1440v18c-160 22-320 30-520 14S520 4 360 12 120 40 0 30z" fill="color-mix(in srgb, var(--red) 5%, var(--paper))" style="fill: color-mix(in srgb, var(--red) 5%, var(--paper))"/></svg>
+    ${(() => { const r = readingStats(); if (!r.total) return ""; const goal = 10, max = Math.max(goal, ...r.last7.map((x) => x.n));
+      const DAYS = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
+      return `<div class="sec"><div class="card stats"><div class="h">Okuma takibi</div>
+        <div class="st-row"><div><b>${r.today}</b><span>bugün okunan sayfa</span></div><div><b>${r.streak}</b><span>gün üst üste</span></div><div><b>${r.total.toLocaleString("tr")}</b><span>son 90 günde sayfa</span></div></div>
+        <div class="goal"><div style="width:${Math.min(100, r.today / goal * 100)}%"></div></div><small>Günlük hedef: ${goal} sayfa${r.today >= goal ? " · tamamlandı ✓" : ""}</small>
+        <div class="week">${r.last7.map((x) => `<div><i style="height:${Math.round(x.n / max * 100)}%" title="${x.n} sayfa"></i><span>${DAYS[x.d.getDay()]}</span></div>`).join("")}</div></div></div>`; })()}
     ${store.get("nr-recent", []).length > 1 ? `<div class="sec"><div class="card"><div class="h">Son okuduklarım</div><div class="recent">${store.get("nr-recent", []).slice(0, 5).map((r) => `<a href="#${r.book}-${r.page}"><span>${escapeHtml(r.chap)} <span style="color:var(--muted)">· ${escapeHtml(r.title)}</span></span><span>Sayfa ${r.page}</span></a>`).join("")}</div></div></div>` : ""}
     ${lastMeta ? `<div class="sec"><div class="card"><div class="h">Kaldığın yer</div><div class="row2"><div><strong>${escapeHtml(lastMeta.title)}</strong> <span style="color:var(--muted)">· Sayfa ${last.page}</span></div><button class="btn" id="resume">Devam et</button></div></div></div>` : ""}
     <div class="sec">
@@ -945,6 +1015,8 @@ function observePages(book) {
     const top = $("#bars").getBoundingClientRect().bottom + 40;
     let p = +marks[0].dataset.p;
     for (const m of marks) { if (m.getBoundingClientRect().top <= top) p = +m.dataset.p; else break; }
+    // Sayfanın sonuna inildiyse son sayfayı say
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) p = +marks[marks.length - 1].dataset.p;
     if (p !== current.page) updatePage(p);
   };
   pageObserver = { disconnect() { window.removeEventListener("scroll", onScroll); } };
@@ -954,6 +1026,7 @@ let pageTimer;
 function updatePage(p) {
   const book = BOOKS.get(current.id); if (!book) return;
   current.page = p;
+  trackRead(book.id, p);
   renderCrumbs();
   $("#progress").style.width = (p / book.pages.length * 100) + "%";
   clearTimeout(pageTimer);
@@ -962,6 +1035,25 @@ function updatePage(p) {
     history.replaceState(null, "", `#${book.id}-${p}`);
     const t = tabs.find((x) => x.k === activeTab); if (t) { t.h = `#${book.id}-${p}`; saveTabs(); }
   }, 400);
+}
+/* Okuma takibi: gün gün okunan sayfalar */
+const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+function trackRead(bookId, p) {
+  const st = store.get("nr-stats", {}), k = dayKey(), key = bookId + ":" + p;
+  st[k] = st[k] || [];
+  if (st[k].includes(key)) return;
+  st[k].push(key);
+  const days = Object.keys(st).sort(); while (days.length > 90) delete st[days.shift()];
+  store.set("nr-stats", st);
+}
+function readingStats() {
+  const st = store.get("nr-stats", {}), today = new Date();
+  const last7 = [...Array(7)].map((_, i) => { const d = new Date(today); d.setDate(d.getDate() - (6 - i)); return { d, n: (st[dayKey(d)] || []).length }; });
+  let streak = 0; const d = new Date(today);
+  if (!(st[dayKey(d)] || []).length) d.setDate(d.getDate() - 1);
+  while ((st[dayKey(d)] || []).length) { streak++; d.setDate(d.getDate() - 1); }
+  const total = Object.values(st).reduce((n, a) => n + a.length, 0);
+  return { today: last7[6].n, last7, streak, total };
 }
 function setRead(id) { const r = store.get("nr-read", {}); r[id] = 1; store.set("nr-read", r); }
 function addRecent(book, chap, page) {
@@ -1445,6 +1537,57 @@ $("#sel-link").onclick = async () => {
   const url = location.href.split("#")[0] + `#${current.id}-${page}`;
   try { await navigator.clipboard.writeText(url); toast("Bağlantı kopyalandı"); } catch { toast(url); }
   seltool.hidden = true;
+};
+/* ---------- Vecize kartı: seçili metni kare görsele çevir ---------- */
+async function makeCard(text, book, chap, page) {
+  const W = 1080, H = 1080, c = document.createElement("canvas"); c.width = W; c.height = H;
+  const g = c.getContext("2d");
+  try { await document.fonts.load('40px "Souvenir NR"'); await document.fonts.load('60px "UnifrakturMaguntia"'); } catch {}
+  // zemin ve çerçeve
+  g.fillStyle = "#FBF7EC"; g.fillRect(0, 0, W, H);
+  g.strokeStyle = "#C81E2B"; g.lineWidth = 10; g.strokeRect(40, 40, W - 80, H - 80);
+  g.strokeStyle = "#D9B25F"; g.lineWidth = 3; g.strokeRect(62, 62, W - 124, H - 124);
+  g.fillStyle = "#C81E2B"; g.textAlign = "center";
+  g.font = '64px "UnifrakturMaguntia", serif'; g.fillText(chap, W / 2, 170, W - 220);
+  g.fillStyle = "#D9B25F"; g.font = "28px serif"; g.fillText("✦  ✦  ✦", W / 2, 220);
+  // metni sığdır: yazı boyutunu küçülterek satırlara böl
+  const clean = text.replace(/\s+/g, " ").trim();
+  let size = 46, lines = [];
+  const wrap = (sz) => {
+    g.font = `${sz}px "Souvenir NR", Georgia, serif`;
+    const out = []; let line = "";
+    for (const w of clean.split(" ")) { const t = line ? line + " " + w : w; if (g.measureText(t).width > W - 260 && line) { out.push(line); line = w; } else line = t; }
+    if (line) out.push(line); return out;
+  };
+  do { lines = wrap(size); size -= 2; } while (lines.length * size * 1.5 > 560 && size > 22);
+  size += 2; const lh = size * 1.5;
+  let y = 260 + (600 - lines.length * lh) / 2 + size;
+  g.fillStyle = "#2A2722"; g.textAlign = "center";
+  if (lines.length > 14) { lines = lines.slice(0, 14); lines[13] += " …"; }
+  for (const l of lines) { g.fillText(l, W / 2, y); y += lh; }
+  g.fillStyle = "#7C766A"; g.font = '30px "Souvenir NR", Georgia, serif';
+  g.fillText(`${book} · Sayfa ${page}`, W / 2, H - 150);
+  g.fillStyle = "#C81E2B"; g.font = 'bold 30px "IBM Plex Sans", sans-serif'; g.fillText("NurRisale", W / 2, H - 100);
+  return c;
+}
+$("#sel-card").onclick = async () => {
+  const info = selectionInfo(); const text = selectedText();
+  if (!text) return;
+  const book = BOOKS.get(current.id), page = info ? info.p : current.page, chap = chapterOf(book, page).title;
+  seltool.hidden = true; getSelection().removeAllRanges();
+  const canvas = await makeCard(text.length > 900 ? text.slice(0, 900) + "…" : text, book.title, chap, page);
+  const url = canvas.toDataURL("image/png");
+  showModal(`<h2>Vecize kartı</h2><img class="card-prev" src="${url}" alt="Vecize kartı">
+    <div class="card-acts"><a class="pri" href="${url}" download="nurrisale-${book.id}-${page}.png">Görseli indir</a><button id="card-share">Paylaş</button></div>
+    <p style="color:var(--muted);font-size:13px;margin:10px 0 0">İndirme çalışmazsa görsele basılı tutup kaydedebilirsin.</p>`);
+  $("#card-share").onclick = async () => {
+    try {
+      const blob = await new Promise((r) => canvas.toBlob(r, "image/png"));
+      const file = new File([blob], `nurrisale-${book.id}-${page}.png`, { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: chap, text: `${book.title} · Sayfa ${page}` });
+      else { await navigator.clipboard.writeText(`"${text}"\n— ${book.title}, ${chap}, s. ${page}`); toast("Paylaşım desteklenmiyor; metin kopyalandı"); }
+    } catch {}
+  };
 };
 $("#sel-search").onclick = () => { const t = selectedText(); seltool.hidden = true; q.value = t.slice(0, 60); openSearch(); };
 let toastTimer;
