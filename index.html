@@ -365,6 +365,14 @@ body.focus #fab-focus { color: var(--red); border-color: var(--red); }
 .modal td { padding: 7px 4px; border-bottom: 1px solid var(--rule); }
 .modal kbd { font: 600 12px var(--font-ui); background: var(--soft); border: 1px solid var(--rule); border-bottom-width: 2px; border-radius: 6px; padding: 2px 7px; }
 .modal ul { padding-left: 20px; margin: 8px 0; }
+.lug-q { width: 100%; font: 15px var(--font-ui); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); }
+.lug-list { margin-top: 10px; display: grid; gap: 0; }
+.lug-list > div { padding: 7px 2px; border-bottom: 1px solid var(--rule); font-size: 14.5px; }
+.lug-list b { color: var(--lugat); margin-right: 4px; }
+.lug-list .lug-n { color: var(--muted); font-size: 12.5px; border: none; }
+.recent { display: grid; gap: 8px; }
+.recent a { display: flex; justify-content: space-between; gap: 10px; text-decoration: none; color: var(--ink); padding: 8px 2px; border-bottom: 1px solid var(--rule); }
+.recent a span:last-child { color: var(--muted); font-size: 13px; white-space: nowrap; }
 
 /* ---------- Telefon ve tablet ---------- */
 @media (max-width: 960px) {
@@ -829,6 +837,7 @@ function showLibrary() {
       <div class="home-results" id="home-results"></div>
     </section></div>
     <svg class="wave" viewBox="0 0 1440 46" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h1440v18c-160 22-320 30-520 14S520 4 360 12 120 40 0 30z" fill="color-mix(in srgb, var(--red) 5%, var(--paper))" style="fill: color-mix(in srgb, var(--red) 5%, var(--paper))"/></svg>
+    ${store.get("nr-recent", []).length > 1 ? `<div class="sec"><div class="card"><div class="h">Son okuduklarım</div><div class="recent">${store.get("nr-recent", []).slice(0, 5).map((r) => `<a href="#${r.book}-${r.page}"><span>${escapeHtml(r.chap)} <span style="color:var(--muted)">· ${escapeHtml(r.title)}</span></span><span>Sayfa ${r.page}</span></a>`).join("")}</div></div></div>` : ""}
     ${lastMeta ? `<div class="sec"><div class="card"><div class="h">Kaldığın yer</div><div class="row2"><div><strong>${escapeHtml(lastMeta.title)}</strong> <span style="color:var(--muted)">· Sayfa ${last.page}</span></div><button class="btn" id="resume">Devam et</button></div></div></div>` : ""}
     <div class="sec">
       <h2 class="sec-h">Eser Grupları</h2>
@@ -891,6 +900,7 @@ async function showChapter(bookId, pageNo, highlight) {
   current = { id: bookId, page: pageNo, chapter: chap.idx };
   openNodes.add("shelf:" + (meta.shelf || "kulliyat")); openNodes.add("book:" + bookId); saveOpen();
   setRead(bookId);
+  addRecent(book, chap, pageNo);
 
   if (!same) {
     const from = pageMode ? pageNo : chap.start, to = pageMode ? pageNo : chap.end;
@@ -954,6 +964,11 @@ function updatePage(p) {
   }, 400);
 }
 function setRead(id) { const r = store.get("nr-read", {}); r[id] = 1; store.set("nr-read", r); }
+function addRecent(book, chap, page) {
+  let list = store.get("nr-recent", []).filter((x) => !(x.book === book.id && x.chap === chap.title));
+  list.unshift({ book: book.id, title: book.title, chap: chap.title, page, at: Date.now() });
+  store.set("nr-recent", list.slice(0, 8));
+}
 
 /* =========================================================
    5) YÖNLENDİRME (#sozler-30 gibi)
@@ -1482,6 +1497,7 @@ function openMenu(kind) {
     const items = [
       ["home", MI('<path d="M3 11l9-8 9 8M5 10v10h14V10"/>'), "Ana sayfa", "Arama, eser grupları ve günün vecizesi"],
       ["notes", MI('<path d="M6 4h12v16l-6-4-6 4z"/>'), "Yer imleri ve notlarım", "İşaretlediğin sayfalar ve vurgular"],
+      ["lugat", MI('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M8 7h8M8 11h6"/>'), "Lugat", "Bütün kelimeler ve anlamları, aranabilir"],
       ["keys", MI('<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/>'), "Kısayollar ve yardım", "Klavye kısayolları, nasıl kullanılır"],
       ["about", MI('<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/>'), "NurRisale hakkında", "Proje, kaynaklar ve özellikler"],
     ];
@@ -1510,6 +1526,16 @@ menu.addEventListener("click", async (e) => {
   if (m === "home") { activeTab = "search"; saveTabs(); location.hash = ""; route(); }
   if (m === "newtab") $("#tab-add").click();
   if (m === "notes") { if (narrow()) openSide(); else { renderSide(); side.scrollTo({ top: 0, behavior: "smooth" }); } if (!getMarks().length && !getHls().length) toast("Henüz yer imi ya da vurgu yok"); }
+  if (m === "lugat") {
+    showModal(`<h2>Lugat</h2><input id="lug-q" class="lug-q" type="search" placeholder="Kelime ya da anlam ara" autocomplete="off"><div id="lug-list" class="lug-list"></div>`);
+    const keys = Object.keys(LUGAT).sort((a, b) => a.localeCompare(b, "tr"));
+    const draw = () => {
+      const t = plain($("#lug-q").value.trim());
+      const list = t ? keys.filter((k) => plain(k).includes(t) || plain(LUGAT[k]).includes(t)) : keys;
+      $("#lug-list").innerHTML = `<div class="lug-n">${list.length.toLocaleString("tr")} kelime</div>` + list.slice(0, 300).map((k) => `<div><b>${escapeHtml(k)}</b> ${escapeHtml(LUGAT[k])}</div>`).join("");
+    };
+    $("#lug-q").oninput = draw; draw(); $("#lug-q").focus();
+  }
   if (m === "keys") showModal(`<h2>Kısayollar ve yardım</h2><table>
       <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Önceki / sonraki bölüm (sayfa modunda sayfa)</td></tr>
       <tr><td><kbd>F</kbd></td><td>Odak modu</td></tr><tr><td><kbd>Esc</kbd></td><td>Açık pencereleri kapat</td></tr></table>
