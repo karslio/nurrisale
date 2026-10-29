@@ -11,6 +11,8 @@ Site: https://karslio.github.io/nurrisale
 - `books/<kitap>.json` — kitabın sayfaları, içindekiler ve haşiyeleri
 - `books/lugat-big.json`, `books/kelime-sira.json` — büyük lugat ve en sık 1000 kelime
   (`tools/build_lugat.py` ile [Risale-i Nur Kelime Frekansı](https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans) verisinden, CC0)
+- `books/ayetler.json` — Arapça satırlarda geçen ayetler ve mealleri (`tools/build_ayet.py`;
+  [quran-json](https://github.com/risan/quran-json) verisinden: Tanzil metni CC BY 3.0, meal: Rowwad Tercüme Merkezi, QuranEnc.com)
 - `books/stats.json` — kitaplara göre kelime istatistikleri (`tools/build_stats.py`)
 - `tools/epub_to_json.py` — EPUB dosyasını `books/` için JSON'a çeviren araç
 

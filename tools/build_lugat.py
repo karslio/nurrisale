@@ -62,10 +62,49 @@ lugat = {}
 for key, cnt in meanings.items():
     best = sorted(cnt.items(), key=lambda kv: (-kv[1], len(kv[0])))[0][0]
     lugat[key] = f"{display[key]}|{best}"
+# Sitedeki kitaplarda hiç geçmeyen kayıtları at (dosya küçülür, site hızlanır).
+# Tek kelime: kitaplardaki bir kelime bu kayıtla başlıyorsa kalır (sitede ekler kırpılarak aranıyor).
+# Tamlama: kelimeler aralarında tek boşlukla art arda geçiyorsa kalır; son kelimede en fazla 5 harflik ek olabilir.
+import bisect
+WORDS = re.compile(r"([A-Za-zÇĞİÖŞÜçğıöşüÂÎÛâîû'’-]+)")
+seqs = []
+for meta in json.loads((OUT / "index.json").read_text(encoding="utf-8")):
+    for page in json.loads((OUT / f"{meta['id']}.json").read_text(encoding="utf-8"))["pages"]:
+        for k, t in page["b"]:
+            if k == "ar":
+                continue
+            parts = WORDS.split(re.sub(r"⟦[^⟧]*⟧", "", t))
+            seqs.append([(plain(re.sub(r"['’].*$", "", parts[i])), parts[i + 1] if i + 1 < len(parts) else "") for i in range(1, len(parts), 2)])
+forms = sorted({w for sq in seqs for w, _ in sq})
+starts = collections.defaultdict(list)
+for si, sq in enumerate(seqs):
+    for j, (w, _) in enumerate(sq):
+        starts[w].append((si, j))
+
+def used(key):
+    if " " not in key:
+        i = bisect.bisect_left(forms, key)
+        return i < len(forms) and forms[i].startswith(key)
+    ws = key.split(" ")
+    for si, j in starts.get(ws[0], ()):
+        sq = seqs[si]
+        if j + len(ws) > len(sq):
+            continue
+        ok = True
+        for n in range(1, len(ws)):
+            w = sq[j + n][0]
+            if sq[j + n - 1][1] != " " or (w != ws[n] if n < len(ws) - 1 else not (w.startswith(ws[n]) and len(w) - len(ws[n]) <= 5)):
+                ok = False
+                break
+        if ok:
+            return True
+    return False
+
+site_lugat = {k: v for k, v in lugat.items() if used(k)}
 OUT.mkdir(exist_ok=True)
-(OUT / "lugat-big.json").write_text(json.dumps(lugat, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-single = sum(1 for k in lugat if " " not in k)
-print(f"lugat-big.json: {len(lugat)} kayıt ({single} tek kelime, {len(lugat) - single} tamlama)")
+(OUT / "lugat-big.json").write_text(json.dumps(site_lugat, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+single = sum(1 for k in site_lugat if " " not in k)
+print(f"lugat-big.json: {len(site_lugat)} kayıt ({single} tek kelime, {len(site_lugat) - single} tamlama; kitaplarda geçmeyen {len(lugat) - len(site_lugat)} kayıt atıldı)")
 
 # 2) Öğrenme sırası: bütün kitaplardaki sıklıkların toplamı (terkipsiz)
 freq = collections.Counter()
