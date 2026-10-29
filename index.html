@@ -560,36 +560,77 @@ body.lesson .pmark { opacity: .35; }
 
 /* ---------- Hayat haritası ---------- */
 .hy { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr); gap: 18px; align-items: start; }
-.hy-map { position: sticky; top: 120px; border: 1px solid var(--rule); border-radius: 16px; background: color-mix(in srgb, var(--paper) 60%, var(--side)); overflow: hidden; }
-.hy-map svg { display: block; width: 100%; height: auto; }
-.hy-map .il { fill: var(--soft); stroke: var(--paper); stroke-width: .8; }
-.hy-map .route { fill: none; stroke: var(--red); stroke-width: 1.2; stroke-dasharray: 4 6; opacity: .18; }
-.hy-map .route-done { fill: none; stroke: var(--red); stroke-width: 2.4; opacity: .55; stroke-linejoin: round; }
-.hy-map .route-last { fill: none; stroke: var(--red); stroke-width: 4; stroke-linecap: round; }
-.hy-map .pt circle { fill: var(--surface); stroke: var(--red); stroke-width: 3; cursor: pointer; transition: r .2s; }
-.hy-map .pt.on circle { fill: var(--red); }
+.hy-eras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 14px; }
+.hy-eras button { border: 1px solid var(--rule); background: var(--surface); border-radius: 12px; padding: 8px 12px; cursor: pointer; text-align: left; color: var(--ink); display: grid; gap: 1px; }
+.hy-eras button b { font: 600 15px "Poppins", var(--font-ui); }
+.hy-eras button small { font: 500 12.5px var(--font-ui); color: var(--muted); }
+.hy-eras button.on { border-color: var(--red); background: color-mix(in srgb, var(--red) 8%, var(--surface)); }
+.hy-eras button.on b { color: var(--red); }
+.hy-map { position: sticky; top: 120px; border: 1px solid var(--rule); border-radius: 16px; background: var(--surface); overflow: hidden; }
+.hy-map svg { display: block; width: 100%; height: auto; aspect-ratio: 1000 / 623; }
+.hy-map .sea { fill: color-mix(in srgb, #5b8db8 16%, var(--paper)); }
+.hy-map .ulke { fill: color-mix(in srgb, var(--soft) 45%, var(--paper)); stroke: color-mix(in srgb, var(--muted) 35%, transparent); stroke-width: .7; vector-effect: non-scaling-stroke; }
+.hy-map .il { fill: var(--soft); stroke: var(--paper); stroke-width: .8; vector-effect: non-scaling-stroke; }
+.hy-map .gol { fill: color-mix(in srgb, #5b8db8 32%, var(--paper)); stroke: color-mix(in srgb, #5b8db8 45%, transparent); stroke-width: .6; vector-effect: non-scaling-stroke; }
+.hy-map .route { fill: none; stroke: var(--red); stroke-width: 1.2; stroke-dasharray: 4 6; opacity: .22; vector-effect: non-scaling-stroke; }
+.hy-map .route-done { fill: none; stroke: var(--red); stroke-width: 2.2; opacity: .5; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.hy-map .route-last { fill: none; stroke: var(--red); stroke-width: 3.6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.hy-map .pt { cursor: pointer; }
+.hy-map .pt .c { fill: var(--surface); stroke: var(--red); stroke-width: 3; transition: r .2s; }
+.hy-map .pt.on .c { fill: var(--red); }
 .hy-map .pt .ring { r: 0; fill: none; stroke: var(--red); stroke-width: 2; pointer-events: none; }
-.hy-map .pt.cur circle:not(.ring) { r: 12; fill: var(--red); }
+.hy-map .pt.cur .c { r: 12; fill: var(--red); }
 .hy-map .pt.cur .ring { animation: hyp 1.6s infinite; }
 @keyframes hyp { from { r: 13; opacity: .6; } to { r: 30; opacity: 0; } }
-.hy-map .pt text { font: 600 21px var(--font-ui); fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; pointer-events: none; }
-.hy-map .off { font: 600 20px var(--font-ui); fill: var(--red); }
+.hy-map .pt text { font: 600 20px var(--font-ui); fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; pointer-events: none; }
+.hy-map .pt.cur text { fill: var(--red); }
+.hy-map .pt.minor .c { stroke-width: 2.5; }
+.hy-map svg.far .pt.minor:not(.cur) text { display: none; }
+.hy-map svg.far .pt.minor:not(.cur) .c { r: 5; }
+.hy-map .pt.off text { font: 600 19px var(--font-ui); fill: var(--red); stroke: var(--paper); stroke-width: 4px; paint-order: stroke; }
+.hy-map .pt.off.cur text { font-weight: 800; text-decoration: underline; }
+.hy-svgw { position: relative; }
+.hy-card { position: absolute; left: 10px; bottom: 10px; max-width: min(70%, 340px); background: color-mix(in srgb, var(--surface) 92%, transparent); border: 1px solid var(--rule); border-radius: 10px; padding: 6px 10px; display: grid; gap: 1px; pointer-events: none; box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+.hy-card.tr { left: auto; right: 10px; bottom: auto; top: 10px; }
+.hy-card b { font: 600 14.5px "Poppins", var(--font-ui); color: var(--ink); }
+.hy-card span { font: 500 12.5px var(--font-ui); color: var(--muted); }
+.hy-tl { position: relative; height: 34px; margin: 0 14px; border-top: 1px solid var(--rule); }
+.hy-tl .band { position: absolute; top: 12px; height: 6px; border-radius: 3px; }
+.hy-tl .band.e0 { background: color-mix(in srgb, var(--red) 22%, transparent); }
+.hy-tl .band.e1 { background: color-mix(in srgb, var(--red) 40%, transparent); }
+.hy-tl .band.e2 { background: color-mix(in srgb, var(--red) 62%, transparent); }
+.hy-tl i { position: absolute; top: 8px; width: 4px; height: 14px; margin-left: -2px; border-radius: 2px; background: var(--muted); opacity: .45; cursor: pointer; }
+.hy-tl i::after { content: ""; position: absolute; inset: -8px -4px; }
+.hy-tl i.on { background: var(--red); opacity: .9; }
+.hy-tl em { position: absolute; top: 4px; width: 12px; height: 22px; margin-left: -6px; border-radius: 6px; background: var(--red); box-shadow: 0 0 0 3px var(--surface); transition: left .4s; pointer-events: none; }
+.hy-tl .t0, .hy-tl .t1 { position: absolute; bottom: -1px; font: 500 10.5px var(--font-ui); color: var(--muted); }
+.hy-tl .t0 { left: 0; } .hy-tl .t1 { right: 0; }
 .hy-ctl { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border-top: 1px solid var(--rule); background: var(--surface); flex-wrap: wrap; }
 .hy-ctl button { border: 1px solid var(--rule); background: var(--paper); border-radius: 10px; padding: 7px 12px; cursor: pointer; font: 500 14px var(--font-ui); color: var(--ink); }
 .hy-ctl button.pri { background: var(--red); border-color: var(--red); color: #fff; }
+.hy-ctl button[aria-pressed="true"] { border-color: var(--red); color: var(--red); }
 .hy-ctl .yr { margin-left: auto; font: 700 18px "Poppins", var(--font-ui); color: var(--red); }
 .hy-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; position: relative; }
 .hy-list::before { content: ""; position: absolute; left: 17px; top: 8px; bottom: 8px; width: 2px; background: var(--rule); }
-.hy-it { position: relative; padding: 4px 0 18px 48px; cursor: pointer; }
-.hy-it .dot { position: absolute; left: 6px; top: 4px; width: 24px; height: 24px; border-radius: 99px; background: var(--surface); border: 3px solid var(--red); display: grid; place-items: center; font: 700 11px var(--font-ui); color: var(--red); }
+.hy-era { position: relative; margin: 6px 0 14px; padding: 10px 12px 10px 48px; background: var(--side); border-radius: 12px; }
+.hy-era b { font: 700 16px "Poppins", var(--font-ui); color: var(--red); }
+.hy-era span { font: 600 13px var(--font-ui); color: var(--muted); }
+.hy-era p { margin: 2px 0 0; font: 500 13.5px var(--font-ui); color: var(--muted); }
+.hy-it { position: relative; padding: 4px 6px 18px 48px; cursor: pointer; }
+.hy-it .dot { position: absolute; left: 6px; top: 4px; width: 24px; height: 24px; border-radius: 99px; background: var(--surface); border: 3px solid var(--red); display: grid; place-items: center; font: 700 10.5px var(--font-ui); color: var(--red); }
 .hy-it.cur .dot { background: var(--red); color: #fff; }
 .hy-it .yr { font: 600 13px var(--font-ui); color: var(--red); }
 .hy-it h3 { margin: 2px 0 4px; font: 600 17px "Poppins", var(--font-ui); }
 .hy-it h3 small { color: var(--muted); font-weight: 500; font-size: 13.5px; }
 .hy-it p { margin: 0 0 8px; font-family: var(--font-body); line-height: 1.55; font-size: 15.5px; }
+.hy-q { margin: 0 0 10px; padding: 6px 0 6px 12px; border-left: 3px solid color-mix(in srgb, var(--red) 45%, transparent); }
+.hy-q a { color: var(--ink); text-decoration: none; font-family: var(--font-body); font-style: italic; font-size: 15px; line-height: 1.55; }
+.hy-q a:hover { color: var(--red); text-decoration: underline; }
+.hy-q cite { display: block; margin-top: 2px; font: 500 12px var(--font-ui); font-style: normal; color: var(--muted); }
 .hy-it .lk { display: flex; flex-wrap: wrap; gap: 6px; }
+.hy-it .lk .bk { font-weight: 600; }
 .hy-it.cur { background: linear-gradient(90deg, color-mix(in srgb, var(--red) 6%, transparent), transparent); border-radius: 12px; }
-@media (max-width: 900px) { .hy { grid-template-columns: minmax(0, 1fr); } .hy-map { position: sticky; top: 96px; z-index: 5; } }
+@media (max-width: 900px) { .hy { grid-template-columns: minmax(0, 1fr); } .hy-map { position: sticky; top: 96px; z-index: 5; } .hy-eras button { padding: 6px 8px; } .hy-eras button b { font-size: 13.5px; } .hy-card { max-width: 78%; padding: 4px 8px; } .hy-card b { font-size: 13px; } .hy-ctl { padding: 8px 10px; gap: 6px; } .hy-ctl button { padding: 6px 10px; font-size: 13px; } }
 
 /* ---------- Dağılım grafiği ---------- */
 .dist { border: 1px solid var(--rule); border-radius: 12px; background: var(--surface); padding: 12px 12px 6px; }
@@ -1220,7 +1261,7 @@ function showLibrary() {
     ${planCardHtml()}
     <div class="sec"><div class="card"><div class="row2"><div><div class="h">Kelime Öğren</div><strong>${srsDue().length ? `${srsDue().length} kelime tekrar bekliyor` : "En sık geçen kelimelerle başla"}</strong><div style="color:var(--muted);font-size:13.5px;margin-top:2px">${KNOWN.size ? `${KNOWN.size} kelime biliyorsun · öğrendiklerin aralıklarla (1, 3, 7, 16… gün) tekrar sorulur` : "İlk 100 kelime, lugata bakma ihtiyacının beşte birini karşılar"}</div></div><button class="btn" id="home-learn">${srsDue().length ? "Tekrar et" : "Başla"}</button></div></div></div>
     <div class="sec"><h2 class="sec-h">Keşfet</h2><div class="ex-grid">
-      <a href="#hayat">${MI('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>')}<b>Bediüzzaman'ın hayatı</b><small>Nurs'tan Urfa'ya harita ve zaman çizelgesi</small></a>
+      <a href="#hayat">${MI('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>')}<b>Bediüzzaman'ın hayatı</b><small>51 durak, üç dönem; Tarihçe ve Lâhikalardan alıntılarla</small></a>
       <a href="#konular">${MI('<path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/>')}<b>Konu dizini</b><small>Haşir, kader, namaz… nerede anlatılıyor</small></a>
       <a href="#dizin">${MI('<path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 9h8M8 13h5"/>')}<b>Hadis, kişi ve yer dizini</b><small>72 hadis, 38 kişi, 29 yer</small></a>
       <a href="#ayetler">${MI('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M12 7v6M9 10h6"/>')}<b>Ayet dizini</b><small>Geçen ayetler, mealleri ve yerleri</small></a>
@@ -1655,7 +1696,7 @@ function route() {
   if (location.hash.startsWith("#ayetler")) { if (pageObserver) pageObserver.disconnect(); return showAyetler(location.hash.slice(9) || null); }
   if (location.hash.startsWith("#konular")) { if (pageObserver) pageObserver.disconnect(); return showKonular(location.hash.slice(9) || null); }
   if (location.hash.startsWith("#dizin")) { if (pageObserver) pageObserver.disconnect(); return showDizin(location.hash.slice(7) || null); }
-  if (location.hash.startsWith("#hayat")) { if (pageObserver) pageObserver.disconnect(); return showHayat(); }
+  if (location.hash.startsWith("#hayat")) { if (pageObserver) pageObserver.disconnect(); return showHayat(location.hash.slice(7)); }
   clearInterval(hyTimer);
   const m = location.hash.match(/^#([a-z]+)-(\d+)(?:-(\d+))?$/);
   if (m) showChapter(m[1], +m[2], pendingHighlight, m[3] != null ? +m[3] : null); else { if (pageObserver) pageObserver.disconnect(); showLibrary(); }
@@ -2195,7 +2236,7 @@ function openMenu(kind) {
       ["ayet", MI('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M12 7v6M9 10h6"/>'), "Ayet dizini", "Risale'de geçen ayetler, mealleri ve geçtiği yerler"],
       ["konu", MI('<path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/><path d="m20.2 18.2 1.8 1.8"/>'), "Konu dizini", "Haşir, kader, namaz… Risale'de nerelerde işleniyor"],
       ["ders", MI('<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>'), "Ders modu", "Perdeye yansıtmak için büyük yazı, tam ekran (D)"],
-      ["hayat", MI('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>'), "Bediüzzaman'ın hayatı", "Harita ve zaman çizelgesi, 1877–1960"],
+      ["hayat", MI('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>'), "Bediüzzaman'ın hayatı", "51 duraklı harita ve zaman çizgisi, 1877–1960"],
       ["dizin", MI('<path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 9h8M8 13h5"/>'), "Hadis, kişi ve yer dizini", "Hadisler, peygamberler, âlimler, şehirler"],
       ["vecize", MI('<path d="M7 7h4v4c0 3-2 5-4 6M15 7h4v4c0 3-2 5-4 6"/>'), "Vecize ezberi", "Küçük Sözler'den her gün yeni vecize"],
       ["offline", MI('<path d="M12 4v11M7 10l5 5 5-5M4 20h16"/>'), "Çevrimdışı kütüphane", "Bütün kitapları cihaza indir"],
@@ -2805,60 +2846,110 @@ async function showDizin(arg) {
 
 /* ---------- Bediüzzaman'ın hayatı: harita ve zaman çizelgesi (#hayat) ---------- */
 let hyTimer = null;
-async function showHayat() {
-  toolPage(); clearInterval(hyTimer);
+async function showHayat(arg) {
+  toolPage(); clearInterval(hyTimer); hyTimer = null;
   app.innerHTML = `<div class="loading">Harita hazırlanıyor…</div>`;
   let H; try { H = await loadJson("hayat"); } catch { app.innerHTML = `<div class="loading">Harita yüklenemedi. Bağlantını kontrol edip sayfayı yenile.</div>`; return; }
   document.title = "Bediüzzaman'ın hayatı · NurRisale";
-  const S = H.stops, places = [];
-  S.forEach((s, i) => { if (s.x == null) return; let p = places.find((q) => q.pl === s.pl); if (!p) places.push(p = { pl: s.pl, x: s.x, y: s.yy, idx: [] }); p.idx.push(i); });
-  const inMap = S.map((s, i) => [s, i]).filter(([s]) => s.x != null);
-  const routeD = (upto) => inMap.filter(([, i]) => i <= upto).map(([s], k) => `${k ? "L" : "M"}${s.x},${s.yy}`).join("");
-  const off = S.map((s, i) => [s, i]).filter(([s]) => s.x == null);
-  const LBL = { "Isparta": [-12, 30, "end"], "Barla": [16, -6, "start"], "Burdur": [-14, -12, "end"], "Denizli": [-16, 4, "end"], "Afyon": [-16, 10, "end"], "Emirdağ": [16, 8, "start"], "Eskişehir": [-16, -2, "end"],
-    "Bitlis": [-16, -12, "end"], "Van": [16, 6, "start"], "Siirt": [10, 26, "start"], "Nurs": [14, 24, "start"], "Doğubayazıt": [-4, -18, "end"], "Erzurum": [-16, -10, "end"], "Şam": [16, 6, "start"] };
-  const labelPos = (p) => { const [dx, dy, a] = LBL[p.pl] || (p.x < H.w - 140 ? [16, 6, "start"] : [-16, 6, "end"]); return `x="${dx}" y="${dy}" text-anchor="${a}"`; };
+  const S = H.stops, P = H.pts, eraIx = (e) => H.eras.findIndex((x) => x[0] === e);
+  const byPt = {}; S.forEach((s, i) => (byPt[s.pt] ||= []).push(i));
+  const firstYear = (y) => parseInt(y, 10), Y0 = 1877, Y1 = 1960, yPos = (y) => (100 * (firstYear(y) - Y0) / (Y1 - Y0)).toFixed(2);
+  const routeD = (upto) => S.slice(0, upto + 1).map((s, k) => `${k ? "L" : "M"}${P[s.pt].x},${P[s.pt].y}`).join("");
+  const link = (ref, label) => `<a class="pl" href="#${ref}">${escapeHtml(label)}</a>`;
+  const refName = (ref) => { const id = ref.replace(/-\d+-\d+$/, ""), m = metaOf(id); return m ? m.title : id; };
+  let auto = store.get("nr-hy-auto", true);
+  // Liste: dönem başlıkları + duraklar
+  let list = "", lastEra = "";
+  S.forEach((s, i) => {
+    if (s.e !== lastEra) { const e = H.eras[eraIx(s.e)]; list += `<li class="hy-era" id="hy-era-${eraIx(s.e)}"><b>${escapeHtml(e[0])}</b> <span>${e[1]}</span><p>${escapeHtml(e[2])}</p></li>`; lastEra = s.e; }
+    const works = s.w.map((w) => metaOf(w) ? `<a class="pl bk" href="#${w}-1">📖 ${escapeHtml(metaOf(w).title)}</a>` : "").join("");
+    const src = s.src.map(([r, l]) => link(r, l)).join("");
+    list += `<li class="hy-it" data-i="${i}" id="hy-${i}"><span class="dot">${i + 1}</span><div class="yr">${s.y}</div><h3>${escapeHtml(s.t)} <small>· ${escapeHtml(s.pl)}</small></h3><p>${escapeHtml(s.d)}</p>
+      ${s.q ? `<blockquote class="hy-q"><a href="#${s.q[1]}">“${escapeHtml(s.q[0])}”</a><cite>${escapeHtml(refName(s.q[1]))}</cite></blockquote>` : ""}
+      ${works || src ? `<div class="lk">${works}${src}</div>` : ""}</li>`;
+  });
+  const ptSvg = Object.entries(P).map(([k, p]) => {
+    const yrs = byPt[k].map((i) => S[i].y).join(", ");
+    if (p.off) return `<g class="pt off" data-pt="${k}" transform="translate(${p.x},${p.y})"><title>${escapeHtml(p.n)} · ${yrs}</title><rect x="-8" y="-4" width="16" height="16" fill="transparent"/><text y="12" text-anchor="middle">${p.off} ${escapeHtml(p.n)}</text></g>`;
+    const [dx, dy, an] = p.l;
+    return `<g class="pt${p.m ? "" : " minor"}" data-pt="${k}" transform="translate(${p.x},${p.y})"><title>${escapeHtml(p.n)} · ${yrs}</title><circle class="ring"/><circle class="c" r="${p.m ? 9 : 7}"/><text x="${dx}" y="${dy}" text-anchor="${an}">${escapeHtml(p.n)}</text></g>`;
+  }).join("");
+  const tr = H.reg.tr;
   app.innerHTML = `<section class="stv">${swHtml("hayat")}
     <h1 class="stv-h">Bediüzzaman Said Nursî'nin hayatı</h1>
-    <p class="stv-sub">Nurs'tan Urfa'ya, 1877–1960. Bir durağa tıkla; o yıllarda yazılan eserler ve Tarihçe-i Hayat'ın ilgili bölümü açılır.</p>
+    <p class="stv-sub">Nurs'tan Urfa'ya, 1877–1960: ${S.length} durak. Her durak Tarihçe-i Hayat'ın ve Lâhikaların ilgili paragrafına bağlı; alıntıya tıklayınca o paragraf açılır.</p>
+    <div class="hy-eras">${H.eras.map((e, k) => `<button data-era="${k}"><b>${escapeHtml(e[0])}</b><small>${e[1]}</small></button>`).join("")}</div>
     <div class="hy">
-      <div class="hy-map">
-        <svg viewBox="0 0 ${H.w} ${H.h}" role="img" aria-label="Bediüzzaman'ın hayatındaki duraklar haritası">
+      <div class="hy-map"><div class="hy-svgw">
+        <svg id="hy-svg" viewBox="${tr.join(" ")}" role="img" aria-label="Bediüzzaman'ın hayatındaki duraklar haritası">
+          <rect class="sea" x="-2000" y="-2000" width="5000" height="5000"/>
+          <g>${H.ulke.map(([n, d]) => `<path class="ulke" d="${d}"><title>${escapeHtml(n)}</title></path>`).join("")}</g>
           <g>${H.il.map(([n, d]) => `<path class="il" d="${d}"><title>${escapeHtml(n)}</title></path>`).join("")}</g>
-          <path class="route" d="${routeD(S.length)}"/><path class="route-done" id="hy-done" d=""/><path class="route-last" id="hy-last" d=""/>
-          ${off.map(([s, i]) => `<text class="off" x="${H.w * 0.64}" y="28" text-anchor="middle" data-i="${i}" style="cursor:pointer">↑ ${escapeHtml(s.pl)} (Rusya) ${s.y}</text>`).join("")}
-          ${places.map((p) => `<g class="pt" data-pl="${escapeHtml(p.pl)}" transform="translate(${p.x},${p.y})"><circle class="ring"/><circle r="9" data-i="${p.idx[0]}"/><text ${labelPos(p)}>${escapeHtml(p.pl)}</text></g>`).join("")}
+          <g>${H.gol.map(([n, d]) => `<path class="gol" d="${d}"><title>${escapeHtml(n)}</title></path>`).join("")}</g>
+          <path class="route" d="${routeD(S.length - 1)}"/><path class="route-done" id="hy-done" d=""/><path class="route-last" id="hy-last" d=""/>
+          ${ptSvg}
         </svg>
-        <div class="hy-ctl"><button class="pri" id="hy-play">▶ Oynat</button><button id="hy-prev">◀</button><button id="hy-next">▶</button><span class="yr" id="hy-yr"></span></div>
+        <div class="hy-card" id="hy-card"></div></div>
+        <div class="hy-tl" id="hy-tl" title="Zaman çizgisi">${H.eras.map((e) => { const [a, b] = e[1].split("–").map(Number); return `<span class="band e${eraIx(e[0])}" style="left:${yPos(a)}%;width:${(100 * (b - a) / (Y1 - Y0)).toFixed(2)}%"></span>`; }).join("")}
+          ${S.map((s, i) => `<i data-i="${i}" style="left:${yPos(s.y)}%"></i>`).join("")}<em id="hy-tlc"></em><span class="t0">1877</span><span class="t1">1960</span></div>
+        <div class="hy-ctl"><button class="pri" id="hy-play">▶ Oynat</button><button id="hy-prev" aria-label="Önceki durak">◀</button><button id="hy-next" aria-label="Sonraki durak">▶</button>
+          <button id="hy-auto" aria-pressed="${auto}">${auto ? "🔍 Yakınlaş: açık" : "🔍 Yakınlaş: kapalı"}</button><span class="yr" id="hy-yr"></span></div>
       </div>
-      <ol class="hy-list">${S.map((s, i) => `<li class="hy-it" data-i="${i}" id="hy-${i}"><span class="dot">${i + 1}</span><div class="yr">${s.y}</div><h3>${escapeHtml(s.t)} <small>· ${escapeHtml(s.pl)}</small></h3><p>${escapeHtml(s.d)}</p>
-        <div class="lk">${s.w.map((w) => metaOf(w) ? `<a class="pl" href="#${w}-1">${escapeHtml(metaOf(w).title)}</a>` : "").join("")}${s.p ? `<a class="pl" href="#tarihceihayat-${s.p}">Tarihçe-i Hayat'ta oku →</a>` : ""}</div></li>`).join("")}</ol>
+      <ol class="hy-list">${list}</ol>
     </div>
-    <p class="stq-note">${escapeHtml(H.kaynak)}. Tarihler Tarihçe-i Hayat'a göre yaklaşık verilmiştir.</p>
+    <p class="stq-note">${escapeHtml(H.kaynak)}. Tarihler Tarihçe-i Hayat'a göre yaklaşık verilmiştir; bazı küçük yerler (Tağ, Tillo, Sav, Çam Dağı) yakınlarındaki noktada gösterilir.</p>
   </section>`;
+  const svg = $("#hy-svg");
+  // viewBox yumuşak geçiş; noktalar ve yazılar ekranda hep aynı boyda kalsın
+  let vb = tr.slice(), anim = 0;
+  const applyVb = () => {
+    svg.setAttribute("viewBox", vb.map((v) => v.toFixed(1)).join(" "));
+    const k = vb[2] / H.w * (narrow() ? 1.45 : 1);
+    svg.classList.toggle("far", vb[2] / H.w > 0.75);
+    app.querySelectorAll("#hy-svg .pt").forEach((g) => { const p = P[g.dataset.pt]; g.setAttribute("transform", `translate(${p.x},${p.y}) scale(${k.toFixed(3)})`); });
+  };
+  const zoomTo = (box) => {
+    cancelAnimationFrame(anim);
+    const from = vb.slice(), t0 = performance.now(), dur = matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : 750;
+    const step = (t) => { const u = Math.min(1, (t - t0) / dur), e = u < .5 ? 2 * u * u : 1 - (-2 * u + 2) ** 2 / 2; vb = from.map((v, j) => v + (box[j] - v) * e); applyVb(); if (u < 1) anim = requestAnimationFrame(step); };
+    anim = requestAnimationFrame(step);
+  };
   let cur = -1;
   const sel = (i, scroll = true) => {
     cur = Math.max(0, Math.min(S.length - 1, i));
-    const s = S[cur];
+    const s = S[cur], p = P[s.pt];
     app.querySelectorAll(".hy-it").forEach((el) => el.classList.toggle("cur", +el.dataset.i === cur));
-    app.querySelectorAll(".pt").forEach((g) => { const p = places.find((q) => q.pl === g.dataset.pl); g.classList.toggle("cur", p.idx.includes(cur)); g.classList.toggle("on", p.idx.some((k) => k < cur)); });
+    app.querySelectorAll("#hy-svg .pt").forEach((g) => { const ix = byPt[g.dataset.pt]; g.classList.toggle("cur", ix.includes(cur)); g.classList.toggle("on", ix.some((k) => k < cur)); });
+    app.querySelectorAll(".hy-tl i").forEach((el) => el.classList.toggle("on", +el.dataset.i <= cur));
+    app.querySelectorAll(".hy-eras button").forEach((b) => b.classList.toggle("on", +b.dataset.era === eraIx(s.e)));
+    $("#hy-tlc").style.left = yPos(s.y) + "%";
     $("#hy-done").setAttribute("d", routeD(cur));
-    const pv = inMap.filter(([, i]) => i < cur).pop(), cs = S[cur];
-    $("#hy-last").setAttribute("d", pv && cs.x != null ? `M${pv[0].x},${pv[0].yy}L${cs.x},${cs.yy}` : "");
-    $("#hy-yr").textContent = `${s.y} · ${s.pl}`;
+    const pv = cur > 0 ? P[S[cur - 1].pt] : null;
+    $("#hy-last").setAttribute("d", pv ? `M${pv.x},${pv.y}L${p.x},${p.y}` : "");
+    $("#hy-yr").textContent = s.y;
+    $("#hy-card").innerHTML = `<b>${cur + 1}. ${escapeHtml(s.t)}</b><span>${escapeHtml(s.pl)} · ${s.y} · ${escapeHtml(s.e)}</span>`;
+    const box = auto ? H.reg[p.r] : tr, fx = (p.x - box[0]) / box[2], fy = (p.y - box[1]) / box[3];
+    $("#hy-card").classList.toggle("tr", fx < 0.6 && fy > 0.55);
+    zoomTo(box);
+    try { history.replaceState(null, "", "#hayat-" + (cur + 1)); } catch {}
     if (scroll) { const el = $("#hy-" + cur), r = el.getBoundingClientRect(), mapB = narrow() ? app.querySelector(".hy-map").getBoundingClientRect().bottom : $("#bars").getBoundingClientRect().bottom; if (r.top < mapB + 10 || r.bottom > innerHeight - 10) window.scrollTo({ top: scrollY + r.top - mapB - 16, behavior: "smooth" }); }
   };
-  app.querySelectorAll(".hy-it").forEach((el) => el.addEventListener("click", (e) => { if (!e.target.closest("a")) { stop(); sel(+el.dataset.i, false); } }));
-  app.querySelectorAll(".pt circle[data-i], .off").forEach((c) => c.addEventListener("click", () => { stop(); const p = places.find((q) => q.idx.includes(+c.dataset.i)); const next = p ? (p.idx.find((k) => k > cur) ?? p.idx[0]) : +c.dataset.i; sel(next); }));
   const stop = () => { clearInterval(hyTimer); hyTimer = null; const b = $("#hy-play"); if (b) b.textContent = "▶ Oynat"; };
+  app.querySelectorAll(".hy-it").forEach((el) => el.addEventListener("click", (e) => { if (!e.target.closest("a")) { stop(); sel(+el.dataset.i, false); } }));
+  app.querySelectorAll("#hy-svg .pt").forEach((g) => g.addEventListener("click", () => { stop(); const ix = byPt[g.dataset.pt]; sel(ix.find((k) => k > cur) ?? ix[0]); }));
+  app.querySelectorAll(".hy-tl i").forEach((el) => el.addEventListener("click", () => { stop(); sel(+el.dataset.i); }));
+  app.querySelectorAll(".hy-eras button").forEach((b) => b.addEventListener("click", () => { stop(); sel(S.findIndex((s) => eraIx(s.e) === +b.dataset.era)); }));
   $("#hy-play").onclick = () => {
     if (hyTimer) return stop();
     if (cur >= S.length - 1) cur = -1;
     $("#hy-play").textContent = "❚❚ Durdur"; sel(cur + 1);
-    hyTimer = setInterval(() => { if (!$("#hy-play")) return stop(); if (cur >= S.length - 1) return stop(); sel(cur + 1); }, 3200);
+    hyTimer = setInterval(() => { if (!$("#hy-play")) return stop(); if (cur >= S.length - 1) return stop(); sel(cur + 1); }, 3800);
   };
   $("#hy-prev").onclick = () => { stop(); sel(cur - 1); }; $("#hy-next").onclick = () => { stop(); sel(cur + 1); };
-  sel(0, false); window.scrollTo(0, 0);
+  $("#hy-auto").onclick = () => { auto = !auto; store.set("nr-hy-auto", auto); const b = $("#hy-auto"); b.setAttribute("aria-pressed", auto); b.textContent = auto ? "🔍 Yakınlaş: açık" : "🔍 Yakınlaş: kapalı"; zoomTo(auto ? H.reg[P[S[cur].pt].r] : tr); };
+  const want = Math.max(0, Math.min(S.length - 1, (parseInt(arg, 10) || 1) - 1));
+  applyVb(); sel(want, false);
+  if (want > 0) setTimeout(() => sel(want), 50); else window.scrollTo(0, 0);
 }
 
 /* ---------- Kelimenin dağılımı (istatistik sayacının altında) ---------- */
