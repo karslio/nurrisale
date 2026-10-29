@@ -1348,9 +1348,12 @@ function openFor(el) {
     showPop(el, `<div class="lbl">Meâl</div><div>${escapeHtml(x.m)}</div>${x.r ? `<div class="ref">${escapeHtml(x.r)}</div>` : ""}`);
   } else if (el.classList.contains("w")) {
     if (el.dataset.l && BIG && BIG[el.dataset.l]) {
-      const [disp, m] = BIG[el.dataset.l].split("|");
-      const known = KNOWN.has(el.dataset.l);
-      showPop(el, `<div class="lw">${escapeHtml(disp)}</div><div>${escapeHtml(m)}</div>`);
+      const key = el.dataset.l, [disp, m] = BIG[key].split("|");
+      const rk = RANK && RANK.get(key), known = KNOWN.has(key);
+      showPop(el, `<div class="lw">${escapeHtml(disp)}</div><div>${escapeHtml(m)}</div>
+        ${rk ? `<div class="ref">En sık geçen ${rk[0]}. kelime · ${rk[1].toLocaleString("tr")} kez geçiyor</div>` : ""}
+        <div class="acts"><button data-know class="${known ? "" : "pri"}">${known ? "Bilmiyorum" : "Biliyorum ✓"}</button></div>`);
+      pop.querySelector("[data-know]").onclick = () => { toggleKnown(key); hidePop(); };
     } else showPop(el, escapeHtml(LUGAT[el.dataset.k] || ""));
   } else {
     const txt = BOOKS.get(current.id)?.footnotes[el.dataset.fn];
@@ -1888,10 +1891,23 @@ menu.addEventListener("click", async (e) => {
   if (m === "install" && installEvt) { installEvt.prompt(); installEvt = null; }
 });
 /* ---------- Kelime Öğren: en sık kelimelerden başlayan kartlar ---------- */
-let LEARN = null;
+let LEARN = null, RANK = null;
+function loadRank() {
+  return fetch("books/kelime-sira.json").then((r) => r.json()).then((x) => {
+    LEARN = x; RANK = new Map(x.words.map((w, i) => [bk(w[0]), [i + 1, w[1]]]));
+  }).catch(() => {});
+}
+/* Okurken bir kelimeyi "biliyorum" diye işaretle: aynı kelime sayfada hemen düz yazıya döner */
+function toggleKnown(key) {
+  if (KNOWN.has(key)) { KNOWN.delete(key); toast("Bilmediğin kelimelere eklendi"); } else { KNOWN.add(key); toast("Bildiğin kelimelere eklendi"); }
+  store.set("nr-known", [...KNOWN]);
+  app.querySelectorAll(".w[data-l]").forEach((x) => { if (x.dataset.l === key) x.classList.toggle("kn", KNOWN.has(key)); });
+  _knownAtOpen.size = KNOWN.size;
+}
 async function openLearn() {
   showModal(`<h2>Kelime Öğren</h2><div id="learn-body"><div class="lug-n">Liste yükleniyor…</div></div>`);
-  if (!LEARN) { try { LEARN = await fetch("books/kelime-sira.json").then((r) => r.json()); } catch { $("#learn-body").textContent = "Liste yüklenemedi."; return; } }
+  if (!LEARN) await loadRank();
+  if (!LEARN) { $("#learn-body").textContent = "Liste yüklenemedi. Bağlantını kontrol et."; return; }
   let level = store.get("nr-learn-level", 100), queue = null, shown = false;
   const saveKnown = () => store.set("nr-known", [...KNOWN]);
   const words = () => LEARN.words.slice(0, level);
@@ -1944,6 +1960,7 @@ app.addEventListener("touchend", (e) => {
    BAŞLAT
    ========================================================= */
 applySettings();
+loadRank();
 Promise.all([loadLibrary(), loadLugat()]).then(async () => {
   // Açık kalan kitapların bölümlerini yükle
   await Promise.all([...openNodes].filter((k) => k.startsWith("book:")).map((k) => loadBook(k.slice(5)).catch(() => {})));
