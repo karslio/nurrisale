@@ -7,6 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=Amiri:wght@400;700&family=UnifrakturMaguntia&family=Poppins:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap">
 <style>
+@font-face { font-family: "Souvenir NR"; src: url("fonts/souvenir-regular.woff") format("woff"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Souvenir NR"; src: url("fonts/souvenir-bold.woff") format("woff"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Souvenir NR"; src: url("fonts/souvenir-italic.woff") format("woff"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Hamdullah"; src: url("fonts/hamdullah.woff") format("woff"); font-display: swap; }
 /* Düzen: üst çubuk + ikinci çubuk (Kitaplar | yol + sayfa); solda kitap ağacı (telefonda açılır), sağda okuma alanı.
    Bölümler tek parça kaydırılarak okunur; sayfa kutusu görünen sayfayı gösterir. */
 :root {
@@ -23,9 +27,9 @@
   --accent: #A0522D;   /* bağlantı ve vurgu */
   --mark: #FBE7A1;     /* arama vurgusu */
   --font-title: "UnifrakturMaguntia", "Times New Roman", serif;
-  --font-body: "Literata", "Amiri", Georgia, serif;
+  --font-body: "Souvenir NR", "Literata", "Hamdullah", "Amiri", Georgia, serif;
   --font-ui: "IBM Plex Sans", system-ui, sans-serif;
-  --font-arabic: "Amiri", "Traditional Arabic", serif;
+  --font-arabic: "Hamdullah", "Amiri", "Traditional Arabic", serif;
   --reader-size: 19px;
   --reader-lh: 1.7;
   --reader-font: var(--font-body);
@@ -171,6 +175,24 @@ main { margin-left: var(--side-w); padding-top: calc(env(safe-area-inset-top, 0p
 .quote .src a { color: var(--red); font-weight: 600; text-decoration: none; }
 @media (max-width: 640px) { .quote { grid-template-columns: 1fr; gap: 18px; } .quote .qimg img { width: 130px; } }
 
+/* Çizilmiş cilt kapağı: kırmızı deri, altın çerçeve ve yazı */
+.bind { --w: 120px; width: var(--w); aspect-ratio: 331 / 540; position: relative; border-radius: 2px 5px 5px 2px; overflow: hidden; container-type: inline-size;
+  background: radial-gradient(120% 80% at 50% 20%, #C42A3B 0%, #A3172A 55%, #7E0F1F 100%);
+  box-shadow: inset 6px 0 8px -4px rgba(0,0,0,.45), inset -2px 0 3px rgba(255,255,255,.12), 0 1px 2px rgba(0,0,0,.1), 0 10px 20px -8px rgba(0,0,0,.45); color: #E9C46A; }
+.bind::before { content: ""; position: absolute; inset: 0; opacity: .35; background-image: radial-gradient(rgba(0,0,0,.25) 1px, transparent 1.2px); background-size: 3px 3px; }
+.bind .fr { position: absolute; inset: 6% 8% 5% 11%; border: 1.5cqw solid transparent; border-image: repeating-linear-gradient(45deg, #E9C46A 0 3px, #B88A2E 3px 6px) 6; }
+.bind .fr::after { content: ""; position: absolute; inset: 4cqw; border: .8cqw solid #E9C46A; opacity: .9; }
+.bind .in { position: absolute; inset: 14% 18% 12% 21%; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.bind .top { font: italic 5.4cqw "EB Garamond", Georgia, serif; opacity: .95; }
+.bind .ttl { margin: auto 0; font-family: "UnifrakturMaguntia", serif; font-size: var(--fs, 17cqw); line-height: 1.05; text-shadow: 0 1px 0 rgba(0,0,0,.35); overflow-wrap: anywhere; }
+.bind .au { font: 700 5cqw "EB Garamond", Georgia, serif; line-height: 1.25; }
+.bind .seal { width: 13cqw; height: 13cqw; margin-top: 4cqw; border: .8cqw solid #E9C46A; border-radius: 50%; position: relative; }
+.bind .seal::after { content: ""; position: absolute; inset: 22%; background: #E9C46A; clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+.cv .img .bind { --w: auto; height: 168px; }
+.fan .bind { position: absolute; bottom: 14px; left: 50%; height: 150px; width: auto; transform: rotate(var(--r)); transform-origin: 50% 120%; transition: transform .25s ease; }
+.group:hover .fan .bind { transform: translateY(-4px) rotate(var(--r)); }
+@media (max-width: 960px) { .cv .img .bind { height: 140px; } }
+
 /* Okuma */
 .reader { max-width: 760px; margin: 0 auto; padding-top: 36px; }
 .chap-title { font-family: var(--font-title); color: var(--red); font-weight: 400; text-align: center; font-size: clamp(36px, 6vw, 60px); line-height: 1.1; margin: 10px 0 18px; text-wrap: balance; }
@@ -178,7 +200,7 @@ main { margin-left: var(--side-w); padding-top: calc(env(safe-area-inset-top, 0p
 .text { font-family: var(--reader-font); font-size: var(--reader-size); line-height: var(--reader-lh); text-align: justify; hyphens: auto; overflow-wrap: break-word; }
 .text p { margin: 0 0 .8em; text-indent: 1.5em; }
 .text p.c { text-align: center; text-indent: 0; }
-.text .arabic { font-family: var(--font-arabic); direction: rtl; text-align: center; text-indent: 0; color: var(--red); font-size: 1.32em; line-height: 1.9; margin: .6em 0 .9em; }
+.text .arabic { font-family: var(--font-arabic); direction: rtl; text-align: center; text-indent: 0; color: var(--red); font-size: 1.5em; line-height: 2; margin: .6em 0 .9em; }
 .text h4 { font-family: var(--font-body); font-weight: 600; color: var(--red); text-align: center; font-size: 1.12em; margin: 1.6em 0 .7em; text-wrap: balance; }
 .pmark { border-top: 1px solid var(--rule); margin: 1.1em -12px .9em; padding: 6px 12px 0; text-align: right; font: 600 15px var(--font-body); color: var(--muted); font-variant-numeric: tabular-nums; }
 .w { color: var(--lugat); cursor: pointer; }
@@ -213,7 +235,7 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; }
 .seg button { border: 1px solid var(--rule); background: var(--paper); border-radius: 8px; padding: 8px 6px; cursor: pointer; font-size: 13.5px; color: var(--ink); }
 .seg button.on { border-color: var(--red); box-shadow: inset 0 0 0 1px var(--red); }
 .seg .sw-light { background: #FDFCF8; color: #2A2722; } .seg .sw-sepia { background: #F5EEDC; color: #3A2E21; } .seg .sw-dark { background: #15130F; color: #E8E2D4; }
-.seg .f-book { font-family: "Literata", Georgia, serif; } .seg .f-classic { font-family: "EB Garamond", Georgia, serif; font-size: 15px; } .seg .f-sans { font-family: var(--font-ui); }
+.seg .f-book { font-family: "Souvenir NR", Georgia, serif; } .seg .f-classic { font-family: "EB Garamond", Georgia, serif; font-size: 15px; } .seg .f-sans { font-family: var(--font-ui); }
 .stepper { display: flex; align-items: center; gap: 8px; }
 .stepper button { width: 40px; height: 36px; border: 1px solid var(--rule); background: var(--paper); border-radius: 8px; cursor: pointer; font-size: 16px; }
 .stepper output { flex: 1; text-align: center; font-variant-numeric: tabular-nums; color: var(--muted); }
@@ -454,6 +476,14 @@ async function loadBook(id) {
   return book;
 }
 const metaOf = (id) => LIBRARY.find((b) => b.id === id);
+/* Külliyat kitapları için çizilmiş kapak; cep kitapları kendi resmini kullanır */
+function coverHtml(b, style = "") {
+  if ((b.shelf || "kulliyat") !== "kulliyat") return `<img src="${b.cover}" alt="" loading="lazy" style="${style}">`;
+  const len = b.title.length, fs = len <= 7 ? 19 : len <= 11 ? 16 : len <= 16 ? 14 : 12;
+  return `<span class="bind" style="--fs:${fs}cqw;${style}"><span class="fr"></span><span class="in">
+    <span class="top">Risale-i Nur Külliyatından</span><span class="ttl">${escapeHtml(b.title)}</span>
+    <span class="au">Bediüzzaman<br>Said Nursî</span><span class="seal"></span></span></span>`;
+}
 
 /* Bölümler: aynı bölüm adını taşıyan ardışık sayfalar. Çok uzun olanlar parçalara ayrılır. */
 function buildChapters(book) {
@@ -612,7 +642,7 @@ function showLibrary() {
     const list = LIBRARY.filter((b) => (b.shelf || "kulliyat") === sh.id);
     const picks = list.slice(0, 5), mid = (picks.length - 1) / 2;
     return `<button class="group" data-jump="shelf-${sh.id}">
-      <div class="fan">${picks.map((b, i) => `<img src="${b.cover}" alt="" style="--r:${(i - mid) * 9}deg; margin-left:${-48 + (i - mid) * 34}px; z-index:${10 - Math.abs(i - mid)}">`).join("")}</div>
+      <div class="fan">${picks.map((b, i) => coverHtml(b, `--r:${(i - mid) * 9}deg; margin-left:${-48 + (i - mid) * 34}px; z-index:${10 - Math.abs(i - mid)}`)).join("")}</div>
       <div class="gt"><strong>${sh.title} →</strong><span>${desc(list)}</span></div></button>`;
   };
   app.innerHTML = `
@@ -641,7 +671,7 @@ function showLibrary() {
     ${SHELVES.map((sh) => {
       const list = LIBRARY.filter((b) => (b.shelf || "kulliyat") === sh.id);
       return list.length ? `<div class="sec" id="shelf-${sh.id}"><h2 class="sec-h">${sh.title}</h2>
-        <div class="covers">${list.map((b) => `<button class="cv" data-open="${b.id}"><span class="img"><img src="${b.cover}" alt="" loading="lazy"></span><span>${escapeHtml(b.title)}</span></button>`).join("")}</div></div>` : "";
+        <div class="covers">${list.map((b) => `<button class="cv" data-open="${b.id}"><span class="img">${coverHtml(b)}</span><span>${escapeHtml(b.title)}</span></button>`).join("")}</div></div>` : "";
     }).join("")}
     </div>`;
   app.querySelectorAll("[data-jump]").forEach((el) => el.onclick = () => document.getElementById(el.dataset.jump)?.scrollIntoView({ behavior: "smooth", block: "start" }));
@@ -946,7 +976,7 @@ $("#btn-search").onclick = openSearch;
    8) OKUMA AYARLARI
    ========================================================= */
 const settings = Object.assign({ size: 19, theme: null, font: "book", lh: "1.7" }, store.get("nr-settings2", {}));
-const FONTS = { book: "var(--font-body)", classic: '"EB Garamond", "Amiri", Georgia, serif', sans: 'var(--font-ui), "Amiri", sans-serif' };
+const FONTS = { book: "var(--font-body)", classic: '"EB Garamond", "Hamdullah", "Amiri", Georgia, serif', sans: 'var(--font-ui), "Hamdullah", "Amiri", sans-serif' };
 function applySettings() {
   const root = document.documentElement;
   root.style.setProperty("--reader-size", settings.size + "px");
