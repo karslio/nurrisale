@@ -1261,7 +1261,7 @@ function showLibrary() {
     ${planCardHtml()}
     <div class="sec"><div class="card"><div class="row2"><div><div class="h">Kelime Öğren</div><strong>${srsDue().length ? `${srsDue().length} kelime tekrar bekliyor` : "En sık geçen kelimelerle başla"}</strong><div style="color:var(--muted);font-size:13.5px;margin-top:2px">${KNOWN.size ? `${KNOWN.size} kelime biliyorsun · öğrendiklerin aralıklarla (1, 3, 7, 16… gün) tekrar sorulur` : "İlk 100 kelime, lugata bakma ihtiyacının beşte birini karşılar"}</div></div><button class="btn" id="home-learn">${srsDue().length ? "Tekrar et" : "Başla"}</button></div></div></div>
     <div class="sec"><h2 class="sec-h">Keşfet</h2><div class="ex-grid">
-      <a href="#hayat">${MI('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>')}<b>Bediüzzaman'ın hayatı</b><small>55 durak, üç dönem; Tarihçe ve Lâhikalardan alıntılarla</small></a>
+      <a href="#hayat">${MI('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>')}<b>Bediüzzaman'ın hayatı</b><small>57 durak, üç dönem; Tarihçe ve Lâhikalardan alıntılarla</small></a>
       <a href="#konular">${MI('<path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/>')}<b>Konu dizini</b><small>Haşir, kader, namaz… nerede anlatılıyor</small></a>
       <a href="#dizin">${MI('<path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 9h8M8 13h5"/>')}<b>Hadis, kişi ve yer dizini</b><small>72 hadis, 38 kişi, 29 yer</small></a>
       <a href="#ayetler">${MI('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M12 7v6M9 10h6"/>')}<b>Ayet dizini</b><small>Geçen ayetler, mealleri ve yerleri</small></a>
@@ -2236,7 +2236,7 @@ function openMenu(kind) {
       ["ayet", MI('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M12 7v6M9 10h6"/>'), "Ayet dizini", "Risale'de geçen ayetler, mealleri ve geçtiği yerler"],
       ["konu", MI('<path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/><path d="m20.2 18.2 1.8 1.8"/>'), "Konu dizini", "Haşir, kader, namaz… Risale'de nerelerde işleniyor"],
       ["ders", MI('<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>'), "Ders modu", "Perdeye yansıtmak için büyük yazı, tam ekran (D)"],
-      ["hayat", MI('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>'), "Bediüzzaman'ın hayatı", "55 duraklı harita ve zaman çizgisi, 1877–1960"],
+      ["hayat", MI('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>'), "Bediüzzaman'ın hayatı", "57 duraklı harita ve zaman çizgisi, 1877–1960"],
       ["dizin", MI('<path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 9h8M8 13h5"/>'), "Hadis, kişi ve yer dizini", "Hadisler, peygamberler, âlimler, şehirler"],
       ["vecize", MI('<path d="M7 7h4v4c0 3-2 5-4 6M15 7h4v4c0 3-2 5-4 6"/>'), "Vecize ezberi", "Küçük Sözler'den her gün yeni vecize"],
       ["offline", MI('<path d="M12 4v11M7 10l5 5 5-5M4 20h16"/>'), "Çevrimdışı kütüphane", "Bütün kitapları cihaza indir"],
