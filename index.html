@@ -68,19 +68,24 @@ main { max-width: 1040px; margin: 0 auto; padding-block: 28px 64px; }
 .hero h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(28px, 5vw, 42px); margin: 0; text-wrap: balance; }
 .hero p { margin: 0 auto; color: var(--muted); max-width: 52ch; line-height: 1.55; }
 
-.bookcase { background: linear-gradient(var(--wall), color-mix(in srgb, var(--wall) 92%, #000)); border-radius: 12px; padding: 34px 20px 0; overflow: hidden; box-shadow: inset 0 10px 18px -12px rgba(0,0,0,.25); }
-.row { display: flex; justify-content: center; align-items: flex-end; gap: clamp(14px, 4vw, 36px); flex-wrap: wrap; position: relative; padding-bottom: 0; }
-.shelf-board { height: 18px; margin: 0 -20px; background: linear-gradient(var(--shelf), var(--shelf) 70%, var(--shelf-edge)); box-shadow: 0 6px 10px -6px rgba(0,0,0,.35); }
-.cover { width: clamp(120px, 20vw, 168px); aspect-ratio: 331 / 540; max-width: 100%; border: none; padding: 0; cursor: pointer; position: relative; border-radius: 2px 5px 5px 2px; overflow: hidden;
-  background: #7A1426; box-shadow: 2px 0 0 rgba(0,0,0,.25), 6px 6px 14px -4px rgba(0,0,0,.45); transition: transform .2s ease; display: block; }
-.cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.shelf-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 34px 0 12px; }
+.shelf-title h2 { font-family: var(--font-display); font-weight: 400; font-size: 24px; margin: 0; }
+.shelf-title span { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.bookcase { background: linear-gradient(var(--wall), color-mix(in srgb, var(--wall) 92%, #000)); border-radius: 12px; padding: 26px 10px 18px; box-shadow: inset 0 10px 18px -12px rgba(0,0,0,.25); }
+.row { display: grid; grid-template-columns: repeat(auto-fill, var(--slot)); justify-content: center; row-gap: 26px; --slot: 136px; --cover-h: 196px; }
+.slot { display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.stand { width: 100%; height: calc(var(--cover-h) + 16px); display: flex; justify-content: center; align-items: flex-end; padding-bottom: 14px;
+  background: linear-gradient(to top, var(--shelf-edge) 0 3px, var(--shelf) 3px 14px, transparent 14px); }
+.cover { height: var(--cover-h); width: auto; max-width: calc(100% - 14px); border: none; padding: 0; cursor: pointer; position: relative; border-radius: 2px 5px 5px 2px; overflow: hidden;
+  background: #7A1426; box-shadow: 2px 0 0 rgba(0,0,0,.2), 6px 6px 12px -4px rgba(0,0,0,.45); transition: transform .2s ease; display: block; }
+.cover img { height: 100%; width: auto; max-width: 100%; object-fit: cover; display: block; }
 .cover::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(90deg, rgba(0,0,0,.38) 0, rgba(255,255,255,.12) 4%, rgba(0,0,0,0) 8%, rgba(0,0,0,0) 94%, rgba(0,0,0,.2)); }
+  background: linear-gradient(90deg, rgba(0,0,0,.32) 0, rgba(255,255,255,.12) 4%, rgba(0,0,0,0) 8%, rgba(0,0,0,0) 94%, rgba(0,0,0,.18)); }
 .cover:hover, .cover:focus-visible { transform: translateY(-6px); }
-.shelf-caption { display: flex; justify-content: center; gap: clamp(14px, 4vw, 36px); flex-wrap: wrap; margin-top: 16px; }
-.shelf-caption div { width: clamp(120px, 20vw, 168px); text-align: center; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
-.shelf-caption strong { display: block; color: var(--ink); font-family: var(--font-display); font-weight: 400; font-size: 18px; margin-bottom: 2px; }
-.shelf-caption .pg { display: block; margin-top: 4px; font-variant-numeric: tabular-nums; color: var(--gilt); font-size: 12px; }
+.slot .cap { text-align: center; padding: 8px 6px 0; font-size: 13px; line-height: 1.3; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.slot .pg { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; margin-top: 2px; }
+.slot .read { font-size: 11px; color: var(--gilt); }
+@media (max-width: 560px) { .row { --slot: 104px; --cover-h: 150px; } .bookcase { padding-inline: 4px; } }
 .resume { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; margin-top: 22px; }
 .resume small { display: block; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; color: var(--muted); margin-bottom: 2px; }
 .resume strong { font-family: var(--font-body); font-weight: 600; font-size: 17px; }
@@ -98,10 +103,15 @@ body.drawer-open .scrim { opacity: 1; pointer-events: auto; }
 .drawer-head .icon-btn { margin-left: auto; }
 .drawer-body { overflow-y: auto; flex: 1; padding: 6px 0 24px; }
 .d-label { text-transform: uppercase; letter-spacing: .1em; font-size: 11px; color: var(--muted); padding: 16px 18px 8px; }
+.d-group summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 10px 18px; font-weight: 600; font-size: 14px; }
+.d-group summary::-webkit-details-marker { display: none; }
+.d-group summary .caret { color: var(--muted); font-size: 11px; transition: transform .15s ease; }
+.d-group[open] summary .caret { transform: rotate(90deg); }
+.d-group summary .n { margin-left: auto; color: var(--muted); font-weight: 400; font-size: 12px; }
 .d-book { display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: none; padding: 8px 18px; cursor: pointer; text-align: left; }
 .d-book:hover { background: var(--paper); }
 .d-book.cur { background: color-mix(in srgb, var(--accent) 10%, transparent); }
-.d-book .chip { width: 26px; height: 42px; object-fit: cover; border-radius: 1px 3px 3px 1px; flex: none; box-shadow: 2px 2px 4px -1px rgba(0,0,0,.35); background: #7A1426; }
+.d-book .chip { width: 26px; height: 40px; object-fit: cover; border-radius: 1px 3px 3px 1px; flex: none; box-shadow: 2px 2px 4px -1px rgba(0,0,0,.35); background: #7A1426; }
 .d-book .n { font-family: var(--font-display); font-size: 18px; }
 .d-book .m { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .toc details { border-top: 1px solid var(--rule); }
@@ -400,6 +410,7 @@ async function loadBook(id) {
   return book;
 }
 const metaOf = (id) => LIBRARY.find((b) => b.id === id);
+const SHELVES = [{ id: "kulliyat", title: "Külliyat" }, { id: "cep", title: "Cep Risaleleri" }];
 
 /* Lugat: önce tam eşleşme, sonra kök ("kâinatın" → "kâinat", en az 4 harf) */
 let LUGAT_KEYS = [];
@@ -449,11 +460,19 @@ function renderBlock([k, t], highlight) {
 let current = { id: null, page: 0 };
 function renderDrawer() {
   const book = current.id && BOOKS.get(current.id);
-  let html = `<div class="d-label">Kütüphane</div>` + LIBRARY.map((b) => `
-    <button class="d-book ${b.id === current.id ? "cur" : ""}" data-open="${b.id}">
-      <img class="chip" src="${b.cover}" alt="" width="26" height="42">
-      <span><div class="n">${escapeHtml(b.title)}</div><div class="m">${b.pages.toLocaleString("tr")} sayfa</div></span>
-    </button>`).join("");
+  const curShelf = current.id ? (metaOf(current.id)?.shelf || "kulliyat") : "kulliyat";
+  let html = `<div class="d-label">Kütüphane</div>` + SHELVES.map((sh) => {
+    const list = LIBRARY.filter((b) => (b.shelf || "kulliyat") === sh.id);
+    if (!list.length) return "";
+    return `<details class="d-group" ${sh.id === curShelf ? "open" : ""}>
+      <summary><span class="caret">▶</span>${sh.title}<span class="n">${list.length}</span></summary>
+      ${list.map((b) => `
+        <button class="d-book ${b.id === current.id ? "cur" : ""}" data-open="${b.id}">
+          <img class="chip" src="${b.cover}" alt="" width="26" height="40" loading="lazy">
+          <span><div class="n">${escapeHtml(b.title)}</div><div class="m">${b.pages.toLocaleString("tr")} sayfa</div></span>
+        </button>`).join("")}
+    </details>`;
+  }).join("");
 
   if (getMarks().length) html += `<div class="d-label">Yer imlerim</div>${marksHtml()}`;
   if (book) {
@@ -507,20 +526,24 @@ function showLibrary() {
     <section class="hero">
       <div class="besmele">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ</div>
       <h1>Risale-i Nur Külliyatı</h1>
-      <p>Okumak istediğin kitabı raftan seç. Altı noktalı kelimelerin ve Arapça ifadelerin üstüne gelince anlamı, küçük numaralarda haşiye açılır.</p>
+      <p>Külliyatın tamamı ve cep risaleleri burada. Okumak istediğin kitabı raftan seç. Altı noktalı kelimelerin ve Arapça ifadelerin üstüne gelince anlamı, küçük numaralarda haşiye açılır.</p>
     </section>
-    <div class="bookcase">
-      <div class="row">
-        ${LIBRARY.map((b) => `
-          <button class="cover" data-open="${b.id}" aria-label="${escapeHtml(b.title)}">
-            <img src="${b.cover}" alt="${escapeHtml(b.title)} kapağı" width="331" height="540">
-          </button>`).join("")}
-      </div>
-      <div class="shelf-board"></div>
-    </div>
-    <div class="shelf-caption">
-      ${LIBRARY.map((b) => `<div><strong>${escapeHtml(b.title)}</strong>${escapeHtml(b.desc)}<span class="pg">${b.pages.toLocaleString("tr")} sayfa</span></div>`).join("")}
-    </div>
+    ${SHELVES.map((sh) => {
+      const list = LIBRARY.filter((b) => (b.shelf || "kulliyat") === sh.id);
+      if (!list.length) return "";
+      return `<section>
+        <div class="shelf-title"><h2>${sh.title}</h2><span>${list.length} kitap</span></div>
+        <div class="bookcase"><div class="row">
+          ${list.map((b) => `<div class="slot">
+            <div class="stand"><button class="cover" data-open="${b.id}" aria-label="${escapeHtml(b.title)}">
+              <img src="${b.cover}" alt="${escapeHtml(b.title)} kapağı" loading="lazy" height="196">
+            </button></div>
+            <div class="cap">${escapeHtml(b.title)}</div>
+            <div class="pg">${b.pages.toLocaleString("tr")} sayfa</div>
+          </div>`).join("")}
+        </div></div>
+      </section>`;
+    }).join("")}
     ${lastMeta ? `
       <div class="resume">
         <div><small>Kaldığın yer</small><strong>${escapeHtml(lastMeta.title)}</strong> <span style="color:var(--muted)">· Sayfa ${last.page}</span></div>
