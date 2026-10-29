@@ -1,36 +1,48 @@
+<!doctype html>
+<html lang="tr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NurRisale</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=Amiri&display=swap">
 <style>
-/* Düzen: sabit üst çubuk + tek sütun; kütüphane ızgarası veya ~65 karakterlik okuma sayfası */
+/* Düzen: üst çubuk + soldan açılan çekmece (kütüphane, içindekiler); ana sayfa kitap rafı, okuma sayfası ~65 karakter */
 :root {
-  --paper: #F3F5F0;   /* sayfa zemini: hafif yeşilimsi kâğıt */
-  --surface: #FFFFFF; /* kartlar, açılır pencereler */
+  --paper: #F3F5F0;   /* sayfa zemini */
+  --surface: #FFFFFF; /* çekmece, açılır pencereler */
   --ink: #1E2928;     /* yazı */
   --muted: #5B6A66;   /* ikincil yazı */
   --rule: #D7DDD4;    /* çizgiler */
   --accent: #23508E;  /* lâcivert vurgu */
-  --gilt: #A27A26;    /* yaldız: çok az kullanılır */
+  --gilt: #A27A26;    /* yaldız */
   --mark: #F2E3B3;    /* arama vurgusu */
+  --wall: #E7EAE2;    /* raf arkası */
+  --shelf: #B89C74;   /* raf tahtası */
+  --shelf-edge: #8E7350;
+  /* Cilt renkleri: kitaplar fiziksel nesne, iki temada da aynı */
+  --cover-green: #1F4A3A; --cover-maroon: #6A2330; --cover-navy: #1E3456; --cover-brown: #5A3B22;
+  --cover-gold: #D2AE5E;
   --font-display: "Marcellus", "Times New Roman", serif;
-  --font-body: "Literata", Georgia, serif;
+  --font-body: "Literata", "Amiri", Georgia, serif;
   --font-ui: "IBM Plex Sans", system-ui, sans-serif;
   --font-arabic: "Amiri", "Traditional Arabic", serif;
   --reader-size: 19px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #111716; --surface: #1A2220; --ink: #E2E8E3; --muted: #93A39E;
-    --rule: #2A3633; --accent: #93B3EA; --gilt: #D3AE5B; --mark: #4A3F1C; color-scheme: dark;
+    --paper: #111716; --surface: #1A2220; --ink: #E2E8E3; --muted: #93A39E; --rule: #2A3633;
+    --accent: #93B3EA; --gilt: #D3AE5B; --mark: #4A3F1C; --wall: #161E1C; --shelf: #4A3A28; --shelf-edge: #2E2418; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #111716; --surface: #1A2220; --ink: #E2E8E3; --muted: #93A39E;
-  --rule: #2A3633; --accent: #93B3EA; --gilt: #D3AE5B; --mark: #4A3F1C; color-scheme: dark;
+  --paper: #111716; --surface: #1A2220; --ink: #E2E8E3; --muted: #93A39E; --rule: #2A3633;
+  --accent: #93B3EA; --gilt: #D3AE5B; --mark: #4A3F1C; --wall: #161E1C; --shelf: #4A3A28; --shelf-edge: #2E2418; color-scheme: dark;
 }
 
-body { background: var(--paper); color: var(--ink); font-family: var(--font-ui); font-size: 15px; }
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-ui); font-size: 15px; -webkit-text-size-adjust: 100%; }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
 .gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 button { font: inherit; color: inherit; }
@@ -38,66 +50,113 @@ button { font: inherit; color: inherit; }
 
 /* Üst çubuk */
 header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper); border-bottom: 1px solid var(--rule); }
-.top-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; gap: 12px; padding-block: 10px; }
-.logo { font-family: var(--font-display); font-size: 24px; color: var(--ink); text-decoration: none; letter-spacing: .01em; display: flex; align-items: baseline; gap: 2px; }
+.top-inner { max-width: 1040px; margin: 0 auto; display: flex; align-items: center; gap: 8px; padding-block: 8px; }
+.logo { font-family: var(--font-display); font-size: 24px; color: var(--ink); text-decoration: none; display: flex; align-items: baseline; }
 .logo b { font-weight: 400; color: var(--gilt); }
-.tools { margin-left: auto; display: flex; gap: 4px; }
-.icon-btn { background: none; border: 1px solid transparent; border-radius: 8px; height: 36px; min-width: 36px; padding: 0 10px; cursor: pointer; font-size: 14px; color: var(--muted); }
+.tools { margin-left: auto; display: flex; gap: 2px; }
+.icon-btn { background: none; border: 1px solid transparent; border-radius: 8px; height: 38px; min-width: 38px; padding: 0 10px; cursor: pointer; font-size: 14px; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .icon-btn:hover { border-color: var(--rule); color: var(--ink); }
+.icon-btn svg { width: 20px; height: 20px; }
+#btn-menu { margin-left: -8px; color: var(--ink); }
 
-main { max-width: 960px; margin: 0 auto; padding-block: 28px 64px; }
+main { max-width: 1040px; margin: 0 auto; padding-block: 28px 64px; }
 
-/* Kütüphane */
-.hero { display: grid; gap: 6px; margin-bottom: 28px; }
-.besmele { font-family: var(--font-arabic); font-size: 30px; color: var(--gilt); direction: rtl; text-align: left; line-height: 1.4; }
-.hero h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(28px, 5vw, 40px); margin: 0; text-wrap: balance; }
-.hero p { margin: 0; color: var(--muted); max-width: 60ch; line-height: 1.55; }
+/* ---------- Kütüphane (kitap rafı) ---------- */
+.hero { text-align: center; display: grid; gap: 6px; margin-bottom: 30px; }
+.besmele { font-family: var(--font-arabic); font-size: 30px; color: var(--gilt); line-height: 1.4; }
+.hero h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(28px, 5vw, 42px); margin: 0; text-wrap: balance; }
+.hero p { margin: 0 auto; color: var(--muted); max-width: 52ch; line-height: 1.55; }
 
-.resume { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; margin-bottom: 28px; }
+.bookcase { background: var(--wall); border-radius: 12px; padding: 28px 20px 0; overflow: hidden; }
+.row { display: flex; justify-content: center; align-items: flex-end; gap: clamp(14px, 4vw, 36px); flex-wrap: wrap; position: relative; padding-bottom: 0; }
+.shelf-board { height: 18px; margin: 0 -20px; background: linear-gradient(var(--shelf), var(--shelf) 70%, var(--shelf-edge)); box-shadow: 0 6px 10px -6px rgba(0,0,0,.35); }
+.cover { --c: var(--cover-green); width: clamp(120px, 20vw, 168px); aspect-ratio: 2 / 3; max-width: 100%; border: none; padding: 0; cursor: pointer; position: relative; border-radius: 3px 6px 6px 3px;
+  background: linear-gradient(90deg, rgba(0,0,0,.35) 0, rgba(255,255,255,.08) 5%, rgba(0,0,0,0) 9%, rgba(0,0,0,0) 92%, rgba(0,0,0,.18)), var(--c);
+  box-shadow: 2px 0 0 rgba(0,0,0,.25), 6px 6px 14px -4px rgba(0,0,0,.45);
+  color: var(--cover-gold); transition: transform .2s ease; display: block; }
+.cover:hover, .cover:focus-visible { transform: translateY(-6px); }
+.cover .frame { position: absolute; inset: 9% 11% 8% 15%; border: 1px solid color-mix(in srgb, var(--cover-gold) 70%, transparent); outline: 1px solid color-mix(in srgb, var(--cover-gold) 35%, transparent); outline-offset: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 8px; }
+.cover .t { font-family: var(--font-display); font-size: clamp(17px, 2.6vw, 23px); line-height: 1.15; }
+.cover .orn { font-size: 11px; letter-spacing: .4em; opacity: .85; }
+.cover .s { position: absolute; bottom: 9%; left: 0; right: 0; font-size: 8.5px; letter-spacing: .14em; text-transform: uppercase; opacity: .8; font-family: var(--font-ui); }
+.cover.green { --c: var(--cover-green); } .cover.maroon { --c: var(--cover-maroon); } .cover.navy { --c: var(--cover-navy); } .cover.brown { --c: var(--cover-brown); }
+.shelf-caption { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 14px; }
+.shelf-caption div { font-size: 13px; color: var(--muted); line-height: 1.45; }
+.shelf-caption strong { display: block; color: var(--ink); font-weight: 600; font-size: 14px; }
+
+.resume { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; margin-top: 22px; }
 .resume small { display: block; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; color: var(--muted); margin-bottom: 2px; }
 .resume strong { font-family: var(--font-body); font-weight: 600; font-size: 17px; }
 .btn { background: var(--accent); color: var(--paper); border: none; border-radius: 8px; padding: 9px 16px; cursor: pointer; font-weight: 500; }
 
-.section-label { text-transform: uppercase; letter-spacing: .1em; font-size: 11px; color: var(--muted); margin: 0 0 12px; }
-.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
-.book { background: var(--surface); border: none; text-align: left; padding: 18px 18px 16px; cursor: pointer; display: grid; gap: 6px; align-content: start; min-width: 0; }
-.book:hover { background: var(--paper); }
-.book .no { font-size: 12px; color: var(--gilt); font-variant-numeric: tabular-nums; letter-spacing: .05em; }
-.book h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 22px; }
-.book p { margin: 0; color: var(--muted); font-size: 13.5px; line-height: 1.45; }
-.book .meta { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.note { margin-top: 20px; font-size: 13px; color: var(--muted); max-width: 70ch; line-height: 1.5; }
+/* ---------- Çekmece (soldan açılan pencere) ---------- */
+.scrim { position: fixed; inset: 0; z-index: 40; background: color-mix(in srgb, #000 40%, transparent); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+.drawer { position: fixed; z-index: 41; top: 0; bottom: 0; left: 0; width: min(360px, 88vw); background: var(--surface); border-right: 1px solid var(--rule);
+  transform: translateX(-102%); transition: transform .25s ease; display: flex; flex-direction: column;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: env(safe-area-inset-left, 0px); }
+body.drawer-open .drawer { transform: none; }
+body.drawer-open .scrim { opacity: 1; pointer-events: auto; }
+.drawer-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px 10px 18px; border-bottom: 1px solid var(--rule); }
+.drawer-head .logo { font-size: 21px; }
+.drawer-head .icon-btn { margin-left: auto; }
+.drawer-body { overflow-y: auto; flex: 1; padding: 6px 0 24px; }
+.d-label { text-transform: uppercase; letter-spacing: .1em; font-size: 11px; color: var(--muted); padding: 16px 18px 8px; }
+.d-book { display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: none; padding: 8px 18px; cursor: pointer; text-align: left; }
+.d-book:hover { background: var(--paper); }
+.d-book.cur { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.d-book .chip { width: 22px; height: 32px; border-radius: 1px 3px 3px 1px; flex: none; box-shadow: inset 3px 0 0 rgba(0,0,0,.3); border: 1px solid color-mix(in srgb, var(--cover-gold) 50%, transparent); }
+.chip.green { background: var(--cover-green); } .chip.maroon { background: var(--cover-maroon); } .chip.navy { background: var(--cover-navy); } .chip.brown { background: var(--cover-brown); }
+.d-book .n { font-family: var(--font-display); font-size: 18px; }
+.d-book .m { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.toc details { border-top: 1px solid var(--rule); }
+.toc details:last-child { border-bottom: 1px solid var(--rule); }
+.toc summary { list-style: none; display: flex; align-items: center; gap: 4px; cursor: pointer; padding-right: 10px; }
+.toc summary::-webkit-details-marker { display: none; }
+.toc summary .caret { width: 28px; flex: none; text-align: center; color: var(--muted); font-size: 11px; transition: transform .15s ease; }
+.toc details[open] summary .caret { transform: rotate(90deg); }
+.toc summary .caret.none { visibility: hidden; }
+.toc a { display: flex; justify-content: space-between; gap: 10px; text-decoration: none; color: var(--ink); padding: 8px 0; flex: 1; min-width: 0; line-height: 1.35; }
+.toc a .pg { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; flex: none; }
+.toc summary a { font-family: var(--font-body); font-weight: 600; font-size: 15px; }
+.toc .sub a { font-size: 14px; padding: 6px 12px 6px 46px; }
+.toc .sub a.l3 { padding-left: 62px; color: var(--muted); }
+.toc a:hover { color: var(--accent); }
+.toc a.cur { color: var(--accent); }
+.toc .loose a { padding-left: 18px; padding-right: 12px; }
 
-/* Okuyucu */
+/* ---------- Okuyucu ---------- */
 .reader-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 22px; }
-.crumb { background: none; border: none; color: var(--accent); cursor: pointer; padding: 0; font-size: 14px; }
-.reader-bar select { margin-left: auto; max-width: 100%; font: inherit; font-size: 14px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); }
+.crumb { background: none; border: 1px solid var(--rule); border-radius: 99px; color: var(--ink); cursor: pointer; padding: 6px 12px; font-size: 13.5px; display: inline-flex; align-items: center; gap: 6px; }
+.crumb:hover { border-color: var(--accent); color: var(--accent); }
 .page { max-width: 65ch; margin: 0 auto; }
 .page .book-title { font-family: var(--font-display); font-size: 15px; color: var(--muted); text-align: center; letter-spacing: .04em; }
 .page h2 { font-family: var(--font-display); font-weight: 400; font-size: 28px; text-align: center; margin: 6px 0 4px; text-wrap: balance; }
 .ornament { text-align: center; color: var(--gilt); letter-spacing: .6em; margin-bottom: 24px; font-size: 13px; }
-.demo-tag { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); border: 1px solid var(--rule); border-radius: 99px; padding: 2px 8px; }
-.text { font-family: var(--font-body); font-size: var(--reader-size); line-height: 1.75; }
+.text { font-family: var(--font-body); font-size: var(--reader-size); line-height: 1.75; overflow-wrap: break-word; }
 .text p { margin: 0 0 1.1em; text-indent: 1.5em; hyphens: auto; }
-.text .arabic { font-family: var(--font-arabic); direction: rtl; text-align: center; font-size: 1.35em; text-indent: 0; color: var(--gilt); }
+.text p.c { text-align: center; text-indent: 0; }
+.text .arabic { font-family: var(--font-arabic); direction: rtl; text-align: center; font-size: 1.35em; text-indent: 0; color: var(--gilt); line-height: 1.9; }
+.text h4 { font-family: var(--font-display); font-weight: 400; font-size: 1.15em; text-align: center; margin: 1.6em 0 .8em; color: var(--accent); text-wrap: balance; }
 .w { cursor: pointer; border-bottom: 1px dotted color-mix(in srgb, var(--accent) 55%, transparent); }
 .w:hover, .w.on { color: var(--accent); }
+.fn { font: 600 .66em/1 var(--font-ui); position: relative; top: -.6em; background: color-mix(in srgb, var(--accent) 12%, transparent); border: none; border-radius: 4px; color: var(--accent); cursor: pointer; padding: 1px 4px; margin: 0 1px; }
 mark { background: var(--mark); color: inherit; border-radius: 2px; }
+.loading { text-align: center; color: var(--muted); padding: 60px 0; font-family: var(--font-body); }
 
 .pager { max-width: 65ch; margin: 36px auto 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid var(--rule); padding-top: 16px; }
 .pager button { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 9px 14px; cursor: pointer; }
 .pager button:disabled { opacity: .4; cursor: default; }
 .pageno { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 14px; display: flex; align-items: center; gap: 6px; }
-.pageno input { width: 3.2em; text-align: center; font: inherit; padding: 4px; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.pageno input { width: 3.6em; text-align: center; font: inherit; padding: 4px; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); color: var(--ink); }
 
-/* Lugat penceresi */
-.lugat { position: fixed; z-index: 20; width: min(320px, calc(100vw - 32px)); background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.18); padding: 14px 16px; }
-.lugat .word { font-family: var(--font-body); font-weight: 600; font-size: 18px; }
-.lugat .def { margin-top: 4px; line-height: 1.5; color: var(--ink); }
-.lugat .lbl { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--gilt); }
+/* Lugat / haşiye penceresi */
+.pop { position: fixed; z-index: 20; width: min(340px, calc(100vw - 32px)); max-height: 50vh; overflow-y: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.18); padding: 14px 16px; }
+.pop .word { font-family: var(--font-body); font-weight: 600; font-size: 18px; }
+.pop .def { margin-top: 4px; line-height: 1.55; color: var(--ink); font-family: var(--font-body); }
+.pop .lbl { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--gilt); }
 
 /* Arama */
-.search-panel { position: fixed; inset: 0; z-index: 30; background: color-mix(in srgb, var(--ink) 35%, transparent); display: flex; justify-content: center; align-items: flex-start; padding-top: calc(env(safe-area-inset-top, 0px) + 8vh); }
+.search-panel { position: fixed; inset: 0; z-index: 30; background: color-mix(in srgb, #000 35%, transparent); display: flex; justify-content: center; align-items: flex-start; padding-top: calc(env(safe-area-inset-top, 0px) + 8vh); }
 .search-box { width: min(620px, 100%); background: var(--surface); border-radius: 12px; border: 1px solid var(--rule); max-height: 75vh; display: flex; flex-direction: column; overflow: hidden; }
 .search-box input { border: none; border-bottom: 1px solid var(--rule); padding: 16px 18px; font: inherit; font-size: 17px; background: transparent; color: var(--ink); outline: none; }
 .results { overflow-y: auto; }
@@ -107,6 +166,9 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; }
 .result .snip { font-family: var(--font-body); margin-top: 3px; line-height: 1.5; }
 .empty { padding: 18px; color: var(--muted); }
 
+@media (prefers-reduced-motion: reduce) {
+  .drawer, .scrim, .cover { transition: none; }
+}
 @media (prefers-reduced-motion: no-preference) {
   .page { animation: fade .25s ease; }
   @keyframes fade { from { opacity: .4; } to { opacity: 1; } }
@@ -115,19 +177,35 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; }
 
 <header class="top">
   <div class="top-inner gutter">
+    <button class="icon-btn" id="btn-menu" aria-label="Kütüphane ve içindekiler">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+    </button>
     <a class="logo" href="#" id="home">Nur<b>Risale</b></a>
     <div class="tools">
-      <button class="icon-btn" id="btn-search" aria-label="Ara">Ara</button>
+      <button class="icon-btn" id="btn-search" aria-label="Ara">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+      </button>
       <button class="icon-btn" id="btn-smaller" aria-label="Yazıyı küçült">A−</button>
       <button class="icon-btn" id="btn-bigger" aria-label="Yazıyı büyüt">A+</button>
-      <button class="icon-btn" id="btn-theme" aria-label="Gece modu">◐</button>
+      <button class="icon-btn" id="btn-theme" aria-label="Gece modu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+      </button>
     </div>
   </div>
 </header>
 
+<div class="scrim" id="scrim"></div>
+<nav class="drawer" id="drawer" aria-label="Kütüphane">
+  <div class="drawer-head">
+    <a class="logo" href="#" id="drawer-home">Nur<b>Risale</b></a>
+    <button class="icon-btn" id="btn-close" aria-label="Kapat">✕</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</nav>
+
 <main class="gutter" id="app"></main>
 
-<div class="lugat" id="lugat" hidden role="dialog" aria-live="polite"></div>
+<div class="pop" id="pop" hidden role="dialog" aria-live="polite"></div>
 
 <div class="search-panel gutter" id="search" hidden>
   <div class="search-box">
@@ -139,136 +217,40 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; }
 <script>
 /* =========================================================
    1) VERİ
-   Kitaplar ve sayfalar. Metinler DENEME metnidir: sitenin
-   nasıl çalıştığını görmek için yazıldı, kitapların kendisinden
-   alınmadı. Gerçek metni eklemek için "pages" dizisini doldur.
+   Kitaplar books/ klasöründe JSON dosyası olarak durur
+   (tools/epub_to_json.py ile EPUB'dan üretildi).
+   books/index.json  → kitap listesi
+   books/<id>.json   → { pages: [ {s: bölüm, b: [[tür, metin], ...]} ],
+                         toc: [ {t: başlık, p: sayfa, l: seviye} ], footnotes: {id: metin} }
+   Blok türleri: "p" paragraf, "c" ortalı satır, "ar" Arapça, "h" ara başlık.
    ========================================================= */
-const BOOKS = [
-  {
-    id: "sozler", title: "Sözler", desc: "İman hakikatlerini temsillerle anlatan risaleler.",
-    pages: [
-      { section: "Birinci Bölüm", arabic: "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ", text: [
-        "Bu kâinat, baştan başa okunacak bir kitap gibidir. Her zerre, kendi lisanıyla bir mânâ söyler ve dikkatli bir göz, bu satırlarda derin bir hikmet görür.",
-        "İnsan, tefekkür ettikçe görür ki her şeyde bir intizam vardır. Bu intizam tesadüfle izah edilemez; bir Sâni'in kudret ve ilmine işaret eder."
-      ]},
-      { section: "Birinci Bölüm", text: [
-        "Bir çiçeğe bakan kimse, onun nakışlarında bir sanat görür. Sanat ise sanatkârı gösterir. Gafletle bakan yalnız rengi görür; tefekkürle bakan ise mânâyı okur.",
-        "İşte iman, insanın gözüne bir nur verir. O nur ile zulümat içinde görünen şeyler, birden aydınlanır ve her biri bir rahmet mektubu olur."
-      ]},
-      { section: "İkinci Bölüm", text: [
-        "Dünya fânidir; ömür bir sermaye gibi elimize verilmiştir. Akıllı adam, fâni sermayesini bâki bir meyveye çevirmeye çalışır.",
-        "Şükür, nimeti görmenin ve onu verene yönelmenin adıdır. Nimeti görüp vereni unutan, sofranın sahibini düşünmeden yiyen misafire benzer."
-      ]},
-      { section: "İkinci Bölüm", text: [
-        "Ubudiyet, insanın aczini ve fakrını bilerek Rabbine yönelmesidir. Bu yönelişte bir zillet yoktur; bilakis en büyük izzet oradadır.",
-        "Fıtrat, insana bırakılmış bir emanettir. Onu muhafaza eden, hem dünyada huzur bulur hem de bâki âleme hazırlanmış olur."
-      ]}
-    ]
-  },
-  {
-    id: "mektubat", title: "Mektubat", desc: "Sorulara cevap olarak yazılmış mektuplar.",
-    pages: [
-      { section: "Birinci Mektup", text: [
-        "Sual edilen meseleye kısa bir cevap verelim. Her hâdisenin bir hikmeti vardır; fakat o hikmet her zaman ilk bakışta görünmez.",
-        "Şefkat ile bakan kalp, zahmet içinde bir rahmet bulur. Sabır ise o rahmetin anahtarı hükmündedir."
-      ]},
-      { section: "Birinci Mektup", text: [
-        "Muhabbetin hakikisi, fâni şeylere değil bâki olana yönelir. Fâni olana bağlanan, ayrılık acısını da beraber alır.",
-        "Kemal ve cemal sahibi olanı tanıyan, her güzellikte O'nun bir tecellisini görür ve sevgisi boşa gitmez."
-      ]},
-      { section: "İkinci Mektup", text: [
-        "Kardeşlerime bir hatırlatma: ihlas, amelin ruhudur. İhlassız amel, ruhsuz bir ceset gibidir.",
-        "Birbirimize karşı hürmet ve muhabbet, hizmetimizin en mühim esasıdır. Zira tesanüd içindeki az kuvvet, dağınık çok kuvvetten üstündür."
-      ]}
-    ]
-  },
-  {
-    id: "lemalar", title: "Lem'alar", desc: "Kısa, parlak hakikat parıltıları.",
-    pages: [
-      { section: "Birinci Lem'a", text: [
-        "Hastalık, insana aczini hatırlatan bir muallimdir. Gafletin perdesini yırtar ve kalbi Hâlık'ına çevirir.",
-        "Sıhhat içinde unutulan şükür, hastalık içinde hatırlanır. Böylece zahmet, bir tefekkür ve tevbe vesilesi olur."
-      ]},
-      { section: "İkinci Lem'a", text: [
-        "İhtiyarlık, kışa benzer; fakat arkasında bir bahar beklenir. İman ile bakan ihtiyar, bâki bir hayatın kapısında bulunduğunu bilir.",
-        "Esmâ-i İlâhiyenin her biri, kâinatta bir tecelli ile görünür. Rahmet ismini anlamak isteyen, bir annenin şefkatine baksın."
-      ]}
-    ]
-  },
-  {
-    id: "sualar", title: "Şualar", desc: "Tevhid ve iman üzerine uzun dersler.",
-    pages: [
-      { section: "Birinci Şuâ", text: [
-        "Tevhid, kâinatın her köşesinde okunan bir hakikattir. Zerreden güneşe kadar her şey, aynı intizam ve aynı sanat ile işlenmiştir.",
-        "Bu birlik, ilim ve kudret sahibi tek bir Sâni'i gösterir. Kesret içindeki vahdeti görmek, imanın en parlak nurudur."
-      ]}
-    ]
-  }
-];
+let LIBRARY = [];          // index.json içeriği
+const BOOKS = new Map();   // açılmış kitaplar: id → kitap
 
 /* Lugat: kelime → anlam. Anahtarlar küçük harf. */
 const LUGAT = {
-  "kâinat": "Bütün varlıklar, evren.",
-  "zerre": "Çok küçük parça; atom.",
-  "lisan": "Dil.",
-  "mânâ": "Anlam.",
-  "hikmet": "Bir şeyin gizli faydası ve sebebi; bilgelik.",
-  "tefekkür": "Derin düşünme, ibretle bakma.",
-  "intizam": "Düzen, tertip.",
-  "izah": "Açıklama.",
-  "sâni": "Sanatkâr; her şeyi sanatla yapan Allah.",
-  "kudret": "Güç, kuvvet.",
-  "ilim": "Bilgi.",
-  "işaret": "Gösterme, belirti.",
-  "nakış": "Süsleme, işleme.",
-  "sanat": "Ustalıkla yapılmış iş.",
-  "sanatkâr": "Sanat sahibi, usta.",
-  "gaflet": "Dikkatsizlik, umursamazlık.",
-  "iman": "İnanç; Allah'a ve O'ndan gelene kalben bağlanmak.",
-  "nur": "Işık, aydınlık.",
-  "zulümat": "Karanlıklar.",
-  "rahmet": "Merhamet, şefkat ve ihsan.",
-  "fâni": "Geçici, sonu olan.",
-  "bâki": "Daimî, sonsuz kalıcı.",
-  "sermaye": "Ana mal; burada: verilen imkân, ömür.",
-  "şükür": "Nimeti verene minnet ve teşekkür.",
-  "nimet": "İyilik, verilen güzel şey.",
-  "ubudiyet": "Kulluk.",
-  "acz": "Güçsüzlük.",
-  "fakr": "Muhtaçlık.",
-  "zillet": "Alçaklık, hor görülme.",
-  "izzet": "Şeref, değer.",
-  "fıtrat": "Yaratılış, tabiat.",
-  "emanet": "Korunmak üzere bırakılan şey.",
-  "muhafaza": "Koruma.",
-  "âlem": "Dünya, evren; varlık alanı.",
-  "sual": "Soru.",
-  "hâdise": "Olay.",
-  "şefkat": "Acıma ile karışık sevgi.",
-  "zahmet": "Sıkıntı, eziyet.",
-  "muhabbet": "Sevgi.",
-  "hakiki": "Gerçek.",
-  "kemal": "Olgunluk, mükemmellik.",
-  "cemal": "Güzellik.",
-  "tecelli": "Görünme, yansıma, belirme.",
-  "ihlas": "Bir işi sadece Allah rızası için yapmak; samimiyet.",
-  "amel": "İş, yapılan ibadet.",
-  "hürmet": "Saygı.",
-  "hizmet": "Görev, iş görme.",
-  "mühim": "Önemli.",
-  "esas": "Temel.",
-  "tesanüd": "Dayanışma.",
-  "muallim": "Öğretmen.",
-  "hâlık": "Yaratan; Allah.",
-  "sıhhat": "Sağlık.",
-  "tevbe": "Pişmanlıkla Allah'a dönüş.",
-  "vesile": "Sebep, araç.",
-  "esmâ": "İsimler; Allah'ın isimleri.",
-  "tevhid": "Allah'ın bir olduğuna inanmak.",
-  "kesret": "Çokluk.",
-  "vahdet": "Birlik.",
-  "bilakis": "Tam tersine.",
-  "temsil": "Benzetme, örnekle anlatma."
+  "kâinat": "Bütün varlıklar, evren.", "zerre": "Çok küçük parça; atom.", "lisan": "Dil.",
+  "mânâ": "Anlam.", "hikmet": "Bir şeyin gizli faydası ve sebebi; bilgelik.", "tefekkür": "Derin düşünme, ibretle bakma.",
+  "intizam": "Düzen, tertip.", "izah": "Açıklama.", "sâni": "Sanatkâr; her şeyi sanatla yapan Allah.",
+  "kudret": "Güç, kuvvet.", "nakış": "Süsleme, işleme.", "sanatkâr": "Sanat sahibi, usta.",
+  "gaflet": "Dikkatsizlik, umursamazlık.", "zulümat": "Karanlıklar.", "rahmet": "Merhamet, şefkat ve ihsan.",
+  "fâni": "Geçici, sonu olan.", "bâki": "Daimî, sonsuz kalıcı.", "sermaye": "Ana mal; burada: verilen imkân, ömür.",
+  "nimet": "İyilik, verilen güzel şey.", "ubudiyet": "Kulluk.", "acz": "Güçsüzlük.", "fakr": "Muhtaçlık.",
+  "zillet": "Alçaklık, hor görülme.", "izzet": "Şeref, değer.", "fıtrat": "Yaratılış, tabiat.",
+  "muhafaza": "Koruma.", "sual": "Soru.", "hâdise": "Olay.", "şefkat": "Acıma ile karışık sevgi.",
+  "zahmet": "Sıkıntı, eziyet.", "muhabbet": "Sevgi.", "hakiki": "Gerçek.", "kemal": "Olgunluk, mükemmellik.",
+  "cemal": "Güzellik.", "tecelli": "Görünme, yansıma, belirme.", "ihlas": "Bir işi sadece Allah rızası için yapmak; samimiyet.",
+  "amel": "İş, yapılan ibadet.", "hürmet": "Saygı.", "mühim": "Önemli.", "tesanüd": "Dayanışma.",
+  "muallim": "Öğretmen.", "hâlık": "Yaratan; Allah.", "sıhhat": "Sağlık.", "tevbe": "Pişmanlıkla Allah'a dönüş.",
+  "vesile": "Sebep, araç.", "esmâ": "İsimler; Allah'ın isimleri.", "tevhid": "Allah'ın bir olduğuna inanmak.",
+  "kesret": "Çokluk.", "vahdet": "Birlik.", "bilakis": "Tam tersine.", "temsil": "Benzetme, örnekle anlatma.",
+  "mevcudat": "Var olan şeyler, varlıklar.", "haşir": "Öldükten sonra dirilip toplanma.",
+  "hakikat": "Gerçek, asıl.", "mahiyet": "Bir şeyin içyüzü, özü.", "isbat": "İspat, kanıtlama.",
+  "nübüvvet": "Peygamberlik.", "ehemmiyet": "Önem.", "mütemadiyen": "Durmadan, sürekli.", "fevkalâde": "Olağanüstü.",
+  "binaenaleyh": "Bundan dolayı.", "mahlukat": "Yaratılmışlar.", "rububiyet": "Allah'ın her şeyi terbiye ve idare etmesi.",
+  "uluhiyet": "İlahlık; ibadete layık tek ilah olmak.", "ebedî": "Sonsuz.", "ezelî": "Başlangıcı olmayan.",
+  "dalalet": "Doğru yoldan sapma.", "hidayet": "Doğru yola girme.", "tasdik": "Doğrulama.", "nefis": "İnsanın kötülüğe meyleden yanı.",
+  "ruh": "Can, insanın manevî varlığı.", "kalb": "Gönül; manevî duygu merkezi.", "akıl": "Düşünme gücü."
 };
 
 /* =========================================================
@@ -276,98 +258,171 @@ const LUGAT = {
    ========================================================= */
 const $ = (s) => document.querySelector(s);
 const lower = (s) => s.toLocaleLowerCase("tr");
-// Arama için şapkaları kaldır: "mânâ" → "mana"
 const plain = (s) => lower(s).normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ı/g, "i");
-const escapeHtml = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const escapeHtml = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const FN_RE = /⟦([^|⟧]+)\|([^⟧]*)⟧/g;   // haşiye işareti: ⟦kimlik|numara⟧
+const stripFn = (s) => s.replace(FN_RE, "");
 
-// Tarayıcı hafızası (kapalıysa sessizce geç)
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
 };
 
-/* Bir kelimenin lugat karşılığını bul.
-   Önce tam eşleşme, sonra kök: "kâinatın" → "kâinat" (en az 4 harfli kök). */
+async function loadLibrary() {
+  const r = await fetch("books/index.json");
+  if (!r.ok) throw new Error("Kitap listesi yüklenemedi");
+  LIBRARY = await r.json();
+}
+async function loadBook(id) {
+  if (BOOKS.has(id)) return BOOKS.get(id);
+  const r = await fetch(`books/${id}.json`);
+  if (!r.ok) throw new Error("Kitap yüklenemedi");
+  const book = await r.json();
+  BOOKS.set(id, book);
+  return book;
+}
+const metaOf = (id) => LIBRARY.find((b) => b.id === id);
+
+/* Lugat: önce tam eşleşme, sonra kök ("kâinatın" → "kâinat", en az 4 harf) */
 const LUGAT_KEYS = Object.keys(LUGAT).sort((a, b) => b.length - a.length);
 function findLugat(word) {
-  const w = lower(word.replace(/['’].*$/, "")); // "Sâni'in" → "sâni"
+  const w = lower(word.replace(/['’].*$/, ""));
   if (LUGAT[w]) return w;
   return LUGAT_KEYS.find((k) => k.length >= 4 && w.startsWith(k)) || null;
 }
 
-/* Paragraf metnini HTML'e çevir: lugatta olan kelimeleri tıklanabilir yap,
-   arama kelimesini işaretle. */
-function renderParagraph(text, highlight) {
-  return text.replace(/[A-Za-zÇĞİÖŞÜçğıöşüÂÎÛâîû'’-]+/g, (word) => {
-    let html = escapeHtml(word);
-    if (highlight && plain(word).includes(highlight)) html = `<mark>${html}</mark>`;
-    const key = findLugat(word);
+const WORD = /([A-Za-zÇĞİÖŞÜçğıöşüÂÎÛâîû'’-]+)/;
+function renderWords(text, highlight) {
+  return text.split(WORD).map((part, i) => {
+    if (i % 2 === 0) return escapeHtml(part);
+    let html = escapeHtml(part);
+    if (highlight && plain(part).includes(highlight)) html = `<mark>${html}</mark>`;
+    const key = findLugat(part);
     return key ? `<span class="w" data-k="${key}" tabindex="0">${html}</span>` : html;
-  });
+  }).join("");
+}
+function renderText(text, highlight) {
+  let out = "", last = 0;
+  for (const m of text.matchAll(FN_RE)) {
+    out += renderWords(text.slice(last, m.index), highlight);
+    out += `<button class="fn" data-fn="${escapeHtml(m[1])}" aria-label="Haşiye ${escapeHtml(m[2])}">${escapeHtml(m[2] || "*")}</button>`;
+    last = m.index + m[0].length;
+  }
+  return out + renderWords(text.slice(last), highlight);
+}
+function renderBlock([k, t], highlight) {
+  if (k === "ar") return `<p class="arabic" lang="ar">${escapeHtml(stripFn(t))}</p>`;
+  if (k === "h") return `<h4>${renderText(t, highlight)}</h4>`;
+  return `<p${k === "c" ? ' class="c"' : ""} dir="auto">${renderText(t, highlight)}</p>`;
 }
 
 /* =========================================================
-   3) GÖRÜNÜMLER
+   3) ÇEKMECE: kütüphane + içindekiler
+   ========================================================= */
+let current = { id: null, page: 0 };
+function renderDrawer() {
+  const book = current.id && BOOKS.get(current.id);
+  let html = `<div class="d-label">Kütüphane</div>` + LIBRARY.map((b) => `
+    <button class="d-book ${b.id === current.id ? "cur" : ""}" data-open="${b.id}">
+      <span class="chip ${b.color}"></span>
+      <span><div class="n">${escapeHtml(b.title)}</div><div class="m">${b.pages.toLocaleString("tr")} sayfa</div></span>
+    </button>`).join("");
+
+  if (book) {
+    // İçindekiler: her ana bölüm (seviye 1) açılıp kapanan bir grup
+    const groups = [];
+    let g = { head: null, items: [] };
+    for (const t of book.toc) {
+      if (t.l === 1) { groups.push(g); g = { head: t, items: [] }; } else g.items.push(t);
+    }
+    groups.push(g);
+    const link = (t, cls = "") => `<a href="#${book.id}-${t.p}" class="${cls} ${t.p === current.page ? "cur" : ""}"><span>${escapeHtml(t.t)}</span><span class="pg">${t.p}</span></a>`;
+    const nextStart = (i) => { for (let j = i + 1; j < groups.length; j++) if (groups[j].head) return groups[j].head.p; return Infinity; };
+    html += `<div class="d-label">İçindekiler · ${escapeHtml(book.title)}</div><div class="toc">` + groups.map((gr, i) => {
+      if (!gr.head) return gr.items.length ? `<div class="loose">${gr.items.map((t) => link(t)).join("")}</div>` : "";
+      const open = current.page >= gr.head.p && current.page < nextStart(i);
+      return `<details ${open ? "open" : ""}>
+        <summary><span class="caret ${gr.items.length ? "" : "none"}">▶</span>${link(gr.head)}</summary>
+        ${gr.items.length ? `<div class="sub">${gr.items.map((t) => link(t, "l" + t.l)).join("")}</div>` : ""}
+      </details>`;
+    }).join("") + `</div>`;
+  }
+  $("#drawer-body").innerHTML = html;
+  $("#drawer-body").querySelectorAll("[data-open]").forEach((el) => el.onclick = () => { closeDrawer(); go(el.dataset.open, 1); });
+  $("#drawer-body").querySelectorAll(".toc a").forEach((a) => a.addEventListener("click", closeDrawer));
+}
+function openDrawer() {
+  renderDrawer();
+  document.body.classList.add("drawer-open");
+  const cur = $("#drawer-body .toc a.cur") || $("#drawer-body .toc details[open]");
+  if (cur) cur.scrollIntoView({ block: "center" });
+  $("#btn-close").focus();
+}
+function closeDrawer() { document.body.classList.remove("drawer-open"); }
+$("#btn-menu").onclick = openDrawer;
+$("#btn-close").onclick = closeDrawer;
+$("#scrim").onclick = closeDrawer;
+
+/* =========================================================
+   4) GÖRÜNÜMLER
    ========================================================= */
 const app = $("#app");
 
 function showLibrary() {
+  current = { id: null, page: 0 };
   const last = store.get("nr-last", null);
-  const lastBook = last && BOOKS.find((b) => b.id === last.book);
+  const lastMeta = last && metaOf(last.book);
   app.innerHTML = `
     <section class="hero">
       <div class="besmele">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ</div>
       <h1>Risale-i Nur Külliyatı</h1>
-      <p>Okumak istediğin kitabı seç. Altı noktalı kelimelere dokununca anlamı açılır.</p>
+      <p>Okumak istediğin kitabı raftan seç. Altı noktalı kelimelere dokununca anlamı, küçük numaralara dokununca haşiye açılır.</p>
     </section>
-    ${lastBook ? `
-      <div class="resume">
-        <div><small>Kaldığın yer</small><strong>${lastBook.title}</strong> <span style="color:var(--muted)">· Sayfa ${last.page}</span></div>
-        <button class="btn" id="resume">Devam et</button>
-      </div>` : ""}
-    <p class="section-label">Kitaplar</p>
-    <div class="shelf">
-      ${BOOKS.map((b, i) => `
-        <button class="book" data-id="${b.id}">
-          <span class="no">${String(i + 1).padStart(2, "0")}</span>
-          <h3>${b.title}</h3>
-          <p>${b.desc}</p>
-          <span class="meta">${b.pages.length} sayfa</span>
-        </button>`).join("")}
+    <div class="bookcase">
+      <div class="row">
+        ${LIBRARY.map((b) => `
+          <button class="cover ${b.color}" data-open="${b.id}" aria-label="${escapeHtml(b.title)}">
+            <span class="frame"><span class="orn">✦ ✦ ✦</span><span class="t">${escapeHtml(b.title)}</span><span class="orn">✦</span></span>
+            <span class="s">Risale-i Nur</span>
+          </button>`).join("")}
+      </div>
+      <div class="shelf-board"></div>
     </div>
-    <p class="note">Bu ilk sürümdeki metinler deneme metnidir; sitenin çalışmasını göstermek için yazıldı. Gerçek metinler kodun en üstündeki BOOKS listesine eklenecek.</p>`;
-  app.querySelectorAll(".book").forEach((el) => el.onclick = () => go(el.dataset.id, 1));
-  if (lastBook) $("#resume").onclick = () => go(last.book, last.page);
+    <div class="shelf-caption">
+      ${LIBRARY.map((b) => `<div><strong>${escapeHtml(b.title)}</strong>${escapeHtml(b.desc)} <span style="font-variant-numeric:tabular-nums">${b.pages.toLocaleString("tr")} sayfa.</span></div>`).join("")}
+    </div>
+    ${lastMeta ? `
+      <div class="resume">
+        <div><small>Kaldığın yer</small><strong>${escapeHtml(lastMeta.title)}</strong> <span style="color:var(--muted)">· Sayfa ${last.page}</span></div>
+        <button class="btn" id="resume">Devam et</button>
+      </div>` : ""}`;
+  app.querySelectorAll("[data-open]").forEach((el) => el.onclick = () => go(el.dataset.open, 1));
+  if (lastMeta) $("#resume").onclick = () => go(last.book, last.page);
   document.title = "NurRisale";
 }
 
-function showPage(bookId, pageNo, highlight) {
-  const book = BOOKS.find((b) => b.id === bookId);
-  if (!book) return showLibrary();
+async function showPage(bookId, pageNo, highlight) {
+  const meta = metaOf(bookId);
+  if (!meta) return showLibrary();
+  if (!BOOKS.has(bookId)) {
+    app.innerHTML = `<div class="loading">${escapeHtml(meta.title)} açılıyor…</div>`;
+    try { await loadBook(bookId); } catch { app.innerHTML = `<div class="loading">Kitap açılamadı. İnternet bağlantını kontrol edip sayfayı yenile.</div>`; return; }
+  }
+  const book = BOOKS.get(bookId);
   pageNo = Math.min(Math.max(1, pageNo), book.pages.length);
   const page = book.pages[pageNo - 1];
+  current = { id: bookId, page: pageNo };
   store.set("nr-last", { book: bookId, page: pageNo });
-
-  // İçindekiler: her bölümün ilk sayfası
-  const toc = [];
-  book.pages.forEach((p, i) => { if (!toc.find((t) => t.section === p.section)) toc.push({ section: p.section, page: i + 1 }); });
 
   app.innerHTML = `
     <div class="reader-bar">
-      <button class="crumb" id="back">← Kitaplar</button>
-      <span class="demo-tag">Deneme metni</span>
-      <select id="toc" aria-label="İçindekiler">
-        ${toc.map((t) => `<option value="${t.page}" ${t.section === page.section ? "selected" : ""}>${t.section}</option>`).join("")}
-      </select>
+      <button class="crumb" id="toc-btn">☰ İçindekiler</button>
     </div>
     <article class="page">
-      <div class="book-title">${book.title}</div>
-      <h2>${page.section}</h2>
+      <div class="book-title">${escapeHtml(book.title)}</div>
+      <h2>${escapeHtml(page.s)}</h2>
       <div class="ornament">✦ ✦ ✦</div>
-      <div class="text">
-        ${page.arabic ? `<p class="arabic">${page.arabic}</p>` : ""}
-        ${page.text.map((t) => `<p>${renderParagraph(t, highlight)}</p>`).join("")}
-      </div>
+      <div class="text">${page.b.map((b) => renderBlock(b, highlight)).join("")}</div>
     </article>
     <nav class="pager">
       <button id="prev" ${pageNo === 1 ? "disabled" : ""}>← Önceki</button>
@@ -375,95 +430,139 @@ function showPage(bookId, pageNo, highlight) {
       <button id="next" ${pageNo === book.pages.length ? "disabled" : ""}>Sonraki →</button>
     </nav>`;
 
-  $("#back").onclick = () => { location.hash = ""; };
+  $("#toc-btn").onclick = openDrawer;
   $("#prev").onclick = () => go(bookId, pageNo - 1);
   $("#next").onclick = () => go(bookId, pageNo + 1);
-  $("#toc").onchange = (e) => go(bookId, +e.target.value);
   $("#pageinput").onchange = (e) => go(bookId, +e.target.value || 1);
   document.title = `${book.title} · NurRisale`;
   window.scrollTo(0, 0);
 }
 
 /* =========================================================
-   4) YÖNLENDİRME (adres çubuğundaki #sozler-3 gibi)
+   5) YÖNLENDİRME (#sozler-3 gibi)
    ========================================================= */
 let pendingHighlight = null;
 function go(bookId, page) { location.hash = `${bookId}-${page}`; }
 function route() {
-  hideLugat();
+  hidePop();
   const m = location.hash.match(/^#([a-z]+)-(\d+)$/);
   if (m) showPage(m[1], +m[2], pendingHighlight); else showLibrary();
   pendingHighlight = null;
 }
 window.addEventListener("hashchange", route);
 
-/* =========================================================
-   5) LUGAT PENCERESİ
-   ========================================================= */
-const lugat = $("#lugat");
-function hideLugat() { lugat.hidden = true; document.querySelectorAll(".w.on").forEach((e) => e.classList.remove("on")); }
-function showLugat(el) {
-  hideLugat();
-  el.classList.add("on");
-  const key = el.dataset.k;
-  lugat.innerHTML = `<div class="lbl">Lugat</div><div class="word">${key}</div><div class="def">${LUGAT[key]}</div>`;
-  lugat.hidden = false;
-  // Kelimenin altına yerleştir, ekrandan taşmasın
-  const r = el.getBoundingClientRect(), w = lugat.offsetWidth, h = lugat.offsetHeight;
-  let left = Math.min(Math.max(16, r.left + r.width / 2 - w / 2), window.innerWidth - w - 16);
-  let top = r.bottom + 8;
-  if (top + h > window.innerHeight - 16) top = r.top - h - 8;
-  lugat.style.left = left + "px";
-  lugat.style.top = top + "px";
-}
-document.addEventListener("click", (e) => {
-  const w = e.target.closest(".w");
-  if (w) return showLugat(w);
-  if (!e.target.closest("#lugat")) hideLugat();
-});
+// Klavye: ← → ile sayfa çevir
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && e.target.classList?.contains("w")) showLugat(e.target);
-  if (e.key === "Escape") { hideLugat(); closeSearch(); }
+  if (!current.id || e.target.closest("input, select, textarea") || !$("#search").hidden) return;
+  if (e.key === "ArrowRight") $("#next")?.click();
+  if (e.key === "ArrowLeft") $("#prev")?.click();
 });
-window.addEventListener("scroll", hideLugat, { passive: true });
 
 /* =========================================================
-   6) ARAMA
+   6) LUGAT VE HAŞİYE PENCERESİ
+   ========================================================= */
+const pop = $("#pop");
+function hidePop() { pop.hidden = true; document.querySelectorAll(".w.on").forEach((e) => e.classList.remove("on")); }
+function showPop(el, html) {
+  hidePop();
+  pop.innerHTML = html;
+  pop.hidden = false;
+  const r = el.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+  const left = Math.min(Math.max(16, r.left + r.width / 2 - w / 2), window.innerWidth - w - 16);
+  let top = r.bottom + 8;
+  if (top + h > window.innerHeight - 16) top = Math.max(16, r.top - h - 8);
+  pop.style.left = left + "px";
+  pop.style.top = top + "px";
+}
+document.addEventListener("click", (e) => {
+  if (e.target.closest("#pop")) return;
+  const w = e.target.closest(".w");
+  if (w) { showPop(w, `<div class="lbl">Lugat</div><div class="word">${escapeHtml(w.dataset.k)}</div><div class="def">${escapeHtml(LUGAT[w.dataset.k])}</div>`); w.classList.add("on"); return; }
+  const f = e.target.closest(".fn");
+  if (f) {
+    const txt = BOOKS.get(current.id)?.footnotes[f.dataset.fn];
+    return showPop(f, `<div class="lbl">Haşiye ${escapeHtml(f.textContent)}</div><div class="def">${txt ? escapeHtml(txt) : "Bu haşiyenin metni bulunamadı."}</div>`);
+  }
+  hidePop();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && e.target.classList?.contains("w")) e.target.click();
+  if (e.key === "Escape") { hidePop(); closeSearch(); closeDrawer(); }
+});
+window.addEventListener("scroll", hidePop, { passive: true });
+
+/* =========================================================
+   7) ARAMA (dört kitapta birden)
    ========================================================= */
 const searchPanel = $("#search"), q = $("#q"), results = $("#results");
-function openSearch() { searchPanel.hidden = false; q.focus(); runSearch(); }
+const indexCache = new Map();
+function indexOf(book) {
+  if (!indexCache.has(book.id)) {
+    const rows = [];
+    book.pages.forEach((p, i) => p.b.forEach(([k, t]) => {
+      if (k === "ar") return;
+      const text = stripFn(t);
+      rows.push({ page: i + 1, section: p.s, text, plain: plain(text) });
+    }));
+    indexCache.set(book.id, rows);
+  }
+  return indexCache.get(book.id);
+}
+let allLoaded = false;
+async function openSearch() {
+  searchPanel.hidden = false; q.focus();
+  if (!allLoaded) {
+    results.innerHTML = `<div class="empty">Kitaplar aranmaya hazırlanıyor…</div>`;
+    try { await Promise.all(LIBRARY.map((b) => loadBook(b.id))); allLoaded = true; }
+    catch { results.innerHTML = `<div class="empty">Kitaplar yüklenemedi. İnternet bağlantını kontrol et.</div>`; return; }
+  }
+  runSearch();
+}
 function closeSearch() { searchPanel.hidden = true; }
+let searchTimer;
 function runSearch() {
+  if (!allLoaded) return;
   const term = plain(q.value.trim());
-  if (term.length < 2) { results.innerHTML = `<div class="empty">En az 2 harf yaz.</div>`; return; }
+  if (term.length < 3) { results.innerHTML = `<div class="empty">En az 3 harf yaz.</div>`; return; }
+  const ids = current.id ? [current.id, ...LIBRARY.map((b) => b.id).filter((id) => id !== current.id)] : LIBRARY.map((b) => b.id);
   const hits = [];
-  BOOKS.forEach((b) => b.pages.forEach((p, i) => p.text.forEach((t) => {
-    const idx = plain(t).indexOf(term);
-    if (idx >= 0) hits.push({ b, page: i + 1, section: p.section, t, idx });
-  })));
+  let total = 0;
+  for (const id of ids) {
+    const book = BOOKS.get(id);
+    for (const r of indexOf(book)) {
+      let idx = r.plain.indexOf(term);
+      while (idx >= 0) {
+        total++;
+        if (hits.length < 60) hits.push({ book, ...r, idx });
+        idx = r.plain.indexOf(term, idx + term.length);
+        break; // bir paragrafı bir kez listele
+      }
+    }
+  }
   if (!hits.length) { results.innerHTML = `<div class="empty">“${escapeHtml(q.value)}” için sonuç yok.</div>`; return; }
-  results.innerHTML = hits.slice(0, 50).map((h, n) => {
-    const start = Math.max(0, h.idx - 50);
-    const snip = (start ? "…" : "") + h.t.slice(start, h.idx + term.length + 70) + "…";
-    return `<button class="result" data-n="${n}">
-      <div class="where">${h.b.title} · ${h.section} · Sayfa ${h.page}</div>
-      <div class="snip">${renderParagraph(snip, term).replace(/<span[^>]*>|<\/span>/g, "")}</div>
-    </button>`;
-  }).join("");
+  results.innerHTML = `<div class="empty">${total.toLocaleString("tr")} paragrafta geçiyor${total > hits.length ? `, ilk ${hits.length} tanesi gösteriliyor` : ""}.</div>` +
+    hits.map((h, n) => {
+      const start = Math.max(0, h.idx - 50);
+      const snip = (start ? "…" : "") + h.text.slice(start, h.idx + term.length + 80) + "…";
+      return `<button class="result" data-n="${n}">
+        <div class="where">${escapeHtml(h.book.title)} · ${escapeHtml(h.section)} · Sayfa ${h.page}</div>
+        <div class="snip">${renderWords(snip, term).replace(/<span[^>]*>|<\/span>/g, "")}</div>
+      </button>`;
+    }).join("");
   results.querySelectorAll(".result").forEach((el) => el.onclick = () => {
     const h = hits[+el.dataset.n];
     pendingHighlight = term;
     closeSearch();
-    const target = `#${h.b.id}-${h.page}`;
+    const target = `#${h.book.id}-${h.page}`;
     if (location.hash === target) route(); else location.hash = target;
   });
 }
-q.addEventListener("input", runSearch);
+q.addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(runSearch, 200); });
 searchPanel.addEventListener("click", (e) => { if (e.target === searchPanel) closeSearch(); });
 $("#btn-search").onclick = openSearch;
 
 /* =========================================================
-   7) AYARLAR: yazı boyutu ve gece modu
+   8) AYARLAR: yazı boyutu ve gece modu
    ========================================================= */
 let size = store.get("nr-size", 19);
 function applySize() { document.documentElement.style.setProperty("--reader-size", size + "px"); store.set("nr-size", size); }
@@ -477,7 +576,8 @@ $("#btn-theme").onclick = () => {
   theme = isDark ? "light" : "dark";
   applyTheme(); store.set("nr-theme", theme);
 };
-$("#home").onclick = (e) => { e.preventDefault(); location.hash = ""; };
+for (const id of ["#home", "#drawer-home"]) $(id).onclick = (e) => { e.preventDefault(); closeDrawer(); location.hash = ""; };
 
-applySize(); applyTheme(); route();
+applySize(); applyTheme();
+loadLibrary().then(route).catch(() => { app.innerHTML = `<div class="loading">Kitap listesi yüklenemedi. Sayfayı yenile.</div>`; });
 </script>
