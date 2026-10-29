@@ -10,7 +10,9 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 - `index.html` — sitenin tamamı (HTML, CSS, JavaScript tek dosya)
 - `books/index.json` — 40 kitabın listesi (ad, raf: kulliyat/cep, kapak, sayfa sayısı)
 - `books/<id>.json` — sayfalar (`s` bölüm, `b` bloklar: p/c/ar/h), içindekiler, haşiyeler
-- `books/lugat.json` — ~950 kelimelik lugat (sayfadaki küçük lugatla birleşir)
+- `books/lugat.json` — ~950 kelimelik küçük lugat (yedek)
+- `books/lugat-big.json` — 40 bin kayıtlık büyük lugat (13 bin kelime + 27 bin tamlama), `books/kelime-sira.json` — en sık 1000 kelime
+  - `tools/build_lugat.py` ile [Risale-i Nur Kelime Frekansı](https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans) verisinden (Ali Tekdemir, CC0); sitede kaynak belirtildi
 - `books/covers/` — kapaklar (EPUB'lardan; külliyat kitapları sitede çizilmiş cilt kapağıyla görünür)
 - `fonts/` — Souvenir (metin; eksik â î û Â Î Û harfleri eklendi) ve Hamdullah (Arapça), WOFF
 - `tools/epub_to_json.py` — EPUB → JSON dönüştürücü (kitap adları, raflar ve açıklamalar `META` içinde)
@@ -19,8 +21,11 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 
 ## Özellikler
 
-- eRisale düzeni: sekmeler (Arama + okuma sekmeleri, en fazla 6), solda kitap ağacı, kitap/bölüm yolu ve sayfa kutusu, bölüm bölüm kaydırarak okuma
-- Lugat: altın renkli kelimeler, üstüne gelince/dokununca anlam; aranabilir lugat penceresi
+- eRisale düzeni: sekmeler (Arama + okuma sekmeleri, en fazla 6, tek boş sekme), solda kitap ağacı, kitap/bölüm/alt başlık yolu ve sayfa kutusu
+- Sürekli kaydırma kesintisiz: bölüm bitince sonraki bölüm alta eklenir; yol, sol liste (alt başlığa kadar), sekme adı ve sayfa kutusu okunan yeri izler
+- Sayfa sayfa okuma modu ayrıca var (ok tuşları, telefonda kaydırma)
+- Lugat: altın renkli kelimeler ve tamlamalar (Cenâb-ı Hak, derd-i maîşet…), üstüne gelince/dokununca anlam, sıklık sırası ve "Biliyorum" düğmesi; aranabilir lugat penceresi
+- Kelime Öğren: en sık 100/300/500/1000 kelime kartları, bilinen kelimeler metinde düz yazılır (ayar), kapsam yüzdesi
 - Arapça: kırmızı, Hamdullah yazı tipi; sık geçen ifade ve ayetlerin meâli (~%56 satır)
 - Haşiyeler: kırmızı numara, tıklayınca metni
 - Ayarlar paneli: tema (sistem/açık/sepya/gece), sürekli ya da sayfa sayfa okuma, yazı boyutu, yazı tipi, iki yana hizalama, sayfa/satır boşluğu, lugat/meâl/haşiye/sayfa numarası aç-kapa
