@@ -193,6 +193,12 @@ main { margin-left: var(--side-w); padding-top: calc(env(safe-area-inset-top, 0p
 .group:hover .fan .bind { transform: translateY(-4px) rotate(var(--r)); }
 @media (max-width: 960px) { .cv .img .bind { height: 140px; } }
 
+/* Yeni sekme: eser seçin */
+.pick { min-height: calc(100vh - var(--bar1) - var(--bar2) - 120px); display: grid; place-content: center; justify-items: center; gap: 18px; text-align: center; color: var(--ink); padding: 40px 0; }
+.pick svg { width: 220px; height: 220px; }
+.pick p { margin: 0; font-size: 19px; line-height: 1.5; }
+.pick small { color: var(--muted); font-size: 14px; }
+
 /* Okuma */
 .reader { max-width: 760px; margin: 0 auto; padding-top: 36px; }
 .chap-title { font-family: var(--font-title); color: var(--red); font-weight: 400; text-align: center; font-size: clamp(36px, 6vw, 60px); line-height: 1.1; margin: 10px 0 18px; text-wrap: balance; }
@@ -829,9 +835,30 @@ $("#tabs").addEventListener("click", (e) => {
   if (location.hash === tab.h) route(); else location.hash = tab.h;
 });
 
+function showPick() {
+  current = { id: null, page: 0, chapter: null };
+  stopSpeaking(); $("#fab").hidden = true; $("#progress").style.width = "0";
+  renderCrumbs(); renderSide();
+  app.innerHTML = `<div class="pick">
+    <svg viewBox="0 0 220 220" aria-hidden="true">
+      <circle cx="110" cy="110" r="96" fill="var(--soft)"/>
+      <circle cx="104" cy="100" r="58" fill="var(--paper)" stroke="var(--lugat)" stroke-width="6"/>
+      <path d="M146 142l34 34" stroke="var(--lugat)" stroke-width="12" stroke-linecap="round"/>
+      <g fill="var(--red)"><path d="M72 76c12-6 24-6 32 2v52c-8-7-20-7-32-2z" opacity=".85"/><path d="M136 76c-12-6-24-6-32 2v52c8-7 20-7 32-2z"/></g>
+      <path d="M80 92h16M80 104h16M112 92h16M112 104h16" stroke="var(--paper)" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="40" cy="58" r="6" fill="var(--lugat)"/><circle cx="182" cy="66" r="5" fill="var(--lugat)"/><circle cx="34" cy="150" r="7" fill="var(--lugat)" opacity=".7"/>
+    </svg>
+    <p>Risale-i Nur Külliyatı'ndan<br>bir eser seçiniz</p>
+    <small>Soldaki listeden bir kitap ve bölüm seç.</small>
+  </div>`;
+  document.title = "Yeni Sekme · NurRisale";
+  if (narrow()) openSide();
+}
+
 function route() {
   hidePop();
   syncTabs();
+  if (!location.hash && activeTab !== "search") { if (pageObserver) pageObserver.disconnect(); return showPick(); }
   const m = location.hash.match(/^#([a-z]+)-(\d+)$/);
   if (m) showChapter(m[1], +m[2], pendingHighlight); else { if (pageObserver) pageObserver.disconnect(); showLibrary(); }
   pendingHighlight = null;
