@@ -25,9 +25,9 @@ OUT = ROOT / "books"
 # Kitapların sitedeki adı, sırası, kapak rengi ve kısa açıklaması
 META = {
     "sozler":   {"title": "Sözler",   "order": 1, "color": "green",    "desc": "İman hakikatlerini temsillerle anlatan otuz üç Söz."},
-    "mektubat": {"title": "Mektubat", "order": 2, "color": "maroon",   "desc": "Suallere cevap olarak yazılmış otuz üç Mektub."},
-    "lemalar":  {"title": "Lem'alar", "order": 3, "color": "navy",     "desc": "Kısa ve parlak hakikat parıltıları."},
-    "sualar":   {"title": "Şualar",   "order": 4, "color": "brown",    "desc": "Tevhid, iman ve müdafaa üzerine Şualar."},
+    "mektubat": {"title": "Mektubat", "order": 2, "color": "red",   "desc": "Suallere cevap olarak yazılmış otuz üç Mektub."},
+    "lemalar":  {"title": "Lem'alar", "order": 3, "color": "red",     "desc": "Kısa ve parlak hakikat parıltıları."},
+    "sualar":   {"title": "Şualar",   "order": 4, "color": "red",    "desc": "Tevhid, iman ve müdafaa üzerine Şualar."},
 }
 
 PAGE_CHARS = 2200  # bir sayfaya sığacak yaklaşık harf sayısı
@@ -83,7 +83,7 @@ def convert(epub_path):
     path = lambda href: posixpath.normpath(posixpath.join(base, unquote(href.split("#")[0])))
 
     book_id = slug(raw_title)
-    meta = META.get(book_id, {"title": raw_title.title(), "order": 99, "color": "green", "desc": ""})
+    meta = META.get(book_id, {"title": raw_title.title(), "order": 99, "color": "red", "desc": ""})
 
     # Haşiyeler
     foot_files = [h for h in manifest.values() if re.search(r"foot|note", h, re.I) and re.search(r"x?html?$", h)]
@@ -151,11 +151,49 @@ def convert(epub_path):
             state["size"] += len(visible)
     new_page()
 
+    cover = save_cover(z, opf, manifest, path, book_id)
+
     book = {"id": book_id, "title": meta["title"], "pages": pages, "toc": toc, "footnotes": footnotes}
     OUT.mkdir(exist_ok=True)
     (OUT / f"{book_id}.json").write_text(json.dumps(book, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    return {"id": book_id, "title": meta["title"], "desc": meta["desc"], "color": meta["color"],
+    return {"id": book_id, "title": meta["title"], "desc": meta["desc"], "color": meta["color"], "cover": cover,
             "order": meta["order"], "pages": len(pages), "chapters": sum(1 for t in toc if t["l"] == 1)}
+
+
+def save_cover(z, opf, manifest, path, book_id):
+    """EPUB'daki kapak resmini books/covers/<id>.jpg olarak kaydet.
+    Kenardaki parlak çerçeveyi kırpar: kırmızı cildin başladığı yeri bulur."""
+    from io import BytesIO
+    from PIL import Image
+
+    cover_id = (opf.xpath("//*[local-name()='meta'][@name='cover']/@content") or [None])[0]
+    href = manifest.get(cover_id) or next((h for h in manifest.values() if re.search(r"cover\.(jpe?g|png)$", h, re.I)), None)
+    if not href:
+        return None
+    img = Image.open(BytesIO(z.read(path(href)))).convert("RGB")
+    w, h = img.size
+    px = img.load()
+
+    def is_binding(x, y):  # koyu kırmızı cilt rengi
+        r, g, b = px[x, y]
+        return r > 110 and g < 70 and b < 90
+
+    def first(line):
+        return next((i for i, ok in enumerate(line) if ok), 0)
+
+    mid_y, mid_x = h // 2, w // 2
+    left = first(is_binding(x, mid_y) for x in range(w))
+    right = w - first(is_binding(x, mid_y) for x in reversed(range(w)))
+    # Üstte ortada ışık parlaması var; birkaç sütunda ölçüp en içtekini al
+    cols = [int(w * f) for f in (0.15, 0.3, 0.7, 0.85)]
+    top = sorted(first(is_binding(x, y) for y in range(h)) for x in cols)[2] + 2  # aykırı değeri at
+    bottom = h - sorted(first(is_binding(x, y) for y in reversed(range(h))) for x in cols)[2] - 2
+    if right - left > w * 0.6 and bottom - top > h * 0.6:
+        img = img.crop((left, top, right, bottom))
+    img.thumbnail((360, 540))
+    (OUT / "covers").mkdir(parents=True, exist_ok=True)
+    img.save(OUT / "covers" / f"{book_id}.jpg", quality=84, optimize=True, progressive=True)
+    return f"books/covers/{book_id}.jpg"
 
 
 def main(paths):

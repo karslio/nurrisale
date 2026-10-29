@@ -4,6 +4,7 @@
   "title": "Sözler",
   "desc": "İman hakikatlerini temsillerle anlatan otuz üç Söz.",
   "color": "green",
+  "cover": "books/covers/sozler.jpg",
   "order": 1,
   "pages": 962,
   "chapters": 43
@@ -12,7 +13,8 @@
   "id": "mektubat",
   "title": "Mektubat",
   "desc": "Suallere cevap olarak yazılmış otuz üç Mektub.",
-  "color": "maroon",
+  "color": "red",
+  "cover": "books/covers/mektubat.jpg",
   "order": 2,
   "pages": 602,
   "chapters": 36
@@ -21,7 +23,8 @@
   "id": "lemalar",
   "title": "Lem'alar",
   "desc": "Kısa ve parlak hakikat parıltıları.",
-  "color": "navy",
+  "color": "red",
+  "cover": "books/covers/lemalar.jpg",
   "order": 3,
   "pages": 558,
   "chapters": 36
@@ -30,7 +33,8 @@
   "id": "sualar",
   "title": "Şualar",
   "desc": "Tevhid, iman ve müdafaa üzerine Şualar.",
-  "color": "brown",
+  "color": "red",
+  "cover": "books/covers/sualar.jpg",
   "order": 4,
   "pages": 822,
   "chapters": 15
