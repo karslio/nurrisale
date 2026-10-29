@@ -514,6 +514,101 @@ body.hide-known .w.kn { color: inherit; }
 .kn-books em { font-style: normal; color: var(--muted); font-variant-numeric: tabular-nums; }
 @media (max-width: 600px) { .kn-books a { grid-template-columns: minmax(0, 120px) minmax(0, 1fr) auto; } .kn-row { grid-template-columns: 24px minmax(0, 1fr) auto; gap: 8px; } }
 
+
+/* ---------- Paragraf bağlantısı ---------- */
+.pflash { background: color-mix(in srgb, var(--select) 75%, transparent); box-shadow: 0 0 0 8px color-mix(in srgb, var(--select) 75%, transparent); border-radius: 4px; transition: background 1.2s, box-shadow 1.2s; }
+#plink { position: absolute; z-index: 30; width: 26px; height: 26px; border-radius: 99px; border: 1px solid var(--rule); background: var(--surface); color: var(--muted); font: 600 14px var(--font-ui); cursor: pointer; display: grid; place-items: center; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+#plink:hover { color: var(--red); border-color: var(--red); }
+@media (hover: none) { #plink { display: none !important; } }
+
+/* ---------- Ders modu ---------- */
+body.lesson .side, body.lesson .bars, body.lesson #fab, body.lesson .prev-top, body.lesson #progress, body.lesson .ayref { display: none !important; }
+body.lesson main { margin-left: 0 !important; padding-top: 0 !important; }
+body.lesson .reader { max-width: min(1500px, 94vw); padding-top: 4vh; padding-bottom: 30vh; }
+body.lesson .reader .text { font-size: calc(var(--reader-size) * var(--lesson-k, 1.7)); line-height: 1.7; }
+body.lesson .chap-title { font-size: clamp(40px, 5vw, 78px); }
+body.lesson .pmark { opacity: .35; }
+#lesson-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 70; display: flex; align-items: center; gap: 8px; padding: 8px 14px calc(8px + env(safe-area-inset-bottom, 0px)); background: color-mix(in srgb, var(--paper) 90%, transparent); backdrop-filter: blur(8px); border-top: 1px solid var(--rule); font: 14px var(--font-ui); opacity: .35; transition: opacity .2s; }
+#lesson-bar:hover, #lesson-bar:focus-within { opacity: 1; }
+#lesson-bar .info { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); }
+#lesson-bar .info b { color: var(--ink); font-weight: 600; }
+#lesson-bar button { border: 1px solid var(--rule); background: var(--surface); color: var(--ink); border-radius: 10px; min-width: 40px; height: 38px; padding: 0 10px; cursor: pointer; font: 600 15px var(--font-ui); }
+#lesson-bar button.x { color: var(--red); }
+
+/* ---------- Keşfet ---------- */
+.ex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.ex-grid a, .ex-grid button { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 12px; align-items: center; text-align: left; font: inherit; color: inherit; text-decoration: none; border: 1px solid var(--rule); border-radius: 14px; background: var(--surface); padding: 14px; cursor: pointer; transition: border-color .15s, transform .15s; }
+.ex-grid a:hover, .ex-grid button:hover { border-color: var(--red); transform: translateY(-1px); }
+.ex-grid svg { grid-row: span 2; width: 40px; height: 40px; padding: 9px; border-radius: 12px; background: color-mix(in srgb, var(--red) 10%, transparent); color: var(--red); }
+.ex-grid b { font: 600 15px "Poppins", var(--font-ui); }
+.ex-grid small { color: var(--muted); font-size: 12.5px; line-height: 1.35; }
+@media (max-width: 600px) { .ex-grid { grid-template-columns: 1fr 1fr; gap: 8px; } .ex-grid a, .ex-grid button { grid-template-columns: minmax(0, 1fr); padding: 12px; gap: 6px; } .ex-grid svg { grid-row: auto; width: 34px; height: 34px; padding: 7px; } .ex-grid b { font-size: 14px; } }
+
+/* ---------- Dizin ---------- */
+.stv-switch { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.stv-switch a { white-space: nowrap; }
+.dz-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.dz-tabs a { padding: 7px 14px; border-radius: 99px; border: 1px solid var(--rule); text-decoration: none; color: var(--ink); font-size: 14px; background: var(--paper); }
+.dz-tabs a.on { border-color: var(--red); color: var(--red); font-weight: 600; }
+.dz-tabs a span { color: var(--muted); font-weight: 400; margin-left: 4px; }
+.dz-row { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; padding: 14px 0; border-top: 1px solid var(--rule); }
+.dz-n { font: 700 18px "Poppins", var(--font-ui); color: var(--red); text-align: center; line-height: 1.1; }
+.dz-n small { display: block; font: 500 11px var(--font-ui); color: var(--muted); }
+.dz-ar { font-family: var(--font-arabic); font-size: 24px; line-height: 1.9; color: var(--red); direction: rtl; text-align: right; }
+.dz-m { font-family: var(--font-body); line-height: 1.55; margin-top: 2px; }
+.dz-src { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+/* ---------- Hayat haritası ---------- */
+.hy { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr); gap: 18px; align-items: start; }
+.hy-map { position: sticky; top: 120px; border: 1px solid var(--rule); border-radius: 16px; background: color-mix(in srgb, var(--paper) 60%, var(--side)); overflow: hidden; }
+.hy-map svg { display: block; width: 100%; height: auto; }
+.hy-map .il { fill: var(--soft); stroke: var(--paper); stroke-width: .8; }
+.hy-map .route { fill: none; stroke: var(--red); stroke-width: 1.2; stroke-dasharray: 4 6; opacity: .18; }
+.hy-map .route-done { fill: none; stroke: var(--red); stroke-width: 2.4; opacity: .55; stroke-linejoin: round; }
+.hy-map .route-last { fill: none; stroke: var(--red); stroke-width: 4; stroke-linecap: round; }
+.hy-map .pt circle { fill: var(--surface); stroke: var(--red); stroke-width: 3; cursor: pointer; transition: r .2s; }
+.hy-map .pt.on circle { fill: var(--red); }
+.hy-map .pt .ring { r: 0; fill: none; stroke: var(--red); stroke-width: 2; pointer-events: none; }
+.hy-map .pt.cur circle:not(.ring) { r: 12; fill: var(--red); }
+.hy-map .pt.cur .ring { animation: hyp 1.6s infinite; }
+@keyframes hyp { from { r: 13; opacity: .6; } to { r: 30; opacity: 0; } }
+.hy-map .pt text { font: 600 21px var(--font-ui); fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; pointer-events: none; }
+.hy-map .off { font: 600 20px var(--font-ui); fill: var(--red); }
+.hy-ctl { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border-top: 1px solid var(--rule); background: var(--surface); flex-wrap: wrap; }
+.hy-ctl button { border: 1px solid var(--rule); background: var(--paper); border-radius: 10px; padding: 7px 12px; cursor: pointer; font: 500 14px var(--font-ui); color: var(--ink); }
+.hy-ctl button.pri { background: var(--red); border-color: var(--red); color: #fff; }
+.hy-ctl .yr { margin-left: auto; font: 700 18px "Poppins", var(--font-ui); color: var(--red); }
+.hy-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; position: relative; }
+.hy-list::before { content: ""; position: absolute; left: 17px; top: 8px; bottom: 8px; width: 2px; background: var(--rule); }
+.hy-it { position: relative; padding: 4px 0 18px 48px; cursor: pointer; }
+.hy-it .dot { position: absolute; left: 6px; top: 4px; width: 24px; height: 24px; border-radius: 99px; background: var(--surface); border: 3px solid var(--red); display: grid; place-items: center; font: 700 11px var(--font-ui); color: var(--red); }
+.hy-it.cur .dot { background: var(--red); color: #fff; }
+.hy-it .yr { font: 600 13px var(--font-ui); color: var(--red); }
+.hy-it h3 { margin: 2px 0 4px; font: 600 17px "Poppins", var(--font-ui); }
+.hy-it h3 small { color: var(--muted); font-weight: 500; font-size: 13.5px; }
+.hy-it p { margin: 0 0 8px; font-family: var(--font-body); line-height: 1.55; font-size: 15.5px; }
+.hy-it .lk { display: flex; flex-wrap: wrap; gap: 6px; }
+.hy-it.cur { background: linear-gradient(90deg, color-mix(in srgb, var(--red) 6%, transparent), transparent); border-radius: 12px; }
+@media (max-width: 900px) { .hy { grid-template-columns: minmax(0, 1fr); } .hy-map { position: sticky; top: 96px; z-index: 5; } }
+
+/* ---------- Dağılım grafiği ---------- */
+.dist { border: 1px solid var(--rule); border-radius: 12px; background: var(--surface); padding: 12px 12px 6px; }
+.dist h3 { margin: 0 0 8px; font-size: 14.5px; }
+.dist svg { display: block; width: 100%; height: 150px; }
+.dist rect { fill: var(--red); opacity: .8; }
+.dist rect:hover { opacity: 1; }
+.dist .ax { font: 11px var(--font-ui); fill: var(--muted); }
+.dist .tip { font-size: 12.5px; color: var(--muted); min-height: 1.3em; }
+
+/* ---------- Vecize ezberi ---------- */
+.vz-card { border: 1px solid var(--rule); border-radius: 16px; background: var(--side); padding: 20px 18px; display: grid; gap: 10px; }
+.vz-card .src { font-size: 12.5px; color: var(--muted); }
+.vz-card .txt { font-family: var(--font-body); font-size: 18px; line-height: 1.6; }
+.vz-card .hide { filter: blur(6px); user-select: none; transition: filter .3s; }
+.vz-card .hide.show { filter: none; }
+.vz-st { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin: 0 0 12px; }
+.vz-st b { color: var(--ink); }
+
 /* ---------- Telefon ve tablet ---------- */
 @media (max-width: 960px) {
   :root { --bar1: 56px; --side-w: min(340px, 86vw); }
@@ -1124,8 +1219,14 @@ function showLibrary() {
         <div class="week">${r.last7.map((x) => `<div><i style="height:${Math.round(x.n / max * 100)}%" title="${x.n} sayfa"></i><span>${DAYS[x.d.getDay()]}</span></div>`).join("")}</div></div></div>`; })()}
     ${planCardHtml()}
     <div class="sec"><div class="card"><div class="row2"><div><div class="h">Kelime Öğren</div><strong>${srsDue().length ? `${srsDue().length} kelime tekrar bekliyor` : "En sık geçen kelimelerle başla"}</strong><div style="color:var(--muted);font-size:13.5px;margin-top:2px">${KNOWN.size ? `${KNOWN.size} kelime biliyorsun · öğrendiklerin aralıklarla (1, 3, 7, 16… gün) tekrar sorulur` : "İlk 100 kelime, lugata bakma ihtiyacının beşte birini karşılar"}</div></div><button class="btn" id="home-learn">${srsDue().length ? "Tekrar et" : "Başla"}</button></div></div></div>
-    <div class="sec"><div class="card"><div class="row2"><div><div class="h">Kelime istatistikleri</div><strong>Hangi kelime kaç kez geçiyor?</strong><div style="color:var(--muted);font-size:13.5px;margin-top:2px">Kitaplara göre kelime sayıları, en sık kelimeler, istediğin kelimenin payı</div></div><button class="btn" id="home-stats">Aç</button></div></div></div>
-    <div class="sec"><div class="card"><div class="row2"><div><div class="h">Konu dizini</div><strong>Hangi konu nerede anlatılıyor?</strong><div style="color:var(--muted);font-size:13.5px;margin-top:2px">Haşir, kader, namaz, ihlas, gençlik… 28 konunun en çok işlendiği bölümler</div></div><button class="btn" id="home-konu">Aç</button></div></div></div>
+    <div class="sec"><h2 class="sec-h">Keşfet</h2><div class="ex-grid">
+      <a href="#hayat">${MI('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>')}<b>Bediüzzaman'ın hayatı</b><small>Nurs'tan Urfa'ya harita ve zaman çizelgesi</small></a>
+      <a href="#konular">${MI('<path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/>')}<b>Konu dizini</b><small>Haşir, kader, namaz… nerede anlatılıyor</small></a>
+      <a href="#dizin">${MI('<path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 9h8M8 13h5"/>')}<b>Hadis, kişi ve yer dizini</b><small>72 hadis, 38 kişi, 29 yer</small></a>
+      <a href="#ayetler">${MI('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M12 7v6M9 10h6"/>')}<b>Ayet dizini</b><small>Geçen ayetler, mealleri ve yerleri</small></a>
+      <a href="#istatistik">${MI('<path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/>')}<b>Kelime istatistikleri</b><small>Hangi kelime kaç kez, nerede yoğun</small></a>
+      <button data-ex="vecize">${MI('<path d="M7 7h4v4c0 3-2 5-4 6M15 7h4v4c0 3-2 5-4 6"/>')}<b>Vecize ezberi</b><small>Her gün üç vecize, aralıklı tekrar</small></button>
+    </div></div>
     ${store.get("nr-recent", []).length > 1 ? `<div class="sec"><div class="card"><div class="h">Son okuduklarım</div><div class="recent">${store.get("nr-recent", []).slice(0, 5).map((r) => `<a href="#${r.book}-${r.page}"><span>${escapeHtml(r.chap)} <span style="color:var(--muted)">· ${escapeHtml(r.title)}</span></span><span>Sayfa ${r.page}</span></a>`).join("")}</div></div></div>` : ""}
     ${lastMeta ? `<div class="sec"><div class="card"><div class="h">Kaldığın yer</div><div class="row2"><div><strong>${escapeHtml(lastMeta.title)}</strong> <span style="color:var(--muted)">· Sayfa ${last.page}</span></div><button class="btn" id="resume">Devam et</button></div></div></div>` : ""}
     <div class="sec">
@@ -1152,8 +1253,7 @@ function showLibrary() {
     </div>`;
   $("#home-learn").onclick = () => openLearn(srsDue().length ? "review" : "learn");
   bindPlanCard(app);
-  $("#home-stats").onclick = () => { location.hash = "#istatistik"; };
-  $("#home-konu").onclick = () => { location.hash = "#konular"; };
+  app.querySelectorAll("[data-ex=vecize]").forEach((b) => b.onclick = () => openVecize());
   app.querySelectorAll("[data-jump]").forEach((el) => el.onclick = () => document.getElementById(el.dataset.jump)?.scrollIntoView({ behavior: "smooth", block: "start" }));
   renderDaily();
   app.querySelectorAll("[data-open]").forEach((el) => el.onclick = () => go(el.dataset.open, 1));
@@ -1171,13 +1271,14 @@ async function renderDaily() {
   const id = metaOf("kucuksozler") ? "kucuksozler" : LIBRARY[0]?.id; if (!id) return;
   try { await loadBook(id); } catch { return; }
   const book = BOOKS.get(id), pool = [];
-  book.pages.forEach((p, i) => p.b.forEach(([k, t]) => { const x = stripFn(t); if (k === "p" && x.length > 160 && x.length < 420) pool.push({ t, page: i + 1 }); }));
+  book.pages.forEach((p, i) => p.b.forEach(([k, t], bi) => { const x = stripFn(t); if (k === "p" && x.length > 160 && x.length < 420) pool.push({ t, page: i + 1, key: `${i + 1}:${bi}` }); }));
   if (!pool.length || !$("#daily")) return;
   const day = Math.floor(Date.now() / 86400000), pick = pool[day % pool.length], chap = chapterOf(book, pick.page);
   box.innerHTML = `<h2 class="sec-h">Günün Vecizesi</h2><div class="quote">
     <div class="qimg"><img src="${metaOf(id).cover}" alt="${escapeHtml(book.title)} kapağı"></div>
     <div><h3>${escapeHtml(chap.title)}</h3><blockquote class="text" style="text-align:left">${renderText(pick.t)}</blockquote>
-    <div class="src"><span>${escapeHtml(book.title)} · Sayfa ${pick.page}</span><a href="#${id}-${pick.page}">Devamını oku →</a></div></div></div>`;
+    <div class="src"><span>${escapeHtml(book.title)} · Sayfa ${pick.page}</span><span><button class="link-btn" id="daily-vz">Ezberle</button> · <a href="#${id}-${pick.page}">Devamını oku →</a></span></div></div></div>`;
+  $("#daily-vz").onclick = () => openVecize(pick.key);
 }
 
 let pageObserver = null;
@@ -1226,7 +1327,7 @@ function inRendered(bookId, pageNo) {
   return pageNo >= book.chapters[rendered.lo].start && pageNo <= rendered.until;
 }
 
-async function showChapter(bookId, pageNo, highlight) {
+async function showChapter(bookId, pageNo, highlight, para = null) {
   const meta = metaOf(bookId);
   if (!meta) return showLibrary();
   if (!BOOKS.has(bookId)) {
@@ -1279,6 +1380,7 @@ async function showChapter(bookId, pageNo, highlight) {
     else if (!same) window.scrollTo(0, 0);
   }
   if (highlight) setTimeout(() => app.querySelector("mark")?.scrollIntoView({ block: "center" }), 60);
+  if (para != null) setTimeout(() => flashPara(pageNo, para), 90);
   $("#fab").hidden = false;
   refreshListenBtn();
   updatePage(pageNo);
@@ -1333,6 +1435,7 @@ const READ_MS = 4000;
 function updatePage(p) {
   const book = BOOKS.get(current.id); if (!book) return;
   current.page = p;
+  updLessonBar();
   // Sayfa ekranda 4 saniye kalınca okunmuş sayılır; hızlıca kaydırıp geçilen sayfalar sayılmaz
   clearTimeout(readTimer);
   readTimer = setTimeout(() => { if (current.id === book.id && current.page === p && !document.hidden) trackRead(book.id, p); }, READ_MS);
@@ -1473,8 +1576,8 @@ function tabLabel(h) {
 }
 function syncTabs() {
   const h = location.hash;
-  if (h.startsWith("#istatistik") || h.startsWith("#ayetler") || h.startsWith("#konular")) { activeTab = "stats"; saveTabs(); renderTabs(); return; }
-  const isBook = /^#[a-z]+-\d+$/.test(h);
+  if (/^#(istatistik|ayetler|konular|dizin|hayat)/.test(h)) { activeTab = "stats"; saveTabs(); renderTabs(); return; }
+  const isBook = /^#[a-z]+-\d+(-\d+)?$/.test(h);
   let t = tabs.find((x) => x.k === activeTab);
   if (isBook) {
     if (!t) {
@@ -1484,7 +1587,7 @@ function syncTabs() {
       if (!t) { t = { k: ++tabSeq, h: "" }; tabs.push(t); }
       activeTab = t.k;
     }
-    t.h = h;
+    t.h = h.replace(/^(#[a-z]+-\d+)-\d+$/, "$1");
     while (tabs.length > 6) { const i = tabs.findIndex((x) => x.k !== activeTab); tabs.splice(i, 1); }
   } else if (!t || t.h) activeTab = "search";
   saveTabs(); renderTabs();
@@ -1551,8 +1654,11 @@ function route() {
   if (location.hash.startsWith("#istatistik")) { if (pageObserver) pageObserver.disconnect(); return showStats(location.hash.slice(12) || null); }
   if (location.hash.startsWith("#ayetler")) { if (pageObserver) pageObserver.disconnect(); return showAyetler(location.hash.slice(9) || null); }
   if (location.hash.startsWith("#konular")) { if (pageObserver) pageObserver.disconnect(); return showKonular(location.hash.slice(9) || null); }
-  const m = location.hash.match(/^#([a-z]+)-(\d+)$/);
-  if (m) showChapter(m[1], +m[2], pendingHighlight); else { if (pageObserver) pageObserver.disconnect(); showLibrary(); }
+  if (location.hash.startsWith("#dizin")) { if (pageObserver) pageObserver.disconnect(); return showDizin(location.hash.slice(7) || null); }
+  if (location.hash.startsWith("#hayat")) { if (pageObserver) pageObserver.disconnect(); return showHayat(); }
+  clearInterval(hyTimer);
+  const m = location.hash.match(/^#([a-z]+)-(\d+)(?:-(\d+))?$/);
+  if (m) showChapter(m[1], +m[2], pendingHighlight, m[3] != null ? +m[3] : null); else { if (pageObserver) pageObserver.disconnect(); showLibrary(); }
   pendingHighlight = null;
 }
 window.addEventListener("hashchange", route);
@@ -1974,9 +2080,9 @@ $("#sel-note").onclick = () => {
   const el = app.querySelector(`span.hl[data-hl="${h.id}"]`); if (el) editNote(el, h);
 };
 $("#sel-link").onclick = async () => {
-  const info = selectionInfo(); const page = info ? info.p : current.page;
-  const url = location.href.split("#")[0] + `#${current.id}-${page}`;
-  try { await navigator.clipboard.writeText(url); toast("Bağlantı kopyalandı"); } catch { toast(url); }
+  const info = selectionInfo();
+  if (info) await copyPara(current.id, info.p, info.bi);
+  else { const url = location.href.split("#")[0] + `#${current.id}-${current.page}`; try { await navigator.clipboard.writeText(url); toast("Bağlantı kopyalandı"); } catch { toast(url); } }
   seltool.hidden = true;
 };
 /* ---------- Vecize kartı: seçili metni kare görsele çevir ---------- */
@@ -2088,6 +2194,11 @@ function openMenu(kind) {
       ["stats", MI('<path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/>'), "Kelime istatistikleri", "Kitaplara göre kelime sayıları ve sıklıklar"],
       ["ayet", MI('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M12 7v6M9 10h6"/>'), "Ayet dizini", "Risale'de geçen ayetler, mealleri ve geçtiği yerler"],
       ["konu", MI('<path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/><path d="m20.2 18.2 1.8 1.8"/>'), "Konu dizini", "Haşir, kader, namaz… Risale'de nerelerde işleniyor"],
+      ["ders", MI('<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>'), "Ders modu", "Perdeye yansıtmak için büyük yazı, tam ekran (D)"],
+      ["hayat", MI('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>'), "Bediüzzaman'ın hayatı", "Harita ve zaman çizelgesi, 1877–1960"],
+      ["dizin", MI('<path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 9h8M8 13h5"/>'), "Hadis, kişi ve yer dizini", "Hadisler, peygamberler, âlimler, şehirler"],
+      ["vecize", MI('<path d="M7 7h4v4c0 3-2 5-4 6M15 7h4v4c0 3-2 5-4 6"/>'), "Vecize ezberi", "Küçük Sözler'den her gün yeni vecize"],
+      ["offline", MI('<path d="M12 4v11M7 10l5 5 5-5M4 20h16"/>'), "Çevrimdışı kütüphane", "Bütün kitapları cihaza indir"],
       ["plan", MI('<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18M8 15l2.5 2.5L16 13"/>'), "Okuma planı", "Bir kitabı belirlediğin günde bitir"],
       ["learn", MI('<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/>'), "Kelime Öğren", "En sık geçen kelimelerden başlayarak öğren"],
       ["lugat", MI('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M8 7h8M8 11h6"/>'), "Lugat", "Bütün kelimeler ve anlamları, aranabilir"],
@@ -2122,6 +2233,11 @@ menu.addEventListener("click", async (e) => {
   if (m === "notes") { if (narrow()) openSide(); else { renderSide(); side.scrollTo({ top: 0, behavior: "smooth" }); } if (!getMarks().length && !getHls().length) toast("Henüz yer imi ya da vurgu yok"); }
   if (m === "learn") openLearn();
   if (m === "plan") openPlan();
+  if (m === "ders") toggleLesson(true);
+  if (m === "hayat") location.hash = "#hayat";
+  if (m === "dizin") location.hash = "#dizin";
+  if (m === "vecize") openVecize();
+  if (m === "offline") openOffline();
   if (m === "stats") location.hash = "#istatistik";
   if (m === "ayet") location.hash = "#ayetler";
   if (m === "konu") location.hash = "#konular";
@@ -2300,7 +2416,7 @@ async function showStats(bookId) {
   const maxT = books[0].s.total;
   document.title = `${bookId ? meta.title + " · " : ""}Kelime İstatistikleri · NurRisale`;
   app.innerHTML = `<section class="stv">
-    <div class="stv-switch"><a class="on" href="#istatistik${bookId ? "-" + bookId : ""}">Kelimeler</a><a href="#ayetler${bookId ? "-" + bookId : ""}">Ayetler</a><a href="#konular">Konular</a></div>
+    ${swHtml("istatistik", bookId)}
     <h1 class="stv-h">Kelime İstatistikleri${bookId ? ` <span style="color:var(--red)">· ${escapeHtml(meta.title)}</span>` : ""}</h1>
     <p class="stv-sub">Türkçe metindeki kelimeler sayıldı; Arapça satırlar ve haşiyeler sayıma dahil değil.</p>
     <div class="stv-ask">
@@ -2354,12 +2470,14 @@ async function showStats(bookId) {
         ${mine ? `<div><b>${fmtN(mine.n)}</b><span>kez ${escapeHtml(meta.title)} içinde · kitaptaki payı ${fmtP(100 * mine.n / S.books[bookId].total)}</span></div>
           <div><b>${fmtP(100 * mine.n / tot)}</b><span>bütün geçişlerin ${escapeHtml(meta.title)} içindeki payı</span></div>` : ""}
       </div>
+      ${distChart(ids, term, suf, bookId)}
       <div class="tbl-wrap tall"><table class="stv-tbl"><thead><tr><th>Kitap</th><th class="n">Geçiş</th><th class="n">Kitaptaki payı</th><th>Geçişlerin payı</th></tr></thead><tbody>
         ${hit.map((r) => `<tr class="${r.id === bookId ? "on" : ""}"><td>${escapeHtml(metaOf(r.id).title)}</td><td class="n">${fmtN(r.n)}</td><td class="n">${fmtP(100 * r.n / S.books[r.id].total)}</td><td><span class="bar"><i style="width:${100 * r.n / maxN}%"></i></span>${fmtP(100 * r.n / tot)}</td></tr>`).join("")}
       </tbody></table></div>
       ${hit.length < ids.length ? `<div class="stq-note">${ids.length - hit.length} kitapta hiç geçmiyor.</div>` : ""}
       ${short ? `<div class="stq-note">Kısa kelimelerde ekli sayım, aynı harflerle başlayan başka kelimeleri de kapsayabilir (hak → hakikat). Daha kesin sonuç için "Ekli hâllerini de say" işaretini kaldır.</div>` : ""}
       <button class="link-btn" id="stq-find">Geçtiği yerleri aramada göster →</button>`;
+    res.querySelectorAll(".dist rect").forEach((r) => r.addEventListener("mouseenter", () => { res.querySelector("[data-tip]").textContent = r.dataset.t; }));
     $("#stq-find").onclick = () => { searchPanel.hidden = false; q.value = raw.includes(" ") ? `"${raw}"` : raw; $("#scope").hidden = true; runSearch(); };
   };
   $("#st-stop").onchange = drawTop; drawTop();
@@ -2402,7 +2520,7 @@ async function showAyetler(bookId) {
   document.title = `${meta ? meta.title + " · " : ""}Ayetler · NurRisale`;
   const place = (x) => { const t = metaOf(x.b).title; const ch = book && x.b === bookId ? chapterOf(book, x.p).title : null; return `<a class="pl" href="#${x.b}-${x.p}">${escapeHtml(bookId ? (ch || t) : t)} · s. ${x.p}</a>`; };
   app.innerHTML = `<section class="stv">
-    <div class="stv-switch"><a href="#istatistik${bookId ? "-" + bookId : ""}">Kelimeler</a><a class="on" href="#ayetler${bookId ? "-" + bookId : ""}">Ayetler</a><a href="#konular">Konular</a></div>
+    ${swHtml("ayetler", bookId)}
     <h1 class="stv-h">Ayetler${meta ? ` <span style="color:var(--red)">· ${escapeHtml(meta.title)}</span>` : ""}</h1>
     <p class="stv-sub">Arapça satırlarda geçen ayetler Kur'an metniyle eşleştirildi. Meal: Rowwad Tercüme Merkezi (QuranEnc.com). Bazı kısa alıntılar ve birleşik okunan ayetler eşleşmemiş olabilir.</p>
     <div class="stv-scope"><label for="ay-book">Kitap</label><select id="ay-book"><option value="">Bütün Risale-i Nur</option>${bookList.map((b) => `<option value="${b.id}" ${b.id === bookId ? "selected" : ""}>${escapeHtml(b.title)}</option>`).join("")}</select></div>
@@ -2443,7 +2561,7 @@ async function showKonular(topicId) {
   app.innerHTML = `<div class="loading">Konular hazırlanıyor…</div>`;
   await loadKonu();
   if (!KONU) { app.innerHTML = `<div class="loading">Konu dizini yüklenemedi. Bağlantını kontrol edip sayfayı yenile.</div>`; return; }
-  const sw = `<div class="stv-switch"><a href="#istatistik">Kelimeler</a><a href="#ayetler">Ayetler</a><a class="on" href="#konular">Konular</a></div>`;
+  const sw = swHtml("konular");
   const T = topicId && KONU.find((x) => x.id === topicId);
   if (!T) {
     document.title = "Konu dizini · NurRisale";
@@ -2517,6 +2635,272 @@ function mergeBackup(d) {
   if (d["nr-read"]) store.set("nr-read", { ...store.get("nr-read", {}), ...d["nr-read"] });
   if (d["nr-recent"]) store.set("nr-recent", uniq([...d["nr-recent"], ...store.get("nr-recent", [])].sort((a, b) => (b.at || 0) - (a.at || 0)), (x) => x.book + x.chap).slice(0, 8));
   ["nr-plan", "nr-last", "nr-settings3", "nr-learn-level"].forEach((k) => { if (d[k] !== undefined) store.set(k, d[k]); });
+}
+
+
+/* ---------- Araçlar sekmesindeki geçiş düğmeleri ---------- */
+const SW_ITEMS = [["istatistik", "Kelimeler", true], ["ayetler", "Ayetler", true], ["konular", "Konular"], ["dizin", "Dizin"], ["hayat", "Hayatı"]];
+function swHtml(on, bookId) {
+  return `<div class="stv-switch">${SW_ITEMS.map(([h, t, b]) => `<a class="${h === on ? "on" : ""}" href="#${h}${b && bookId ? "-" + bookId : ""}">${t}</a>`).join("")}</div>`;
+}
+const toolPage = () => { current = { id: null, page: 0, chapter: null }; rendered = null; stopSpeaking(); $("#fab").hidden = true; $("#progress").style.width = "0"; renderCrumbs(); renderSide(); };
+const jsonCache = {};
+function loadJson(name) {
+  if (!jsonCache[name]) jsonCache[name] = fetch(`books/${name}.json`).then((r) => { if (!r.ok) throw 0; return r.json(); }).catch((e) => { delete jsonCache[name]; throw e; });
+  return jsonCache[name];
+}
+
+/* ---------- Paragraf bağlantısı ---------- */
+function paraUrl(bookId, p, bi) { return location.href.split("#")[0] + `#${bookId}-${p}-${bi}`; }
+async function copyPara(bookId, p, bi) {
+  const url = paraUrl(bookId, p, bi);
+  try { await navigator.clipboard.writeText(url); toast("Paragraf bağlantısı kopyalandı"); } catch { toast(url); }
+}
+function flashPara(p, bi) {
+  let el = app.querySelector(`[data-b="${p}:${bi}"]`);
+  if (!el) { const all = app.querySelectorAll(`[data-b^="${p}:"]`); el = all[all.length - 1]; }
+  if (!el) return;
+  const y = el.getBoundingClientRect().top + scrollY - innerHeight * 0.3;
+  window.scrollTo(0, Math.max(0, y));
+  el.classList.add("pflash"); setTimeout(() => el.classList.remove("pflash"), 3500);
+}
+const plink = document.createElement("button");
+plink.id = "plink"; plink.hidden = true; plink.textContent = "¶"; plink.title = "Bu paragrafın bağlantısını kopyala"; plink.setAttribute("aria-label", plink.title);
+document.body.appendChild(plink);
+let plinkFor = null;
+app.addEventListener("mouseover", (e) => {
+  if (!current.id || document.body.classList.contains("lesson")) return;
+  const el = e.target.closest(".text [data-b]"); if (!el || el === plinkFor) return;
+  if (el.tagName === "H4") return;
+  plinkFor = el;
+  const r = el.getBoundingClientRect();
+  plink.style.left = Math.max(4, r.left + scrollX - 36) + "px"; plink.style.top = r.top + scrollY + 2 + "px"; plink.hidden = false;
+});
+app.addEventListener("mouseleave", () => { setTimeout(() => { if (!plink.matches(":hover")) { plink.hidden = true; plinkFor = null; } }, 200); });
+plink.onclick = () => { if (!plinkFor) return; const [p, bi] = plinkFor.dataset.b.split(":"); copyPara(current.id, p, bi); };
+
+/* ---------- Ders modu (projeksiyon) ---------- */
+let lessonK = store.get("nr-lesson-k", 1.7);
+const lessonBar = document.createElement("div");
+lessonBar.id = "lesson-bar"; lessonBar.hidden = true;
+lessonBar.innerHTML = `<button data-l="prev" aria-label="Geri">◀</button><button data-l="next" aria-label="İleri">▶</button><div class="info" id="lesson-info"></div><button data-l="minus" aria-label="Yazıyı küçült">A−</button><button data-l="plus" aria-label="Yazıyı büyüt">A+</button><button data-l="x" class="x" aria-label="Ders modundan çık">✕</button>`;
+document.body.appendChild(lessonBar);
+const inLesson = () => document.body.classList.contains("lesson");
+function updLessonBar() {
+  if (!inLesson()) return;
+  const book = BOOKS.get(current.id); if (!book) return;
+  const ch = chapterOf(book, current.page);
+  $("#lesson-info").innerHTML = `<b>${escapeHtml(ch.title)}</b> · ${escapeHtml(book.title)} · s. ${current.page}`;
+}
+function toggleLesson(on = !inLesson()) {
+  if (on && !current.id) { const t = tabs.find((x) => x.h); if (t) { activeTab = t.k; saveTabs(); location.hash = t.h; setTimeout(() => toggleLesson(true), 600); return; } return toast("Önce bir eser aç"); }
+  document.body.classList.toggle("lesson", on); lessonBar.hidden = !on; plink.hidden = true; hidePop();
+  document.documentElement.style.setProperty("--lesson-k", lessonK);
+  if (on) { try { document.documentElement.requestFullscreen().catch(() => {}); } catch {} updLessonBar(); toast("Ders modu: boşluk / → ileri, ← geri, Esc çıkış"); }
+  else if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+}
+function lessonStep(dir) {
+  if (settings.mode === "page") { (dir > 0 ? $("#next-pg") : $("#prev-pg"))?.click(); return; }
+  window.scrollBy({ top: dir * innerHeight * 0.8, behavior: "smooth" });
+}
+function lessonSize(d) { lessonK = Math.min(3, Math.max(1, +(lessonK + d).toFixed(2))); store.set("nr-lesson-k", lessonK); document.documentElement.style.setProperty("--lesson-k", lessonK); }
+lessonBar.addEventListener("click", (e) => {
+  const a = e.target.closest("[data-l]")?.dataset.l; if (!a) return;
+  if (a === "prev") lessonStep(-1); if (a === "next") lessonStep(1);
+  if (a === "minus") lessonSize(-0.15); if (a === "plus") lessonSize(0.15); if (a === "x") toggleLesson(false);
+});
+document.addEventListener("keydown", (e) => {
+  if (!inLesson() || e.target.closest("input, textarea, select")) return;
+  const k = e.key; let used = true;
+  if (k === "ArrowRight" || k === "ArrowDown" || k === "PageDown" || k === " ") lessonStep(1);
+  else if (k === "ArrowLeft" || k === "ArrowUp" || k === "PageUp") lessonStep(-1);
+  else if (k === "+" || k === "=") lessonSize(0.15);
+  else if (k === "-") lessonSize(-0.15);
+  else if (k === "Escape") toggleLesson(false);
+  else used = false;
+  if (used) { e.preventDefault(); e.stopImmediatePropagation(); }
+}, true);
+app.addEventListener("click", (e) => {
+  if (!inLesson() || e.target.closest("a, button, .w, .aw, .ay, .fn, .hl") || String(getSelection())) return;
+  lessonStep(e.clientX > innerWidth / 2 ? 1 : -1);
+});
+document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && inLesson()) toggleLesson(false); });
+document.addEventListener("keydown", (e) => { if ((e.key === "d" || e.key === "D") && current.id && !inLesson() && !e.target.closest("input, textarea, select") && $("#search").hidden && !e.ctrlKey && !e.metaKey) toggleLesson(true); });
+
+/* ---------- Çevrimdışı kütüphane ---------- */
+async function openOffline() {
+  const files = [...LIBRARY.map((b) => `books/${b.id}.json`), ...LIBRARY.map((b) => b.cover).filter(Boolean), "books/dizin.json", "books/hayat.json", "books/konular.json", "books/arapca.json", "books/ayetler.json", "books/stats.json", "books/lugat-big.json"];
+  const sw = "serviceWorker" in navigator && navigator.serviceWorker.controller;
+  let have = 0;
+  if (sw && window.caches) for (const f of LIBRARY) if (await caches.match(`books/${f.id}.json`)) have++;
+  showModal(`<h2>Çevrimdışı kütüphane</h2>
+    <p style="margin:0 0 12px;color:var(--muted);font-size:14px">Bütün kitapları, kapakları, lugatı ve dizinleri bu cihaza indirir. Sonra internet olmadan da her kitabı okuyabilir, arayabilirsin. Toplam yaklaşık 45 MB.</p>
+    ${sw ? `<div class="learn-prog"><span><b style="color:var(--ink)">${have} / ${LIBRARY.length}</b> kitap şu an cihazda</span><div class="learn-bar"><div id="off-bar" style="width:${100 * have / LIBRARY.length}%"></div></div></div>
+      <div class="plan-acts"><button class="pri" id="off-go">${have >= LIBRARY.length ? "Güncelle" : "Hepsini indir"}</button></div><p class="plan-note" id="off-st"></p>`
+      : `<p class="plan-note">Çevrimdışı indirme yalnız sitenin kendi adresinde (karslio.github.io/nurrisale) ya da telefona yüklenen uygulamada çalışır.</p>`}`);
+  if (!sw) return;
+  $("#off-go").onclick = async () => {
+    $("#off-go").disabled = true; let done = 0, fail = 0;
+    const step = async (f) => { try { const r = await fetch(f); if (!r.ok) fail++; await r.arrayBuffer(); } catch { fail++; } done++; $("#off-bar").style.width = (100 * done / files.length) + "%"; $("#off-st").textContent = `İndiriliyor: ${done} / ${files.length}`; };
+    for (let i = 0; i < files.length; i += 4) await Promise.all(files.slice(i, i + 4).map(step));
+    store.set("nr-offline", { at: Date.now(), n: files.length - fail });
+    $("#off-st").textContent = fail ? `${fail} dosya indirilemedi; bağlantını kontrol edip tekrar dene.` : "Tamam! Bütün kütüphane artık bu cihazda.";
+    $("#off-go").disabled = false; $("#off-go").textContent = "Güncelle";
+  };
+}
+
+/* ---------- Hadis, kişi ve yer dizini (#dizin, #dizin-kisiler, #dizin-kisi-<id>, …) ---------- */
+async function showDizin(arg) {
+  toolPage();
+  app.innerHTML = `<div class="loading">Dizin hazırlanıyor…</div>`;
+  let D; try { D = await loadJson("dizin"); } catch { app.innerHTML = `<div class="loading">Dizin yüklenemedi. Bağlantını kontrol edip sayfayı yenile.</div>`; return; }
+  const [kind0, ...rest] = (arg || "hadisler").split("-"); const id = rest.join("-");
+  const kind = { hadis: "hadisler", hadisler: "hadisler", kisi: "kisiler", kisiler: "kisiler", yer: "yerler", yerler: "yerler" }[kind0] || "hadisler";
+  const tabsHtml = `<div class="dz-tabs">${[["hadisler", "Hadisler", D.hadisler.length], ["kisiler", "Kişiler", D.kisiler.length], ["yerler", "Yerler", D.yerler.length]].map(([k, t, n]) => `<a class="${k === kind ? "on" : ""}" href="#dizin-${k}">${t}<span>${n}</span></a>`).join("")}</div>`;
+  const place = ([b, p]) => `<a class="pl" href="#${b}-${p}">${escapeHtml(metaOf(b)?.title || b)} · s. ${p}</a>`;
+  const head = (h, sub) => `<section class="stv">${swHtml("dizin")}<h1 class="stv-h">${h}</h1><p class="stv-sub">${sub}</p>${tabsHtml}`;
+  if (kind === "hadisler") {
+    document.title = "Hadis dizini · NurRisale";
+    app.innerHTML = head("Hadis dizini", "Risale-i Nur'da hadis olarak anılan Arapça ifadeler, açıklamaları ve geçtiği yerler. Açıklama varsa Risale'nin kendi ifadesidir; yoksa yaklaşık meal verildi.") +
+      `<input id="dz-q" class="ay-q" type="search" placeholder="Hadis içinde ara (Türkçe ya da Arapça)" autocomplete="off" style="max-width:none"><div id="dz-list"></div></section>`;
+    const draw = () => {
+      const t = plain($("#dz-q").value.trim());
+      const list = D.hadisler.filter((h) => !t || plain(h[1] || "").includes(t) || h[0].includes($("#dz-q").value.trim()));
+      $("#dz-list").innerHTML = list.map((h) => `<div class="dz-row"><div class="dz-n">${h[3].length}<small>yerde</small></div><div><div class="dz-ar" dir="rtl">${escapeHtml(h[0])}</div>${h[1] ? `<div class="dz-m">${escapeHtml(h[1])}</div><div class="dz-src">${h[2] === "r" ? "Risale-i Nur'daki açıklaması" : "Yaklaşık meal"}</div>` : ""}<div class="ay-w">${h[3].slice(0, 10).map(place).join("")}${h[3].length > 10 ? `<span class="pl">+${h[3].length - 10}</span>` : ""}</div></div></div>`).join("") || `<div class="empty">Sonuç yok.</div>`;
+    };
+    let tm; $("#dz-q").oninput = () => { clearTimeout(tm); tm = setTimeout(draw, 150); }; draw(); window.scrollTo(0, 0); return;
+  }
+  const L = D[kind], label = kind === "kisiler" ? "Kişiler" : "Yerler", one = kind === "kisiler" ? "kisi" : "yer";
+  const T = id && L.find((x) => x.id === id);
+  if (!T) {
+    document.title = `${label} dizini · NurRisale`;
+    app.innerHTML = head(`${label} dizini`, kind === "kisiler" ? "Peygamberler, sahabe, âlimler ve Risale-i Nur talebeleri; isimlerinin en çok geçtiği yerler." : "Bediüzzaman'ın hayatındaki şehirler ve Risale-i Nur'da anılan diyarlar; en çok geçtiği yerler.") +
+      `<input id="dz-q" class="ay-q" type="search" placeholder="${kind === "kisiler" ? "Kişi ara" : "Yer ara"}" autocomplete="off" style="max-width:none">
+      <div class="kn-grid">${L.filter((x) => x.total).map((x) => `<a class="kn-card" href="#dizin-${one}-${x.id}" data-s="${escapeHtml(plain(x.t + " " + x.d))}"><b>${escapeHtml(x.t)}</b><small>${escapeHtml(x.d)}</small><span class="kn-n">${fmtN(x.total)} geçiş · ${fmtN(x.places)} yer</span></a>`).join("")}</div></section>`;
+    $("#dz-q").oninput = (e) => { const q = plain(e.target.value.trim()); app.querySelectorAll(".kn-card").forEach((c) => { c.hidden = q && !c.dataset.s.includes(q); }); };
+    window.scrollTo(0, 0); return;
+  }
+  document.title = `${T.t} · ${label} dizini · NurRisale`;
+  const maxB = T.books.length ? T.books[0][1] : 1;
+  app.innerHTML = head(escapeHtml(T.t), escapeHtml(T.d)) + `
+    <div><a class="pl" href="#dizin-${kind}">← Bütün ${label.toLowerCase()}</a></div>
+    <div class="stv-cards"><div><b>${fmtN(T.total)}</b><span>kez geçiyor</span></div><div><b>${fmtN(T.places)}</b><span>bölüm ve alt başlıkta</span></div>${T.books.length ? `<div><b style="font-size:18px;line-height:1.35">${escapeHtml(metaOf(T.books[0][0])?.title || "")}</b><span>en çok geçtiği kitap</span></div>` : ""}</div>
+    <div class="stv-head"><h2>En çok geçtiği yerler</h2></div>
+    <div class="kn-list">${T.items.map(([b, p, ch, sub, n]) => `<a class="kn-row" href="#${b}-${p}"><span><span class="t">${escapeHtml(sub || ch)}</span><span class="w">${escapeHtml(metaOf(b)?.title || b)}${sub ? " · " + escapeHtml(ch) : ""} · s. ${p}</span></span><span class="c"><b>${n}</b>geçiş</span></a>`).join("")}</div>
+    <div class="stv-head"><h2>Kitaplara göre</h2></div>
+    <div class="kn-books">${T.books.map(([b, n]) => `<a href="#${b}-1"><span>${escapeHtml(metaOf(b)?.title || b)}</span><i style="width:${Math.max(3, Math.round(n / maxB * 100))}%"></i><em>${fmtN(n)}</em></a>`).join("")}</div>
+  </section>`;
+  window.scrollTo(0, 0);
+}
+
+/* ---------- Bediüzzaman'ın hayatı: harita ve zaman çizelgesi (#hayat) ---------- */
+let hyTimer = null;
+async function showHayat() {
+  toolPage(); clearInterval(hyTimer);
+  app.innerHTML = `<div class="loading">Harita hazırlanıyor…</div>`;
+  let H; try { H = await loadJson("hayat"); } catch { app.innerHTML = `<div class="loading">Harita yüklenemedi. Bağlantını kontrol edip sayfayı yenile.</div>`; return; }
+  document.title = "Bediüzzaman'ın hayatı · NurRisale";
+  const S = H.stops, places = [];
+  S.forEach((s, i) => { if (s.x == null) return; let p = places.find((q) => q.pl === s.pl); if (!p) places.push(p = { pl: s.pl, x: s.x, y: s.yy, idx: [] }); p.idx.push(i); });
+  const inMap = S.map((s, i) => [s, i]).filter(([s]) => s.x != null);
+  const routeD = (upto) => inMap.filter(([, i]) => i <= upto).map(([s], k) => `${k ? "L" : "M"}${s.x},${s.yy}`).join("");
+  const off = S.map((s, i) => [s, i]).filter(([s]) => s.x == null);
+  const LBL = { "Isparta": [-12, 30, "end"], "Barla": [16, -6, "start"], "Burdur": [-14, -12, "end"], "Denizli": [-16, 4, "end"], "Afyon": [-16, 10, "end"], "Emirdağ": [16, 8, "start"], "Eskişehir": [-16, -2, "end"],
+    "Bitlis": [-16, -12, "end"], "Van": [16, 6, "start"], "Siirt": [10, 26, "start"], "Nurs": [14, 24, "start"], "Doğubayazıt": [-4, -18, "end"], "Erzurum": [-16, -10, "end"], "Şam": [16, 6, "start"] };
+  const labelPos = (p) => { const [dx, dy, a] = LBL[p.pl] || (p.x < H.w - 140 ? [16, 6, "start"] : [-16, 6, "end"]); return `x="${dx}" y="${dy}" text-anchor="${a}"`; };
+  app.innerHTML = `<section class="stv">${swHtml("hayat")}
+    <h1 class="stv-h">Bediüzzaman Said Nursî'nin hayatı</h1>
+    <p class="stv-sub">Nurs'tan Urfa'ya, 1877–1960. Bir durağa tıkla; o yıllarda yazılan eserler ve Tarihçe-i Hayat'ın ilgili bölümü açılır.</p>
+    <div class="hy">
+      <div class="hy-map">
+        <svg viewBox="0 0 ${H.w} ${H.h}" role="img" aria-label="Bediüzzaman'ın hayatındaki duraklar haritası">
+          <g>${H.il.map(([n, d]) => `<path class="il" d="${d}"><title>${escapeHtml(n)}</title></path>`).join("")}</g>
+          <path class="route" d="${routeD(S.length)}"/><path class="route-done" id="hy-done" d=""/><path class="route-last" id="hy-last" d=""/>
+          ${off.map(([s, i]) => `<text class="off" x="${H.w * 0.64}" y="28" text-anchor="middle" data-i="${i}" style="cursor:pointer">↑ ${escapeHtml(s.pl)} (Rusya) ${s.y}</text>`).join("")}
+          ${places.map((p) => `<g class="pt" data-pl="${escapeHtml(p.pl)}" transform="translate(${p.x},${p.y})"><circle class="ring"/><circle r="9" data-i="${p.idx[0]}"/><text ${labelPos(p)}>${escapeHtml(p.pl)}</text></g>`).join("")}
+        </svg>
+        <div class="hy-ctl"><button class="pri" id="hy-play">▶ Oynat</button><button id="hy-prev">◀</button><button id="hy-next">▶</button><span class="yr" id="hy-yr"></span></div>
+      </div>
+      <ol class="hy-list">${S.map((s, i) => `<li class="hy-it" data-i="${i}" id="hy-${i}"><span class="dot">${i + 1}</span><div class="yr">${s.y}</div><h3>${escapeHtml(s.t)} <small>· ${escapeHtml(s.pl)}</small></h3><p>${escapeHtml(s.d)}</p>
+        <div class="lk">${s.w.map((w) => metaOf(w) ? `<a class="pl" href="#${w}-1">${escapeHtml(metaOf(w).title)}</a>` : "").join("")}${s.p ? `<a class="pl" href="#tarihceihayat-${s.p}">Tarihçe-i Hayat'ta oku →</a>` : ""}</div></li>`).join("")}</ol>
+    </div>
+    <p class="stq-note">${escapeHtml(H.kaynak)}. Tarihler Tarihçe-i Hayat'a göre yaklaşık verilmiştir.</p>
+  </section>`;
+  let cur = -1;
+  const sel = (i, scroll = true) => {
+    cur = Math.max(0, Math.min(S.length - 1, i));
+    const s = S[cur];
+    app.querySelectorAll(".hy-it").forEach((el) => el.classList.toggle("cur", +el.dataset.i === cur));
+    app.querySelectorAll(".pt").forEach((g) => { const p = places.find((q) => q.pl === g.dataset.pl); g.classList.toggle("cur", p.idx.includes(cur)); g.classList.toggle("on", p.idx.some((k) => k < cur)); });
+    $("#hy-done").setAttribute("d", routeD(cur));
+    const pv = inMap.filter(([, i]) => i < cur).pop(), cs = S[cur];
+    $("#hy-last").setAttribute("d", pv && cs.x != null ? `M${pv[0].x},${pv[0].yy}L${cs.x},${cs.yy}` : "");
+    $("#hy-yr").textContent = `${s.y} · ${s.pl}`;
+    if (scroll) { const el = $("#hy-" + cur), r = el.getBoundingClientRect(), mapB = narrow() ? app.querySelector(".hy-map").getBoundingClientRect().bottom : $("#bars").getBoundingClientRect().bottom; if (r.top < mapB + 10 || r.bottom > innerHeight - 10) window.scrollTo({ top: scrollY + r.top - mapB - 16, behavior: "smooth" }); }
+  };
+  app.querySelectorAll(".hy-it").forEach((el) => el.addEventListener("click", (e) => { if (!e.target.closest("a")) { stop(); sel(+el.dataset.i, false); } }));
+  app.querySelectorAll(".pt circle[data-i], .off").forEach((c) => c.addEventListener("click", () => { stop(); const p = places.find((q) => q.idx.includes(+c.dataset.i)); const next = p ? (p.idx.find((k) => k > cur) ?? p.idx[0]) : +c.dataset.i; sel(next); }));
+  const stop = () => { clearInterval(hyTimer); hyTimer = null; const b = $("#hy-play"); if (b) b.textContent = "▶ Oynat"; };
+  $("#hy-play").onclick = () => {
+    if (hyTimer) return stop();
+    if (cur >= S.length - 1) cur = -1;
+    $("#hy-play").textContent = "❚❚ Durdur"; sel(cur + 1);
+    hyTimer = setInterval(() => { if (!$("#hy-play")) return stop(); if (cur >= S.length - 1) return stop(); sel(cur + 1); }, 3200);
+  };
+  $("#hy-prev").onclick = () => { stop(); sel(cur - 1); }; $("#hy-next").onclick = () => { stop(); sel(cur + 1); };
+  sel(0, false); window.scrollTo(0, 0);
+}
+
+/* ---------- Kelimenin dağılımı (istatistik sayacının altında) ---------- */
+function distChart(ids, term, suf, bookId) {
+  let bars;
+  if (bookId) {
+    const book = BOOKS.get(bookId), n = book.pages.length, bins = Math.min(60, n), per = n / bins;
+    const cnt = Array(bins).fill(0), words = Array(bins).fill(0);
+    for (const r of indexOf(book)) { const b = Math.min(bins - 1, Math.floor((r.page - 1) / per)); const t = r.plain.replace(/[’`]/g, "'"); cnt[b] += countIn(t, term, suf); words[b] += t.split(/\s+/).length; }
+    bars = cnt.map((c, i) => { const p1 = Math.floor(i * per) + 1, p2 = Math.floor((i + 1) * per); return { v: words[i] ? 1000 * c / words[i] : 0, c, label: `s. ${p1}–${p2}: ${c} kez`, href: `#${bookId}-${p1}`, title: chapterOf(book, p1).title }; });
+  } else {
+    bars = ids.map((id) => { const t = statText(BOOKS.get(id)); const c = countIn(t, term, suf); return { v: 1000 * c / Math.max(1, STATS.books[id].total), c, label: `${metaOf(id).title}: ${c} kez`, href: `#istatistik-${id}`, title: "" }; });
+  }
+  const max = Math.max(...bars.map((b) => b.v)) || 1, W = 1000, Hh = 140, bw = W / bars.length;
+  return `<div class="dist"><h3>${bookId ? "Kitap boyunca dağılımı (1000 kelimede)" : "Kitaplara göre yoğunluk (1000 kelimede)"}</h3>
+    <svg viewBox="0 0 ${W} ${Hh + 12}" preserveAspectRatio="none">${bars.map((b, i) => `<a href="${b.href}"><rect x="${(i * bw + bw * 0.12).toFixed(1)}" y="${(Hh - Hh * b.v / max).toFixed(1)}" width="${(bw * 0.76).toFixed(1)}" height="${Math.max(b.c ? 2 : 0, Hh * b.v / max).toFixed(1)}" data-t="${escapeHtml(b.label + (b.title ? " · " + b.title : "") + " · " + b.v.toLocaleString("tr", { maximumFractionDigits: 2 }) + " / 1000")}"><title>${escapeHtml(b.label)}</title></rect></a>`).join("")}<line x1="0" y1="${Hh}" x2="${W}" y2="${Hh}" stroke="var(--rule)"/></svg>
+    <div class="tip" data-tip>${bookId ? "Sütunun üstüne gel; tıklayınca o sayfalara gider." : "Sütunun üstüne gel; tıklayınca kitabın istatistiği açılır. Sıra, kütüphanedeki kitap sırasıdır."}</div></div>`;
+}
+
+/* ---------- Vecize ezberi (Küçük Sözler'den, aralıklı tekrar: nr-vsrs) ---------- */
+async function openVecize(addKey) {
+  showModal(`<h2>Vecize ezberi</h2><div id="vz-body"><div class="lug-n">Hazırlanıyor…</div></div>`);
+  const id = "kucuksozler";
+  try { await loadBook(id); } catch { $("#vz-body").textContent = "Kitap yüklenemedi."; return; }
+  const book = BOOKS.get(id), pool = [];
+  book.pages.forEach((p, i) => p.b.forEach(([k, t], bi) => { const x = stripFn(t); if (k === "p" && x.length > 60 && x.length < 420) pool.push({ key: `${i + 1}:${bi}`, t: x, page: i + 1 }); }));
+  const V = store.get("nr-vsrs", {}), save = () => store.set("nr-vsrs", V);
+  if (addKey && !V[addKey]) { V[addKey] = { b: 0, due: Date.now() }; save(); }
+  const today = dayKey(), nw = store.get("nr-vnew", { d: today, n: 0 }); if (nw.d !== today) { nw.d = today; nw.n = 0; }
+  const NEW_PER_DAY = 3;
+  let queue = Object.keys(V).filter((k) => V[k].due <= Date.now());
+  while (queue.length < 1 && nw.n < NEW_PER_DAY) { const c = pool.find((x) => !V[x.key]); if (!c) break; V[c.key] = { b: 0, due: Date.now() }; queue.push(c.key); nw.n++; }
+  save(); store.set("nr-vnew", nw);
+  let shown = false;
+  const draw = () => {
+    const all = Object.values(V), learnt = all.filter((x) => x.b >= 4).length;
+    const st = `<div class="vz-st"><span><b>${all.length}</b> vecize listede</span><span><b>${learnt}</b> ezberlendi</span><span>Bugün <b>${queue.length}</b> tekrar</span></div>`;
+    const key = queue[0], it = key && pool.find((x) => x.key === key);
+    if (!it) { $("#vz-body").innerHTML = st + `<div class="flash"><div class="fw" style="font-size:24px">Bugünlük bu kadar ✓</div><div class="fm">Her gün ${NEW_PER_DAY} yeni vecize eklenir; ezberlediklerin 1, 3, 7, 16… gün aralıklarla tekrar sorulur.</div></div><div class="flash-acts"><button id="vz-more">Bir vecize daha ekle</button><button class="ok" id="vz-close">Kapat</button></div>`;
+      $("#vz-more").onclick = () => { const c = pool.find((x) => !V[x.key]); if (!c) return toast("Bütün vecizeler listende"); V[c.key] = { b: 0, due: Date.now() }; save(); queue.push(c.key); draw(); };
+      $("#vz-close").onclick = closeModal; return; }
+    const words = it.t.split(/\s+/), cut = Math.max(3, Math.round(words.length * 0.4));
+    const chap = chapterOf(book, it.page).title;
+    $("#vz-body").innerHTML = st + `<div class="vz-card"><div class="src">${escapeHtml(chap)} · Küçük Sözler, s. ${it.page}${V[key].b ? ` · ${SRS_DAYS[V[key].b]} günlük aralıkta` : " · yeni"}</div>
+      <div class="txt">${escapeHtml(words.slice(0, cut).join(" "))} <span class="hide ${shown ? "show" : ""}">${escapeHtml(words.slice(cut).join(" "))}</span></div></div>
+      <div class="flash-acts">${shown ? `<button class="no" id="vz-no">Tekrar et</button><button class="ok" id="vz-ok">Hatırladım ✓</button>` : `<button class="show" id="vz-show">Devamını göster</button>`}</div>
+      <p class="plan-note">Önce devamını içinden söylemeye çalış, sonra "Devamını göster"e bas.</p>`;
+    $("#vz-show") && ($("#vz-show").onclick = () => { shown = true; draw(); });
+    $("#vz-ok") && ($("#vz-ok").onclick = () => { const x = V[key]; x.b = Math.min(6, x.b + 1); x.due = Date.now() + SRS_DAYS[x.b] * 864e5 - 36e5; save(); queue.shift(); shown = false; draw(); });
+    $("#vz-no") && ($("#vz-no").onclick = () => { V[key] = { b: 0, due: Date.now() }; save(); queue.push(queue.shift()); shown = false; draw(); });
+  };
+  draw();
 }
 
 /* =========================================================

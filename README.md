@@ -16,6 +16,7 @@ Site: https://karslio.github.io/nurrisale
 - `books/stats.json` — kitaplara göre kelime istatistikleri (`tools/build_stats.py`)
 - `books/konular.json` — konu dizini: 28 konunun en çok işlendiği bölümler (`tools/build_konular.py`)
 - `books/arapca.json` — ayet olmayan Arapça/Farsça satırların yaklaşık meali (`tools/build_arapca.py`, kaynak `tools/arapca_tercume.json`)
+- `books/dizin.json` — hadis, kişi ve yer dizini (`tools/build_dizin.py`); `books/hayat.json` — Bediüzzaman'ın hayatı haritası (`tools/build_hayat.py`, il sınırları: Turkey-Maps-GeoJSON, Apache 2.0)
 - `tools/epub_to_json.py` — EPUB dosyasını `books/` için JSON'a çeviren araç
 
 ## Yeni kitap eklemek

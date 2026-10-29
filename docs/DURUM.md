@@ -16,6 +16,8 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 - `books/ayetler.json` — ayet eşleşmeleri (3.810 Arapça satırın %41'i, 501 farklı ayet) ve Türkçe meal (Rowwad, QuranEnc.com 1.0.4; metne dokunmadan, kaynakla) — `tools/build_ayet.py /yol/quran-json`
 - `books/konular.json` — konu dizini: 28 konu (haşir, kader, namaz, ihlas, gençlik…), her biri için anahtar kelimelerin en yoğun geçtiği 30 bölüm/alt başlık ve kitaplara göre sayılar (`tools/build_konular.py`)
 - `books/arapca.json` — ayet olmayan Arapça/Farsça satırların meali (dua, salavat, Âyetü'l-Kübra, Farsça münacatlar): 930 tercüme, 1.404 satır; kaynak `tools/arapca_tercume.json` (NurRisale çalışma tercümesi, yaklaşık meal), `tools/build_arapca.py`
+- `books/dizin.json` — hadis dizini (72 hadis; Kur'an'da eşleşmeyen, yanında "hadîs"/"ev kemâ kal" geçen Arapça ifadeler), kişiler (38) ve yerler (29) — `tools/build_dizin.py /yol/quran-json`
+- `books/hayat.json` — Bediüzzaman'ın hayatı: 22 durak, Türkiye il sınırları (Turkey-Maps-GeoJSON, Apache 2.0) — `tools/build_hayat.py /yol/Turkey-Maps-GeoJSON`
 - `books/stats.json` — kitaplara göre kelime sayısı, farklı kelime, en sık kelimeler (`tools/build_stats.py`; kitap eklenince yeniden çalıştır)
 - `books/covers/` — kapaklar (EPUB'lardan; külliyat kitapları sitede çizilmiş cilt kapağıyla görünür)
 - `fonts/` — Souvenir (metin; eksik â î û Â Î Û harfleri eklendi) ve Hamdullah (Arapça), WOFF
@@ -36,6 +38,14 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 - Ayetler: Arapça satırın altında sure:ayet etiketi, üstüne gelince meal; Ayet dizini (#ayetler, #ayetler-<kitap>): sure sırasıyla, en çok geçenler, geçtiği yerler, arama
 - Hız: uzun bölümler 10'ar sayfa çizilir (Onuncu Söz 0,7 sn → 0,06 sn); lugat ve ayet dosyaları açılışta arka planda iner; lugat kitaplarda geçmeyen kayıtlardan ayıklandı (31 bin kayıt)
 - Konu dizini (#konular, #konular-<konu>): konu kartları ve arama; konu sayfasında en çok işlendiği yerler (tıklayınca açılır, anahtar kelimeler işaretli), kitaplara göre çubuk grafik. İstatistik sekmesinde Kelimeler / Ayetler / Konular geçişi; menüde ve ana sayfada bağlantı
+- Paragraf bağlantısı: #kitap-sayfa-paragraf (ör. #sozler-40-4) o paragrafa gider ve işaretler; masaüstünde paragrafın solundaki ¶ düğmesi, seçim araç çubuğundaki "Bağlantı" paragrafa kadar kopyalar
+- Ders modu (menü ya da D tuşu): perdeye yansıtmak için büyük yazı, tam ekran; boşluk/oklar ya da ekranın sağına/soluna tıklama ile ilerleme, A−/A+ ile yazı boyu
+- Bediüzzaman'ın hayatı (#hayat): Türkiye haritası üzerinde 22 durak, oynat düğmesi, her durakta ilgili eserler ve Tarihçe-i Hayat bağlantısı
+- Dizin (#dizin): hadisler (Risale'deki açıklamasıyla ya da yaklaşık meal), kişiler ve yerler (en çok geçtiği bölümler, kitaplara göre)
+- Kelime sayacında dağılım grafiği: bütün Risale'de kitaplara göre yoğunluk, bir kitap seçiliyse kitap boyunca dağılım
+- Vecize ezberi: Küçük Sözler'den her gün 3 yeni vecize, aralıklı tekrar (nr-vsrs); Günün Vecizesi'nde "Ezberle"
+- Çevrimdışı kütüphane (menü): bütün kitapları ve dizinleri tek düğmeyle cihaza indirir
+- Ana sayfada "Keşfet" bölümü: hayat, konular, dizin, ayetler, istatistik, vecize ezberi
 - Arapça satırların altında "Türkçesi" düğmesi (ayet değilse): yaklaşık meal penceresi
 - Arapça: kırmızı, Hamdullah yazı tipi; sık geçen ifade ve ayetlerin meâli (~%56 satır)
 - Haşiyeler: kırmızı numara, tıklayınca metni
