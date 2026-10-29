@@ -1030,7 +1030,9 @@ function updatePage(p) {
   renderCrumbs();
   $("#progress").style.width = (p / book.pages.length * 100) + "%";
   clearTimeout(pageTimer);
+  const tabK = activeTab;
   pageTimer = setTimeout(() => {
+    if (current.id !== book.id || activeTab !== tabK) return;  // bu arada sekme ya da kitap değiştiyse yazma
     store.set("nr-last", { book: book.id, page: p });
     history.replaceState(null, "", `#${book.id}-${p}`);
     const t = tabs.find((x) => x.k === activeTab); if (t) { t.h = `#${book.id}-${p}`; saveTabs(); }
@@ -1102,6 +1104,15 @@ function renderTabs() {
     tabs.map((t) => `<div class="tab ${activeTab === t.k ? "on" : ""}" data-tab="${t.k}" role="button" tabindex="0">${ICON_OPEN}<span class="t">${escapeHtml(tabLabel(t.h))}</span><button class="x" data-close="${t.k}" aria-label="Sekmeyi kapat">✕</button></div>`).join("") +
     `<button class="tab-add" id="tab-add" aria-label="Yeni sekme">+</button>`;
 }
+/* Yeni sekme: boş bir sekme zaten varsa yenisini açma, ona geç */
+function newTab() {
+  const blank = tabs.find((t) => !t.h);
+  if (blank) {
+    if (activeTab === blank.k) toast("Önce bu sekmede bir eser seç");
+    activeTab = blank.k;
+  } else { tabs.push({ k: ++tabSeq, h: "" }); activeTab = tabSeq; }
+  saveTabs(); location.hash = ""; route();
+}
 $("#tabs").addEventListener("click", (e) => {
   const close = e.target.closest("[data-close]");
   if (close) {
@@ -1111,7 +1122,7 @@ $("#tabs").addEventListener("click", (e) => {
     else { saveTabs(); renderTabs(); }
     return;
   }
-  if (e.target.closest("#tab-add")) { tabs.push({ k: ++tabSeq, h: "" }); activeTab = tabSeq; saveTabs(); location.hash = ""; route(); return; }
+  if (e.target.closest("#tab-add")) { newTab(); return; }
   const t = e.target.closest("[data-tab]"); if (!t) return;
   if (t.dataset.tab === "search") { activeTab = "search"; saveTabs(); location.hash = ""; route(); return; }
   const tab = tabs.find((x) => x.k === +t.dataset.tab); activeTab = tab.k; saveTabs();
@@ -1140,6 +1151,7 @@ function showPick() {
 
 function route() {
   hidePop();
+  clearTimeout(pageTimer);
   syncTabs();
   if (!location.hash && activeTab !== "search") { if (pageObserver) pageObserver.disconnect(); return showPick(); }
   const m = location.hash.match(/^#([a-z]+)-(\d+)$/);
@@ -1667,7 +1679,7 @@ menu.addEventListener("click", async (e) => {
   const m = e.target.closest("[data-m]")?.dataset.m; if (!m) return;
   closeMenu();
   if (m === "home") { activeTab = "search"; saveTabs(); location.hash = ""; route(); }
-  if (m === "newtab") $("#tab-add").click();
+  if (m === "newtab") newTab();
   if (m === "notes") { if (narrow()) openSide(); else { renderSide(); side.scrollTo({ top: 0, behavior: "smooth" }); } if (!getMarks().length && !getHls().length) toast("Henüz yer imi ya da vurgu yok"); }
   if (m === "lugat") {
     showModal(`<h2>Lugat</h2><input id="lug-q" class="lug-q" type="search" placeholder="Kelime ya da anlam ara" autocomplete="off"><div id="lug-list" class="lug-list"></div>`);
