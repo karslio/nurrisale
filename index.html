@@ -399,6 +399,29 @@ body.hide-known .w.kn { color: inherit; }
 .flash-acts .ok { background: #3E9B58; border-color: #3E9B58; color: #fff; }
 .flash-acts .show { grid-column: 1 / -1; background: var(--red); border-color: var(--red); color: #fff; }
 .learn-list { display: grid; margin-top: 14px; max-height: 260px; overflow-y: auto; border-top: 1px solid var(--rule); }
+.learn-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: var(--soft); border-radius: 12px; padding: 4px; margin-bottom: 14px; }
+.learn-mode button { border: 0; background: transparent; border-radius: 9px; padding: 8px; cursor: pointer; font: 500 14.5px var(--font-ui); color: var(--muted); }
+.learn-mode button.on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.learn-mode .cnt { display: inline-block; min-width: 20px; padding: 0 6px; margin-left: 4px; border-radius: 99px; background: var(--red); color: #fff; font-size: 12px; line-height: 20px; }
+.srs-boxes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
+.srs-boxes div { border: 1px solid var(--rule); border-radius: 10px; padding: 8px; text-align: center; font-size: 12px; color: var(--muted); }
+.srs-boxes b { display: block; font: 700 18px "Poppins", var(--font-ui); color: var(--ink); }
+.flash-acts .no { background: var(--paper); border-color: var(--red); color: var(--red); }
+.plan-f { display: grid; gap: 12px; }
+.plan-f label { display: grid; gap: 5px; font-weight: 600; font-size: 14px; }
+.plan-f select, .plan-f input { font: 15px var(--font-ui); padding: 9px 11px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); min-width: 0; }
+.plan-f .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.plan-f .calc { background: var(--side); border-radius: 12px; padding: 12px 14px; font-size: 14.5px; }
+.plan-f .calc b { color: var(--red); }
+.plan-acts { display: flex; gap: 8px; flex-wrap: wrap; }
+.plan-acts button { border: 1px solid var(--rule); background: var(--paper); border-radius: 10px; padding: 10px 14px; cursor: pointer; font: 500 14.5px var(--font-ui); color: var(--ink); }
+.plan-acts .pri { background: var(--red); border-color: var(--red); color: #fff; }
+.plan-st { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 8px 0 12px; }
+.plan-st b { display: block; font: 700 22px "Poppins", var(--font-ui); color: var(--red); font-variant-numeric: tabular-nums; }
+.plan-st span { font-size: 12.5px; color: var(--muted); }
+.plan-bar { height: 8px; border-radius: 99px; background: var(--rule); overflow: hidden; position: relative; } .plan-bar div { height: 100%; background: var(--red); border-radius: 99px; }
+.plan-bar i { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); opacity: .45; }
+.plan-note { font-size: 13px; color: var(--muted); margin-top: 6px; }
 .learn-list label { display: flex; gap: 10px; align-items: baseline; padding: 6px 2px; border-bottom: 1px solid var(--rule); font-size: 14px; cursor: pointer; }
 .learn-list b { color: var(--lugat); min-width: 7em; } .learn-list small { color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; }
 .lug-q { width: 100%; font: 15px var(--font-ui); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); }
@@ -1083,13 +1106,14 @@ function showLibrary() {
       <div class="home-results" id="home-results"></div>
     </section></div>
     <svg class="wave" viewBox="0 0 1440 46" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h1440v18c-160 22-320 30-520 14S520 4 360 12 120 40 0 30z" fill="color-mix(in srgb, var(--red) 5%, var(--paper))" style="fill: color-mix(in srgb, var(--red) 5%, var(--paper))"/></svg>
-    ${(() => { const r = readingStats(); if (!r.total) return ""; const goal = 10, max = Math.max(goal, ...r.last7.map((x) => x.n));
+    ${(() => { const r = readingStats(); if (!r.total) return ""; const pi = planInfo(), goal = pi && !pi.done ? pi.target : 10, max = Math.max(goal, ...r.last7.map((x) => x.n));
       const DAYS = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
       return `<div class="sec"><div class="card stats"><div class="h">Okuma takibi</div>
         <div class="st-row"><div><b>${r.today}</b><span>bugün okunan sayfa</span></div><div><b>${r.streak}</b><span>gün üst üste</span></div><div><b>${r.total.toLocaleString("tr")}</b><span>son 90 günde sayfa</span></div></div>
-        <div class="goal"><div style="width:${Math.min(100, r.today / goal * 100)}%"></div></div><small>Günlük hedef: ${goal} sayfa${r.today >= goal ? " · tamamlandı ✓" : ""}</small>
+        <div class="goal"><div style="width:${Math.min(100, r.today / goal * 100)}%"></div></div><small>Günlük hedef: ${goal} sayfa${pi && !pi.done ? " (okuma planından)" : ""}${r.today >= goal ? " · tamamlandı ✓" : ""}</small>
         <div class="week">${r.last7.map((x) => `<div><i style="height:${Math.round(x.n / max * 100)}%" title="${x.n} sayfa"></i><span>${DAYS[x.d.getDay()]}</span></div>`).join("")}</div></div></div>`; })()}
-    <div class="sec"><div class="card"><div class="row2"><div><div class="h">Kelime Öğren</div><strong>En sık geçen kelimelerle başla</strong><div style="color:var(--muted);font-size:13.5px;margin-top:2px">${KNOWN.size ? `${KNOWN.size} kelime biliyorsun` : "İlk 100 kelime, lugata bakma ihtiyacının beşte birini karşılar"}</div></div><button class="btn" id="home-learn">Başla</button></div></div></div>
+    ${planCardHtml()}
+    <div class="sec"><div class="card"><div class="row2"><div><div class="h">Kelime Öğren</div><strong>${srsDue().length ? `${srsDue().length} kelime tekrar bekliyor` : "En sık geçen kelimelerle başla"}</strong><div style="color:var(--muted);font-size:13.5px;margin-top:2px">${KNOWN.size ? `${KNOWN.size} kelime biliyorsun · öğrendiklerin aralıklarla (1, 3, 7, 16… gün) tekrar sorulur` : "İlk 100 kelime, lugata bakma ihtiyacının beşte birini karşılar"}</div></div><button class="btn" id="home-learn">${srsDue().length ? "Tekrar et" : "Başla"}</button></div></div></div>
     <div class="sec"><div class="card"><div class="row2"><div><div class="h">Kelime istatistikleri</div><strong>Hangi kelime kaç kez geçiyor?</strong><div style="color:var(--muted);font-size:13.5px;margin-top:2px">Kitaplara göre kelime sayıları, en sık kelimeler, istediğin kelimenin payı</div></div><button class="btn" id="home-stats">Aç</button></div></div></div>
     <div class="sec"><div class="card"><div class="row2"><div><div class="h">Konu dizini</div><strong>Hangi konu nerede anlatılıyor?</strong><div style="color:var(--muted);font-size:13.5px;margin-top:2px">Haşir, kader, namaz, ihlas, gençlik… 28 konunun en çok işlendiği bölümler</div></div><button class="btn" id="home-konu">Aç</button></div></div></div>
     ${store.get("nr-recent", []).length > 1 ? `<div class="sec"><div class="card"><div class="h">Son okuduklarım</div><div class="recent">${store.get("nr-recent", []).slice(0, 5).map((r) => `<a href="#${r.book}-${r.page}"><span>${escapeHtml(r.chap)} <span style="color:var(--muted)">· ${escapeHtml(r.title)}</span></span><span>Sayfa ${r.page}</span></a>`).join("")}</div></div></div>` : ""}
@@ -1115,7 +1139,8 @@ function showLibrary() {
       <div>Lugat ve kelime sıklıkları: <a href="https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans" target="_blank" rel="noopener">Risale-i Nur Kelime Frekansı</a> (Ali Tekdemir, CC0)</div>
     </footer>
     </div>`;
-  $("#home-learn").onclick = () => openLearn();
+  $("#home-learn").onclick = () => openLearn(srsDue().length ? "review" : "learn");
+  bindPlanCard(app);
   $("#home-stats").onclick = () => { location.hash = "#istatistik"; };
   $("#home-konu").onclick = () => { location.hash = "#konular"; };
   app.querySelectorAll("[data-jump]").forEach((el) => el.onclick = () => document.getElementById(el.dataset.jump)?.scrollIntoView({ behavior: "smooth", block: "start" }));
@@ -1318,10 +1343,79 @@ const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1
 function trackRead(bookId, p) {
   const st = store.get("nr-stats", {}), k = dayKey(), key = bookId + ":" + p;
   st[k] = st[k] || [];
+  planTrack(bookId, p);
   if (st[k].includes(key)) return;
   st[k].push(key);
   const days = Object.keys(st).sort(); while (days.length > 90) delete st[days.shift()];
   store.set("nr-stats", st);
+}
+/* ---------- Okuma planı: bir kitabı belirli günde bitir (nr-plan) ---------- */
+const getPlan = () => store.get("nr-plan", null);
+function planInfo(pl = getPlan()) {
+  if (!pl) return null;
+  const meta = metaOf(pl.book); if (!meta) return null;
+  const today = dayKey(), total = meta.pages, read = pl.read || {};
+  const n = Object.keys(read).length, before = Object.values(read).filter((d) => d < today).length, todayN = n - before;
+  const day = Math.floor((new Date(today + "T12:00") - new Date(pl.start + "T12:00")) / 864e5) + 1;
+  const daysLeft = Math.max(1, pl.days - day + 1);
+  const target = Math.max(1, Math.ceil((total - before) / daysLeft));
+  let next = (pl.last || 0) + 1; while (next <= total && read[next]) next++;
+  if (next > total) { next = 1; while (next <= total && read[next]) next++; }
+  const expected = Math.min(total, Math.round(total * Math.min(day, pl.days) / pl.days));
+  return { meta, total, n, todayN, target: Math.min(target, total - before), day, days: pl.days, done: n >= total, late: day > pl.days, next: Math.min(next, total), pct: 100 * n / total, expectedPct: 100 * expected / total, behind: Math.max(0, Math.round(total * (day - 1) / pl.days) - before) };
+}
+function planTrack(bookId, p) {
+  const pl = getPlan(); if (!pl || pl.book !== bookId) return;
+  pl.last = p;
+  if (pl.read[p]) { store.set("nr-plan", pl); return; }
+  const was = planInfo(pl);
+  pl.read[p] = dayKey(); store.set("nr-plan", pl);
+  const now = planInfo(pl);
+  if (now.done && !was.done) toast(`Tebrikler! ${now.meta.title} planını bitirdin`);
+  else if (was.todayN < was.target && now.todayN >= now.target) toast(`Bugünkü hedef tamam: ${now.todayN} sayfa ✓`);
+}
+function planCardHtml() {
+  const i = planInfo();
+  if (!i) return `<div class="sec"><div class="card"><div class="row2"><div><div class="h">Okuma planı</div><strong>Bir kitabı belirlediğin günde bitir</strong><div style="color:var(--muted);font-size:13.5px;margin-top:2px">Ör. Sözler'i 60 günde: her gün kaç sayfa okuman gerektiğini hesaplar, takip eder</div></div><button class="btn" data-plan>Plan yap</button></div></div></div>`;
+  const msg = i.done ? "Plan tamamlandı. Tebrikler!" : i.late ? `Süre doldu; kalan ${i.total - i.n} sayfa için bugün ${i.target} sayfa` : i.todayN >= i.target ? `Bugünkü hedef tamam ✓ (${i.todayN} sayfa)` : `Bugün ${i.todayN} / ${i.target} sayfa${i.behind > 0 ? ` · plana göre ${i.behind} sayfa geridesin` : ""}`;
+  return `<div class="sec"><div class="card stats"><div class="row2"><div><div class="h">Okuma planı</div><strong>${escapeHtml(i.meta.title)}</strong> <span style="color:var(--muted)">· ${i.days} günde · ${Math.min(i.day, i.days)}. gün</span></div>${i.done ? `<button class="btn" data-plan>Yeni plan</button>` : `<button class="btn" data-plan-go>Okumaya devam</button>`}</div>
+    <div class="plan-st"><div><b>${fmtN(i.n)}</b><span>/ ${fmtN(i.total)} sayfa okundu</span></div><div><b>%${Math.floor(i.pct)}</b><span>tamamlandı</span></div><div><b>${i.done ? 0 : Math.max(0, i.target - i.todayN)}</b><span>bugün kalan sayfa</span></div></div>
+    <div class="plan-bar"><div style="width:${i.pct}%"></div>${i.done ? "" : `<i style="left:${i.expectedPct}%" title="Plana göre bugün sonunda olman gereken yer"></i>`}</div>
+    <div class="plan-note">${msg} · <a href="#" data-plan style="color:inherit">planı düzenle</a></div></div></div>`;
+}
+function bindPlanCard(root) {
+  root.querySelectorAll("[data-plan]").forEach((b) => b.onclick = (e) => { e.preventDefault(); openPlan(); });
+  root.querySelectorAll("[data-plan-go]").forEach((b) => b.onclick = () => { const i = planInfo(); if (i) go(i.meta.id, i.next); });
+}
+function openPlan() {
+  const pl = getPlan(), last = store.get("nr-last", null);
+  const bookId = pl ? pl.book : (last && last.book) || "sozler";
+  showModal(`<h2>Okuma planı</h2>
+    <form class="plan-f" id="plan-f">
+      <label>Kitap<select id="pl-book">${LIBRARY.map((b) => `<option value="${b.id}" ${b.id === bookId ? "selected" : ""}>${escapeHtml(b.title)} · ${fmtN(b.pages)} sayfa</option>`).join("")}</select></label>
+      <div class="row">
+        <label>Kaç günde?<input id="pl-days" type="number" min="1" max="730" value="${pl ? pl.days : 30}" list="pl-dl"><datalist id="pl-dl">${[7, 15, 30, 40, 60, 90, 120, 180, 365].map((n) => `<option value="${n}">`).join("")}</datalist></label>
+        <label>Başlangıç sayfası<input id="pl-from" type="number" min="1" value="1"></label>
+      </div>
+      <div class="calc" id="pl-calc"></div>
+      <div class="plan-acts"><button class="pri" type="submit">${pl ? "Yeni planı başlat" : "Planı başlat"}</button>${pl ? `<button type="button" id="pl-del">Planı sil</button>` : ""}</div>
+      ${pl ? `<div class="plan-note">Yeni plan başlatınca şimdiki planın ilerlemesi silinir.</div>` : ""}
+    </form>`);
+  const calc = () => {
+    const m = metaOf($("#pl-book").value), d = Math.max(1, +$("#pl-days").value || 1), f = Math.min(m.pages, Math.max(1, +$("#pl-from").value || 1));
+    const left = m.pages - f + 1, per = Math.ceil(left / d), end = new Date(); end.setDate(end.getDate() + d - 1);
+    $("#pl-calc").innerHTML = `Günde <b>${per} sayfa</b> okursan ${fmtN(left)} sayfa <b>${end.toLocaleDateString("tr", { day: "numeric", month: "long", year: "numeric" })}</b> günü biter.${per > 60 ? " Bu biraz yoğun; günleri artırmayı düşünebilirsin." : ""}`;
+  };
+  const setFrom = () => { const b = $("#pl-book").value; $("#pl-from").max = metaOf(b).pages; $("#pl-from").value = last && last.book === b ? last.page : 1; calc(); };
+  $("#pl-book").onchange = setFrom; $("#pl-days").oninput = calc; $("#pl-from").oninput = calc; setFrom();
+  $("#plan-f").onsubmit = (e) => {
+    e.preventDefault();
+    const b = $("#pl-book").value, m = metaOf(b), f = Math.min(m.pages, Math.max(1, +$("#pl-from").value || 1));
+    const read = {}; for (let p = 1; p < f; p++) read[p] = "0";       // başlangıçtan önceki sayfalar okunmuş sayılır
+    store.set("nr-plan", { book: b, days: Math.max(1, Math.min(730, +$("#pl-days").value || 30)), start: dayKey(), read, last: f - 1 });
+    closeModal(); toast("Okuma planı başladı"); go(b, f);
+  };
+  if ($("#pl-del")) $("#pl-del").onclick = () => { store.set("nr-plan", null); closeModal(); toast("Plan silindi"); if (!current.id) route(); };
 }
 function readingStats() {
   const st = store.get("nr-stats", {}), today = new Date();
@@ -1975,6 +2069,7 @@ function openMenu(kind) {
       ["stats", MI('<path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/>'), "Kelime istatistikleri", "Kitaplara göre kelime sayıları ve sıklıklar"],
       ["ayet", MI('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M12 7v6M9 10h6"/>'), "Ayet dizini", "Risale'de geçen ayetler, mealleri ve geçtiği yerler"],
       ["konu", MI('<path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/><path d="m20.2 18.2 1.8 1.8"/>'), "Konu dizini", "Haşir, kader, namaz… Risale'de nerelerde işleniyor"],
+      ["plan", MI('<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18M8 15l2.5 2.5L16 13"/>'), "Okuma planı", "Bir kitabı belirlediğin günde bitir"],
       ["learn", MI('<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/>'), "Kelime Öğren", "En sık geçen kelimelerden başlayarak öğren"],
       ["lugat", MI('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M8 7h8M8 11h6"/>'), "Lugat", "Bütün kelimeler ve anlamları, aranabilir"],
       ["keys", MI('<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/>'), "Kısayollar ve yardım", "Klavye kısayolları, nasıl kullanılır"],
@@ -2006,6 +2101,7 @@ menu.addEventListener("click", async (e) => {
   if (m === "newtab") newTab();
   if (m === "notes") { if (narrow()) openSide(); else { renderSide(); side.scrollTo({ top: 0, behavior: "smooth" }); } if (!getMarks().length && !getHls().length) toast("Henüz yer imi ya da vurgu yok"); }
   if (m === "learn") openLearn();
+  if (m === "plan") openPlan();
   if (m === "stats") location.hash = "#istatistik";
   if (m === "ayet") location.hash = "#ayetler";
   if (m === "konu") location.hash = "#konular";
@@ -2045,19 +2141,63 @@ function loadRank() {
     LEARN = x; RANK = new Map(x.words.map((w, i) => [bk(w[0]), [i + 1, w[1]]]));
   }).catch(() => {});
 }
+/* Aralıklı tekrar (Leitner): bilinen kelime 1, 3, 7, 16, 35, 90 gün sonra yeniden sorulur (nr-srs) */
+const SRS_DAYS = [0, 1, 3, 7, 16, 35, 90];
+let SRS = store.get("nr-srs", null);
+if (!SRS) {   // önceden "biliyorum" denen kelimeler önümüzdeki bir haftaya yayılarak tekrara girer
+  SRS = {}; [...KNOWN].forEach((k, i) => { SRS[k] = { b: 1, due: Date.now() + (i % 7) * 864e5 }; });
+  store.set("nr-srs", SRS);
+}
+const saveSrs = () => store.set("nr-srs", SRS);
+function srsAdd(key) { if (!SRS[key] || SRS[key].b === 0) { SRS[key] = { b: 1, due: Date.now() + 864e5 }; saveSrs(); } }
+function srsDue() { const now = Date.now(); return Object.keys(SRS).filter((k) => SRS[k].due <= now).sort((a, b) => SRS[a].due - SRS[b].due); }
+function wordInfo(key) {
+  const r = RANK && RANK.get(key);
+  if (r && LEARN) { const w = LEARN.words[r[0] - 1]; return { w: w[0], m: w[2], r: r[0], f: w[1] }; }
+  const v = BIG && BIG[key];
+  if (v) { const [d, m] = v.split("|"); return { w: d || key, m: m || "" }; }
+  return { w: key, m: "" };
+}
 /* Okurken bir kelimeyi "biliyorum" diye işaretle: aynı kelime sayfada hemen düz yazıya döner */
 function toggleKnown(key) {
-  if (KNOWN.has(key)) { KNOWN.delete(key); toast("Bilmediğin kelimelere eklendi"); } else { KNOWN.add(key); toast("Bildiğin kelimelere eklendi"); }
+  if (KNOWN.has(key)) { KNOWN.delete(key); delete SRS[key]; saveSrs(); toast("Bilmediğin kelimelere eklendi"); } else { KNOWN.add(key); srsAdd(key); toast("Bildiğin kelimelere eklendi · tekrar listesine girdi"); }
   store.set("nr-known", [...KNOWN]);
   app.querySelectorAll(".w[data-l]").forEach((x) => { if (x.dataset.l === key) x.classList.toggle("kn", KNOWN.has(key)); });
   _knownAtOpen.size = KNOWN.size;
 }
-async function openLearn() {
-  showModal(`<h2>Kelime Öğren</h2><div id="learn-body"><div class="lug-n">Liste yükleniyor…</div></div>`);
+async function openLearn(mode = "learn") {
+  showModal(`<h2>Kelime Öğren</h2><div class="learn-mode" id="learn-mode"></div><div id="learn-body"><div class="lug-n">Liste yükleniyor…</div></div>`);
   if (!LEARN) await loadRank();
   if (!LEARN) { $("#learn-body").textContent = "Liste yüklenemedi. Bağlantını kontrol et."; return; }
-  let level = store.get("nr-learn-level", 100), queue = null, shown = false;
+  if (!BIG) loadBig();
+  let level = store.get("nr-learn-level", 100), queue = null, shown = false, rq = null, rshown = false, rdone = 0;
   const saveKnown = () => store.set("nr-known", [...KNOWN]);
+  const drawMode = () => {
+    const n = srsDue().length;
+    $("#learn-mode").innerHTML = `<button data-md="learn" class="${mode === "learn" ? "on" : ""}">Yeni kelimeler</button><button data-md="review" class="${mode === "review" ? "on" : ""}">Tekrar${n ? `<span class="cnt">${n}</span>` : ""}</button>`;
+    $("#learn-mode").querySelectorAll("[data-md]").forEach((b) => b.onclick = () => { mode = b.dataset.md; queue = null; rq = null; shown = rshown = false; render(); });
+  };
+  const review = () => {
+    if (!rq) { rq = srsDue(); rdone = 0; }
+    const key = rq[0], all = Object.values(SRS);
+    const boxes = [["Yeni öğrenilen", all.filter((x) => x.b <= 2).length], ["Pekişiyor", all.filter((x) => x.b === 3 || x.b === 4).length], ["Sağlam", all.filter((x) => x.b === 5).length], ["Ustalaşıldı", all.filter((x) => x.b >= 6).length]];
+    const tomorrow = Object.values(SRS).filter((x) => x.due <= Date.now() + 864e5 && x.due > Date.now()).length;
+    let html;
+    if (key) {
+      const i = wordInfo(key), x = SRS[key];
+      html = `<p style="margin:0 0 12px;color:var(--muted);font-size:14px">Bildiğin kelimeler unutulmadan önce yeniden sorulur. Hatırladıkça aralık uzar: 1, 3, 7, 16, 35, 90 gün.</p>
+        <div class="flash"><div class="fr">${rq.length} kelime kaldı${rdone ? ` · bugün ${rdone} tekrar` : ""}${x.b ? ` · ${SRS_DAYS[x.b]} günlük aralıkta` : " · yeniden öğreniliyor"}</div><div class="fw">${escapeHtml(i.w)}</div>${rshown ? `<div class="fm">${escapeHtml(i.m || "Anlam bulunamadı")}</div>` : ""}</div>
+        <div class="flash-acts">${rshown ? `<button class="no" id="sr-no">Unuttum</button><button class="ok" id="sr-ok">Hatırladım ✓</button>` : `<button class="show" id="sr-show">Anlamını göster</button>`}</div>`;
+    } else {
+      html = `<div class="flash"><div class="fw" style="font-size:26px">${rdone ? "Bugünkü tekrar bitti ✓" : "Şu an tekrar edilecek kelime yok"}</div><div class="fm">${Object.keys(SRS).length ? `Yarına kadar ${tomorrow} kelime tekrar bekliyor.` : "Yeni kelimeler bölümünde \"Biliyorum\" dediğin ya da okurken işaretlediğin kelimeler burada aralıklarla sorulur."}</div></div>`;
+    }
+    html += `<div class="srs-boxes">${boxes.map(([t, n]) => `<div><b>${n}</b>${t}</div>`).join("")}</div>`;
+    $("#learn-body").innerHTML = html;
+    $("#sr-show") && ($("#sr-show").onclick = () => { rshown = true; render(); });
+    $("#sr-ok") && ($("#sr-ok").onclick = () => { const x = SRS[key]; x.b = Math.min(6, x.b + 1); x.due = Date.now() + SRS_DAYS[x.b] * 864e5 - 36e5; if (!KNOWN.has(key)) { KNOWN.add(key); saveKnown(); } saveSrs(); rq.shift(); rdone++; rshown = false; render(); });
+    $("#sr-no") && ($("#sr-no").onclick = () => { SRS[key] = { b: 0, due: Date.now() }; KNOWN.delete(key); saveKnown(); saveSrs(); rq.push(rq.shift()); rdone++; rshown = false; render(); });
+  };
+  const render = () => { drawMode(); mode === "review" ? review() : draw(); };
   const words = () => LEARN.words.slice(0, level);
   const coverage = () => { const k = LEARN.words.filter((w) => KNOWN.has(bk(w[0]))).reduce((n, w) => n + w[1], 0); return (100 * k / LEARN.total).toLocaleString("tr", { maximumFractionDigits: 1 }); };
   const draw = () => {
@@ -2073,14 +2213,14 @@ async function openLearn() {
         : `<div class="flash"><div class="fw">Tebrikler!</div><div class="fm">Bu seviyedeki bütün kelimeleri biliyorsun. Bir üst seviyeye geçebilirsin.</div></div>`}
       <details style="margin-top:14px"><summary style="cursor:pointer;color:var(--muted);font-size:14px">Bu seviyenin listesi (işaretle / kaldır)</summary>
         <div class="learn-list">${list.map((w, i) => `<label><input type="checkbox" data-kw="${escapeHtml(bk(w[0]))}" ${KNOWN.has(bk(w[0])) ? "checked" : ""}><b>${escapeHtml(w[0])}</b><span>${escapeHtml(w[2])}</span><small>${i + 1}</small></label>`).join("")}</div></details>`;
-    $("#learn-body").querySelectorAll("[data-lv]").forEach((b) => b.onclick = () => { level = +b.dataset.lv; store.set("nr-learn-level", level); queue = null; shown = false; draw(); });
-    $("#fl-show") && ($("#fl-show").onclick = () => { shown = true; draw(); });
-    $("#fl-ok") && ($("#fl-ok").onclick = () => { KNOWN.add(bk(cur[0])); saveKnown(); queue.shift(); shown = false; draw(); });
-    const again = () => { queue.push(queue.shift()); shown = false; draw(); };
+    $("#learn-body").querySelectorAll("[data-lv]").forEach((b) => b.onclick = () => { level = +b.dataset.lv; store.set("nr-learn-level", level); queue = null; shown = false; render(); });
+    $("#fl-show") && ($("#fl-show").onclick = () => { shown = true; render(); });
+    $("#fl-ok") && ($("#fl-ok").onclick = () => { KNOWN.add(bk(cur[0])); srsAdd(bk(cur[0])); saveKnown(); queue.shift(); shown = false; render(); });
+    const again = () => { queue.push(queue.shift()); shown = false; render(); };
     $("#fl-again") && ($("#fl-again").onclick = again); $("#fl-skip") && ($("#fl-skip").onclick = again);
-    $("#learn-body").querySelectorAll("[data-kw]").forEach((c) => c.onchange = () => { c.checked ? KNOWN.add(c.dataset.kw) : KNOWN.delete(c.dataset.kw); saveKnown(); queue = null; draw(); });
+    $("#learn-body").querySelectorAll("[data-kw]").forEach((c) => c.onchange = () => { if (c.checked) { KNOWN.add(c.dataset.kw); srsAdd(c.dataset.kw); } else { KNOWN.delete(c.dataset.kw); delete SRS[c.dataset.kw]; saveSrs(); } saveKnown(); queue = null; render(); });
   };
-  draw();
+  render();
 }
 // Pencere kapanınca okunan bölümü yeniden çiz ki bilinen kelimeler güncellensin
 const _knownAtOpen = { size: KNOWN.size };

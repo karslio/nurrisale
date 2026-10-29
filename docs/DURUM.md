@@ -29,6 +29,8 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 - Sayfa sayfa okuma modu ayrıca var (ok tuşları, telefonda kaydırma)
 - Lugat: altın renkli kelimeler ve tamlamalar (Cenâb-ı Hak, derd-i maîşet…), üstüne gelince/dokununca anlam, sıklık sırası ve "Biliyorum" düğmesi; aranabilir lugat penceresi
 - Kelime Öğren: en sık 100/300/500/1000 kelime kartları, bilinen kelimeler metinde düz yazılır (ayar), kapsam yüzdesi
+- Aralıklı tekrar (nr-srs, Leitner): bilinen kelimeler 1, 3, 7, 16, 35, 90 gün sonra yeniden sorulur; "Unuttum" deyince kelime yeniden altın renkli olur; ana sayfada tekrar bekleyen kelime sayısı
+- Okuma planı (nr-plan): kitap, gün sayısı, başlangıç sayfası; günlük hedef kalan sayfa/kalan gün olarak her gün yeniden hesaplanır; ana sayfada ilerleme çubuğu (plana göre olunması gereken yer işaretli), hedefe ulaşınca bildirim
 - İstatistik sekmesi (#istatistik, #istatistik-<kitap>): toplam/farklı kelime, en sık kelimeler (bağlaçlar hariç seçeneği), kitaplara göre tablo, istenen kelime/ifadenin kitaplara göre sayısı ve payları (ekli hâller dahil ya da tam kelime)
 - Ayetler: Arapça satırın altında sure:ayet etiketi, üstüne gelince meal; Ayet dizini (#ayetler, #ayetler-<kitap>): sure sırasıyla, en çok geçenler, geçtiği yerler, arama
 - Hız: uzun bölümler 10'ar sayfa çizilir (Onuncu Söz 0,7 sn → 0,06 sn); lugat ve ayet dosyaları açılışta arka planda iner; lugat kitaplarda geçmeyen kayıtlardan ayıklandı (31 bin kayıt)
