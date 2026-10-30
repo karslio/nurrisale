@@ -7,7 +7,8 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 
 ## Yapı
 
-- `index.html` — sitenin tamamı (HTML, CSS, JavaScript tek dosya)
+- `index.html` — HTML iskeleti ve sayfa içi CSS
+- `js/` — uygulamanın JavaScript dosyaları; klasik script olarak bağımlılık sırasıyla yüklenir. `app.js` başlangıç kodudur.
 - `books/index.json` — 40 kitabın listesi (ad, raf: kulliyat/cep, kapak, sayfa sayısı)
 - `books/<id>.json` — sayfalar (`s` bölüm, `b` bloklar: p/c/ar/h), içindekiler, haşiyeler
 - `books/lugat.json` — ~950 kelimelik küçük lugat (yedek)
