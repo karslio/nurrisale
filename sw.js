@@ -1,8 +1,8 @@
 /* NurRisale service worker: siteyi ve açılan kitapları çevrimdışı okunabilir kılar.
    Sayfa (index.html) önce ağdan denenir, olmazsa önbellekten gelir.
    Kitaplar, kapaklar ve yazı tipleri önbellekten gelir; yoksa indirilip saklanır. */
-const CACHE = "nurrisale-v25";
-const SHELL = ["./", "index.html", "books/index.json", "books/lugat.json", "books/lugat-big.json", "books/kelime-sira.json", "books/stats.json", "books/ayetler.json", "books/konular.json", "books/arapca.json", "books/dizin.json", "books/hayat.json", "manifest.webmanifest",
+const CACHE = "nurrisale-v26";
+const SHELL = ["./", "index.html", "js/data.js", "js/core.js", "js/navigation.js", "js/home.js", "js/reader.js", "js/search.js", "js/interactions.js", "js/app-shell.js", "js/learning.js", "js/analytics.js", "js/backup.js", "js/utilities.js", "js/directory-map.js", "js/word-tools.js", "js/app.js", "books/index.json", "books/lugat.json", "books/lugat-big.json", "books/kelime-sira.json", "books/stats.json", "books/ayetler.json", "books/konular.json", "books/arapca.json", "books/dizin.json", "books/hayat.json", "manifest.webmanifest",
   "fonts/souvenir-regular.woff", "fonts/souvenir-bold.woff", "fonts/souvenir-italic.woff", "fonts/hamdullah.woff", "icon-192.png"];
 
 self.addEventListener("install", (e) => {
