@@ -77,8 +77,6 @@ button { font: inherit; color: inherit; }
 .tab .x { border: none; background: none; color: var(--muted); cursor: pointer; padding: 2px 4px; border-radius: 6px; font-size: 14px; line-height: 1; }
 .tab .x:hover { background: var(--rule); color: var(--ink); }
 .tab-add { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--soft); color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; align-self: center; flex: none; }
-.home-link { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border: 1px solid var(--rule); border-bottom: none; border-radius: 12px 12px 0 0; background: var(--paper); text-decoration: none; color: var(--ink); align-self: flex-end; margin-bottom: -1px; font-size: 15px; }
-.home-link svg { width: 18px; height: 18px; color: var(--red); }
 .tools { margin-left: auto; display: flex; gap: 8px; }
 .round { width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--soft); color: var(--ink); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
 .round:hover { filter: brightness(.95); }
@@ -147,9 +145,6 @@ main { margin-left: var(--side-w); padding-top: calc(env(safe-area-inset-top, 0p
 .card strong { font-family: var(--font-body); font-size: 18px; }
 .btn { background: var(--red); color: #fff; border: none; border-radius: 999px; padding: 9px 18px; cursor: pointer; font-weight: 600; }
 .home-results { display: grid; gap: 0; }
-.shelf-h { display: flex; align-items: baseline; justify-content: space-between; margin: 26px 0 12px; }
-.shelf-h h2 { font-size: 19px; margin: 0; font-weight: 600; }
-.shelf-h span { color: var(--muted); font-size: 13px; }
 .covers { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 22px 16px; }
 .cv { background: none; border: none; padding: 0; cursor: pointer; text-align: center; display: grid; gap: 8px; justify-items: center; }
 .cv .img { height: 168px; display: flex; align-items: flex-end; }
@@ -259,7 +254,6 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; }
 
 /* Lugat / haşiye / meâl baloncuğu */
 .pop { position: fixed; z-index: 40; max-width: min(340px, calc(100vw - 32px)); max-height: 50vh; overflow-y: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; box-shadow: 0 8px 22px rgba(0,0,0,.14); padding: 9px 14px; font-size: 15px; color: var(--ink); line-height: 1.5; }
-.pop .lw { font-weight: 600; color: var(--lugat); font-family: var(--font-body); margin-bottom: 2px; }
 .pop .lbl { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--red); margin-bottom: 2px; }
 .pop .ar { font-family: var(--font-arabic); direction: rtl; font-size: 19px; color: var(--red); line-height: 1.7; }
 .pop .ref { margin-top: 6px; font-size: 12px; color: var(--muted); }
@@ -305,8 +299,6 @@ body.no-hls span.hl { background: none !important; box-shadow: none !important; 
 .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
 .seg button { border: 1px solid var(--rule); background: var(--paper); border-radius: 8px; padding: 8px 6px; cursor: pointer; font-size: 13.5px; color: var(--ink); }
 .seg button.on { border-color: var(--red); box-shadow: inset 0 0 0 1px var(--red); }
-.seg .sw-light { background: #FDFCF8; color: #2A2722; } .seg .sw-sepia { background: #F5EEDC; color: #3A2E21; } .seg .sw-dark { background: #15130F; color: #E8E2D4; }
-.seg .f-book { font-family: "Souvenir NR", Georgia, serif; } .seg .f-classic { font-family: "EB Garamond", Georgia, serif; font-size: 15px; } .seg .f-sans { font-family: var(--font-ui); }
 .stepper { display: flex; align-items: center; gap: 8px; }
 .stepper button { width: 40px; height: 36px; border: 1px solid var(--rule); background: var(--paper); border-radius: 8px; cursor: pointer; font-size: 16px; }
 .stepper output { flex: 1; text-align: center; font-variant-numeric: tabular-nums; color: var(--muted); }
@@ -648,7 +640,6 @@ body.lesson .pmark { opacity: .35; }
 .dist svg { display: block; width: 100%; height: 150px; }
 .dist rect { fill: var(--red); opacity: .8; }
 .dist rect:hover { opacity: 1; }
-.dist .ax { font: 11px var(--font-ui); fill: var(--muted); }
 .dist .tip { font-size: 12.5px; color: var(--muted); min-height: 1.3em; }
 
 /* ---------- Vecize ezberi ---------- */
@@ -665,7 +656,7 @@ body.lesson .pmark { opacity: .35; }
   :root { --bar1: 56px; --side-w: min(340px, 86vw); }
   .logo { width: auto; }
   .logo .name { font-size: 22px; }
-  .home-link, .tabs { display: none; }
+  .tabs { display: none; }
   .only-narrow { display: inline-flex !important; }
   #btn-full { display: none; }
   .tools { gap: 6px; }
@@ -762,7 +753,7 @@ body.lesson .pmark { opacity: .35; }
   </details>
   <div class="offline-row" id="offline-row" hidden><div class="set-t">Çevrimdışı okuma</div>
     <button id="btn-offline">Bütün kitapları bu cihaza kaydet</button><small id="offline-msg">Açtığın kitaplar zaten kaydediliyor. İnternet olmadan da okuyabilirsin.</small></div>
-<div class="ver" style="margin:12px 0 4px;font:500 11.5px var(--font-ui);color:var(--muted);text-align:center">Sürüm 24 · 30 Ekim 2026</div>
+<div class="ver" style="margin:12px 0 4px;font:500 11.5px var(--font-ui);color:var(--muted);text-align:center">Sürüm 25 · 30 Ekim 2026</div>
 </div>
 <div class="seltool" id="seltool" hidden>
   <button class="hl-dot" data-hl-color="y" aria-label="Sarı vurgula" style="--c:#F7D774"></button>

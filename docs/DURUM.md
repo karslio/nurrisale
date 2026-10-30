@@ -69,3 +69,5 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 - Menü (9 noktalı düğme ve sekmeler) açıkken arkadaki sayfa kilitli: katman tıklamayı yutup menüyü kapatır, kaydırma ve ok/sayfa tuşları arkaya geçmez
 - Kelime balonu sadeleştirildi: kelime yeniden yazılmaz, sıklık bilgisi yok; yalnız anlam ve ✓ düğmesi (bilinen kelimede dolu)
 - Kelime öğrenme yüzdelikleri yalnız lugatta anlamı olan kelimelere göre: `kelime-sira.json` total = lugat kelimelerinin toplam geçişi (445.388); kartta "lugattaki kelime geçişlerinin %X'i" yazar; `tools/build_lugat.py /yol/Risale-i-Nur-Kelime-Frekans`
+
+- Sürüm 25: sadeleştirme — kullanılmayan CSS kuralları (home-link, shelf-h, lw, sw-*, f-*, ax) silindi; davranış değişmedi. Ölü JS ve kullanılmayan dosya bulunmadı.
