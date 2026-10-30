@@ -9,7 +9,7 @@ Kullanım:
 
 Çıktılar:
     books/lugat-big.json   {sade_anahtar: "Yazılış|anlam"}  (tek kelimeler ve tamlamalar)
-    books/kelime-sira.json {"total": toplam tekrar, "words": [[kelime, sıklık, anlam], ...]}  en sık 1000 kelime
+    books/kelime-sira.json {"total": lugattaki kelimelerin toplam tekrarı, "words": [[kelime, sıklık, anlam], ...]}  en sık 1000 kelime
 """
 import collections
 import csv
@@ -126,6 +126,7 @@ for w, n in freq.most_common():
     order.append([display.get(key, w), n, lugat[key].split("|", 1)[1]])
     if len(order) == 1000:
         break
-total = sum(n for w, n in freq.items() if plain(w) not in STOP)
+# Yüzdelikler yalnız lugatta anlamı olan kelimelere göre hesaplanır (her yerde geçen kelimeler paydaya girmez)
+total = sum(n for w, n in freq.items() if plain(w) not in STOP and len(plain(w)) >= 3 and plain(w) in lugat)
 (OUT / "kelime-sira.json").write_text(json.dumps({"total": total, "words": order}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 print(f"kelime-sira.json: {len(order)} kelime; ilk 10: {[o[0] for o in order[:10]]}")

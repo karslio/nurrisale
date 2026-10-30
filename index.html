@@ -762,7 +762,7 @@ body.lesson .pmark { opacity: .35; }
   </details>
   <div class="offline-row" id="offline-row" hidden><div class="set-t">Çevrimdışı okuma</div>
     <button id="btn-offline">Bütün kitapları bu cihaza kaydet</button><small id="offline-msg">Açtığın kitaplar zaten kaydediliyor. İnternet olmadan da okuyabilirsin.</small></div>
-<div class="ver" style="margin:12px 0 4px;font:500 11.5px var(--font-ui);color:var(--muted);text-align:center">Sürüm 23 · 30 Ekim 2026</div>
+<div class="ver" style="margin:12px 0 4px;font:500 11.5px var(--font-ui);color:var(--muted);text-align:center">Sürüm 24 · 30 Ekim 2026</div>
 </div>
 <div class="seltool" id="seltool" hidden>
   <button class="hl-dot" data-hl-color="y" aria-label="Sarı vurgula" style="--c:#F7D774"></button>
@@ -2413,10 +2413,10 @@ async function openLearn(mode = "learn") {
     if (!queue) queue = list.filter((w) => !KNOWN.has(bk(w[0])));
     const cur = queue[0];
     $("#learn-body").innerHTML = `
-      <p style="margin:0 0 12px;color:var(--muted);font-size:14px">Risale-i Nur'da en çok tekrar eden kelimelerden başla. En sık 100 kelime, lugata bakma ihtiyacının yaklaşık beşte birini karşılar.</p>
+      <p style="margin:0 0 12px;color:var(--muted);font-size:14px">Risale-i Nur'da en çok tekrar eden kelimelerden başla. En sık 100 kelime, lugata bakma ihtiyacının yaklaşık dörtte birini karşılar. Yüzdelikler yalnız lugatta anlamı olan kelimelere göre hesaplanır.</p>
       <div class="learn-top">${[100, 300, 500, 1000].map((n) => `<button data-lv="${n}" class="${n === level ? "on" : ""}">İlk ${n}</button>`).join("")}</div>
       <div class="learn-prog"><span><b style="color:var(--ink)">${known} / ${list.length}</b> kelimeyi biliyorsun · lugata bakma ihtiyacın <b style="color:var(--ink)">%${coverage()}</b> azaldı</span><div class="learn-bar"><div style="width:${100 * known / list.length}%"></div></div></div>
-      ${cur ? `<div class="flash"><div class="fr">${LEARN.words.indexOf(cur) + 1}. sıradaki kelime · ${cur[1].toLocaleString("tr")} kez geçiyor</div><div class="fw">${escapeHtml(cur[0])}</div>${shown ? `<div class="fm">${escapeHtml(cur[2])}</div>` : ""}</div>
+      ${cur ? `<div class="flash"><div class="fr">${LEARN.words.indexOf(cur) + 1}. sıradaki kelime · lugattaki kelime geçişlerinin %${(100 * cur[1] / LEARN.total).toLocaleString("tr", { maximumFractionDigits: 2 })}'i</div><div class="fw">${escapeHtml(cur[0])}</div>${shown ? `<div class="fm">${escapeHtml(cur[2])}</div>` : ""}</div>
         <div class="flash-acts">${shown ? `<button id="fl-again">Tekrar et</button><button class="ok" id="fl-ok">Biliyorum ✓</button>` : `<button class="show" id="fl-show">Anlamını göster</button><button id="fl-skip">Tekrar et</button><button class="ok" id="fl-ok">Zaten biliyorum ✓</button>`}</div>`
         : `<div class="flash"><div class="fw">Tebrikler!</div><div class="fm">Bu seviyedeki bütün kelimeleri biliyorsun. Bir üst seviyeye geçebilirsin.</div></div>`}
       <details style="margin-top:14px"><summary style="cursor:pointer;color:var(--muted);font-size:14px">Bu seviyenin listesi (işaretle / kaldır)</summary>
