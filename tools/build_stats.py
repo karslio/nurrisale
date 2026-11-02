@@ -8,6 +8,7 @@ Sayım kuralları (sitedeki sayaçla aynı):
 - Kelime: harfler, araya giren kesme (') ve tire (-) ile birlikte ("Cenâb-ı", "Hakk'a").
 - Karşılaştırma şapkasız ve küçük harfle yapılır (â→a, ç→c, ı→i ...).
 - "Farklı kelime" ve listelerde kesme sonrası ekler ve izafet ekleri ayrılır (Nur'un → Nur, risale-i → risale).
+- Yalnız büyük lugattaki tek kelimeler sayılır; sözlükte karşılığı olmayan kelimeler paydaya girmez.
 """
 import collections
 import json
@@ -27,6 +28,9 @@ def plain(s):
 
 def tr_lower(s):
     return s.replace("I", "ı").replace("İ", "i").lower().replace("’", "'").replace("`", "'")
+
+# Sözlükte karşılığı bulunan tek kelimeler istatistiklere girer; tamlamalar ayrı kelime sayılmaz.
+LUGAT_WORDS = {k for k in json.loads((BOOKS / "lugat-big.json").read_text(encoding="utf-8")) if " " not in k}
 
 # Kelimenin kendisi: özel isimlerde kesmeden sonraki ek ("Nur'un" → nur, "Allah'ın" → allah) ve izafet "-ı/-i/-u/-ü"
 # ("risale-i" → risale) ayrılır. Kelimenin içindeki kesme korunur (Kur'an, mes'ele, san'at, kat'î).
@@ -67,7 +71,7 @@ for meta in idx:
             for tok in TOKEN.findall(t):
                 b0 = base(tok)
                 key = plain(b0)
-                if not key:
+                if not key or key.replace("'", "") not in LUGAT_WORDS:
                     continue
                 c[key] += 1
                 forms[key][tr_lower(b0)] += 1
