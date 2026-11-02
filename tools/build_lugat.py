@@ -5,7 +5,9 @@ Kaynak: https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans (CC0)
   data/eRisale/analysis/terkipsiz/*   → kitaplara göre kelime sıklıkları
 
 Kullanım:
-    python3 tools/build_lugat.py /yol/Risale-i-Nur-Kelime-Frekans
+    python3 tools/build_lugat.py
+
+İsteğe bağlı olarak ilk argümanla başka bir yerel veri klasörü verilebilir.
 
 Çıktılar:
     books/lugat-big.json   {sade_anahtar: "Yazılış|anlam"}  (tek kelimeler ve tamlamalar)
@@ -20,8 +22,9 @@ import sys
 import unicodedata
 from pathlib import Path
 
-SRC = Path(sys.argv[1])
-OUT = Path(__file__).resolve().parent.parent / "books"
+ROOT = Path(__file__).resolve().parent.parent
+SRC = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT
+OUT = ROOT / "books"
 
 # Lugatta işaretlenmesi gereksiz, her yerde geçen Türkçe kelimeler
 STOP = set("""
@@ -106,27 +109,32 @@ OUT.mkdir(exist_ok=True)
 single = sum(1 for k in site_lugat if " " not in k)
 print(f"lugat-big.json: {len(site_lugat)} kayıt ({single} tek kelime, {len(site_lugat) - single} tamlama; kitaplarda geçmeyen {len(lugat) - len(site_lugat)} kayıt atıldı)")
 
-# 2) Öğrenme sırası: bütün kitaplardaki sıklıkların toplamı (terkipsiz)
-freq = collections.Counter()
-for f in glob.glob(str(SRC / "data/eRisale/analysis/terkipsiz/*_frekans.txt")):
-    name = Path(f).name
-    if "ilk" in name or name.startswith("1-10"):
-        continue  # Sözler'in parça listeleri; tamamı zaten var
-    with open(f, encoding="utf-8") as fh:
-        r = csv.reader(fh)
-        next(r, None)
-        for row in r:
-            if len(row) >= 2 and row[1].strip().isdigit():
-                freq[row[0].strip()] += int(row[1])
-order = []
-for w, n in freq.most_common():
-    key = plain(w)
-    if key in STOP or len(key) < 3 or key not in lugat:
-        continue
-    order.append([display.get(key, w), n, lugat[key].split("|", 1)[1]])
-    if len(order) == 1000:
-        break
-# Yüzdelikler yalnız lugatta anlamı olan kelimelere göre hesaplanır (her yerde geçen kelimeler paydaya girmez)
-total = sum(n for w, n in freq.items() if plain(w) not in STOP and len(plain(w)) >= 3 and plain(w) in lugat)
-(OUT / "kelime-sira.json").write_text(json.dumps({"total": total, "words": order}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-print(f"kelime-sira.json: {len(order)} kelime; ilk 10: {[o[0] for o in order[:10]]}")
+# 2) Öğrenme sırası: sıklık dosyaları varsa yenile.
+# Bu depo ham sözlük CSV'lerini içerir; frekans dosyaları ayrı kaynak veridir.
+freq_files = glob.glob(str(SRC / "data/eRisale/analysis/terkipsiz/*_frekans.txt"))
+if freq_files:
+    freq = collections.Counter()
+    for f in freq_files:
+        name = Path(f).name
+        if "ilk" in name or name.startswith("1-10"):
+            continue  # Sözler'in parça listeleri; tamamı zaten var
+        with open(f, encoding="utf-8") as fh:
+            r = csv.reader(fh)
+            next(r, None)
+            for row in r:
+                if len(row) >= 2 and row[1].strip().isdigit():
+                    freq[row[0].strip()] += int(row[1])
+    order = []
+    for w, n in freq.most_common():
+        key = plain(w)
+        if key in STOP or len(key) < 3 or key not in lugat:
+            continue
+        order.append([display.get(key, w), n, lugat[key].split("|", 1)[1]])
+        if len(order) == 1000:
+            break
+    # Yüzdelikler yalnız lugatta anlamı olan kelimelere göre hesaplanır.
+    total = sum(n for w, n in freq.items() if plain(w) not in STOP and len(plain(w)) >= 3 and plain(w) in lugat)
+    (OUT / "kelime-sira.json").write_text(json.dumps({"total": total, "words": order}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    print(f"kelime-sira.json: {len(order)} kelime; ilk 10: {[o[0] for o in order[:10]]}")
+else:
+    print("Frekans dosyaları bulunmadı; mevcut kelime-sira.json korundu.")

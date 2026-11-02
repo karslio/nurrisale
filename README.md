@@ -11,7 +11,7 @@ Site: https://karslio.github.io/nurrisale
 - `books/index.json` — kitap listesi (ad, açıklama, kapak rengi, sayfa sayısı)
 - `books/<kitap>.json` — kitabın sayfaları, içindekiler ve haşiyeleri
 - `books/lugat-big.json`, `books/kelime-sira.json` — büyük lugat ve en sık 1000 kelime
-  (`tools/build_lugat.py` ile [Risale-i Nur Kelime Frekansı](https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans) verisinden, CC0)
+  (`tools/build_lugat.py` ile depodaki `data/` CSV kopyalarından üretilir; kaynak ve lisans bilgisi `data/README.md` içinde)
 - `books/ayetler.json` — Arapça satırlarda geçen ayetler ve mealleri (`tools/build_ayet.py`;
   [quran-json](https://github.com/risan/quran-json) verisinden: Tanzil metni CC BY 3.0, meal: Rowwad Tercüme Merkezi, QuranEnc.com)
 - `books/stats.json` — kitaplara göre kelime istatistikleri (`tools/build_stats.py`)
@@ -19,6 +19,14 @@ Site: https://karslio.github.io/nurrisale
 - `books/arapca.json` — ayet olmayan Arapça/Farsça satırların yaklaşık meali (`tools/build_arapca.py`, kaynak `tools/arapca_tercume.json`)
 - `books/dizin.json` — hadis, kişi ve yer dizini (`tools/build_dizin.py`); `books/hayat.json` — Bediüzzaman'ın hayatı haritası (`tools/build_hayat.py`, 57 durak, Tarihçe ve Lâhika alıntılarıyla; il sınırları: Turkey-Maps-GeoJSON, Apache 2.0; ülkeler ve göller: Natural Earth, kamu malı)
 - `tools/epub_to_json.py` — EPUB dosyasını `books/` için JSON'a çeviren araç
+
+## Lugatı yeniden üretmek
+
+Depodaki ham sözlük CSV kopyalarından büyük lugatı üretmek için:
+
+```
+python3 tools/build_lugat.py
+```
 
 ## Yeni kitap eklemek
 
