@@ -157,7 +157,7 @@ function openFor(el) {
       const known = KNOWN.has(key);
       showPop(el, `<div class="lgrow"><div class="lgm">${escapeHtml(m)}</div><button data-know class="kn ${known ? "on" : ""}" aria-label="${known ? "Bildiklerimden çıkar" : "Biliyorum"}" title="${known ? "Bildiklerimden çıkar" : "Biliyorum"}">✓</button></div>`);
       pop.querySelector("[data-know]").onclick = () => { toggleKnown(key); hidePop(); };
-    } else showPop(el, escapeHtml(LUGAT[el.dataset.k] || ""));
+    } else return;
   } else {
     const txt = BOOKS.get(current.id)?.footnotes[el.dataset.fn];
     showPop(el, `<div class="lbl">Haşiye ${escapeHtml(el.textContent)}</div><div style="font-family:var(--font-body)">${txt ? escapeHtml(txt) : "Bu haşiyenin metni bulunamadı."}</div>`);
