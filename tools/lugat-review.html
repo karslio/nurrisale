@@ -57,8 +57,9 @@ function refresh(){
 list.addEventListener("click",e=>{
   const card=e.target.closest(".card");if(!card)return;
   const key=card.dataset.key,entry=entries.find(x=>x.key===key);
-  if(e.target.classList.contains("candidate")){const meaning=entry.candidates[+e.target.dataset.i].meaning;overrides[key]=meaning;refresh();}
-  if(e.target.classList.contains("reset")){delete overrides[key];refresh();}
+  const candidate=e.target.closest(".candidate");
+  if(candidate){const meaning=entry.candidates[+candidate.dataset.i].meaning;overrides[key]=meaning;refresh();}
+  if(e.target.closest(".reset")){delete overrides[key];refresh();}
 });
 list.addEventListener("input",e=>{
   if(!e.target.classList.contains("meaning"))return;
@@ -69,7 +70,7 @@ list.addEventListener("input",e=>{
 document.querySelector("#q").addEventListener("input",()=>{pageNo=0;refresh()});
 document.querySelector("#filter").addEventListener("change",()=>{pageNo=0;refresh()});
 document.querySelector("#prev").onclick=()=>{pageNo=Math.max(0,pageNo-1);refresh()};
-document.querySelector("#next").onclick=()=>{pageNo=Math.min(Math.ceil(filtered.length/PAGE_SIZE)-1,pageNo+1);refresh()};
+document.querySelector("#next").onclick=()=>{pageNo=Math.min(Math.max(0,Math.ceil(filtered.length/PAGE_SIZE)-1),pageNo+1);refresh()};
 document.querySelector("#download").onclick=()=>{
   const blob=new Blob([JSON.stringify(overrides,null,2)+"\n"],{type:"application/json"});
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="lugat-overrides.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);

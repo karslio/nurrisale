@@ -32,6 +32,9 @@ for path in files:
             if not header or len(header) < 2:
                 errors.append(f"{path.relative_to(ROOT)}: en az iki sütunlu başlık yok")
                 continue
+            if [plain(cell.strip()) for cell in header[:2]] != ["kelime", "anlam"]:
+                errors.append(f"{path.relative_to(ROOT)}: başlık sütunları 'kelime, anlam' değil")
+                continue
             for row in rows:
                 if not row or not any(cell.strip() for cell in row):
                     continue
