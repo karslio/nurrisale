@@ -20,13 +20,21 @@ Site: https://karslio.github.io/nurrisale
 - `books/dizin.json` — hadis, kişi ve yer dizini (`tools/build_dizin.py`); `books/hayat.json` — Bediüzzaman'ın hayatı haritası (`tools/build_hayat.py`, 57 durak, Tarihçe ve Lâhika alıntılarıyla; il sınırları: Turkey-Maps-GeoJSON, Apache 2.0; ülkeler ve göller: Natural Earth, kamu malı)
 - `tools/epub_to_json.py` — EPUB dosyasını `books/` için JSON'a çeviren araç
 
-## Lugatı yeniden üretmek
+## Sözlük kontrolü ve üretimi
 
-Depodaki ham sözlük CSV kopyalarından büyük lugatı üretmek için:
+Sözlük, kelime istatistikleri ve kalite denetimini tek komutla yenile:
 
 ```
-python3 tools/build_lugat.py
+python3 tools/build_dictionary.py
 ```
+
+Komut, birden fazla anlamı bulunan sözlük kayıtları için `books/lugat-review.json` inceleme raporunu üretir. İnceleme ekranını açmak için depo kökünde yerel sunucu başlat:
+
+```
+python3 -m http.server 8000
+```
+
+Ardından `http://localhost:8000/tools/lugat-review.html` adresine git. Anlam adaylarından birini seçebilir veya kendi düzeltmeni yazıp **Düzeltmeleri indir** ile `lugat-overrides.json` dosyasını indirebilirsin. Dosyayı `data/lugat-overrides.json` üzerine kopyalayıp üretim komutunu yeniden çalıştır; düzeltmeler lugata ve kelime istatistiklerine uygulanır.
 
 ## Yeni kitap eklemek
 

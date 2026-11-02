@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sözlük inceleme · NurRisale</title>
+<style>
+:root{color-scheme:light;--ink:#25231f;--muted:#77736c;--line:#e7e3dc;--paper:#faf9f6;--accent:#8b3f2f;--soft:#f0ede7}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 system-ui,sans-serif}
+header{background:#fff;border-bottom:1px solid var(--line);padding:22px max(20px,calc((100vw - 980px)/2))}
+main{max-width:980px;margin:24px auto;padding:0 18px}h1{font-size:24px;margin:0}p{margin:6px 0;color:var(--muted)}
+.controls{position:sticky;top:0;background:var(--paper);padding:14px 0;display:grid;grid-template-columns:1fr 190px auto;gap:10px;z-index:1}
+input,select,button{font:inherit;border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:white;color:var(--ink)}
+button{cursor:pointer}button:hover{border-color:var(--accent)}.primary{background:var(--accent);border-color:var(--accent);color:white}
+#status{font-size:14px;color:var(--muted);margin:4px 0 14px}.card{background:white;border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0}
+.card h2{font-size:18px;margin:0}.key{font:13px ui-monospace,monospace;color:var(--muted);margin:2px 0 12px}
+.candidates{display:grid;gap:7px}.source{display:block;color:var(--muted);font-size:11px;margin-top:3px}.candidate{display:flex;justify-content:space-between;text-align:left;gap:12px}.candidate span:last-child{white-space:nowrap;color:var(--muted);font-size:13px}
+.editor{display:flex;gap:8px;margin-top:12px}.editor input{flex:1}.pager{display:flex;align-items:center;justify-content:center;gap:14px;margin:20px 0}
+.empty{padding:26px;text-align:center;color:var(--muted);background:white;border-radius:10px}
+@media(max-width:650px){.controls{grid-template-columns:1fr 1fr}.controls input{grid-column:1/-1}.editor{flex-wrap:wrap}.editor input{min-width:100%}}
+</style>
+</head>
+<body>
+<header><h1>Sözlük anlamlarını incele</h1><p>Birden fazla anlam adayı bulunan kayıtları ara, uygun anlamı seç veya kendi düzeltmeni yaz.</p></header>
+<main>
+<div class="controls">
+<input id="q" type="search" placeholder="Kelime ya da anlam ara" aria-label="Kelime ya da anlam ara">
+<select id="filter" aria-label="Kayıt filtresi"><option value="all">Bütün kayıtlar</option><option value="pending">Düzeltilmemişler</option><option value="edited">Düzeltilenler</option></select>
+<button id="download" class="primary">Düzeltmeleri indir</button>
+</div>
+<div id="status">İnceleme listesi yükleniyor…</div><div id="list"></div>
+<div class="pager"><button id="prev">← Önceki</button><span id="page"></span><button id="next">Sonraki →</button></div>
+</main>
+<script>
+const list=document.querySelector("#list"),statusEl=document.querySelector("#status"),PAGE_SIZE=40;
+let entries=[],overrides={},filtered=[],pageNo=0;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+async function start(){
+  const [a,b]=await Promise.all([fetch("../books/lugat-review.json"),fetch("../data/lugat-overrides.json")]);
+  if(!a.ok)throw new Error("İnceleme raporu bulunamadı. Önce tools/build_dictionary.py çalıştır.");
+  entries=await a.json(); overrides=b.ok?await b.json():{};
+  refresh();
+}
+function refresh(){
+  const q=document.querySelector("#q").value.trim().toLocaleLowerCase("tr"),f=document.querySelector("#filter").value;
+  filtered=entries.filter(x=>{
+    if(f==="pending"&&overrides[x.key])return false;
+    if(f==="edited"&&!overrides[x.key])return false;
+    return !q||[x.display,x.key,...x.candidates.map(c=>c.meaning)].join(" ").toLocaleLowerCase("tr").includes(q);
+  });
+  pageNo=Math.min(pageNo,Math.max(0,Math.ceil(filtered.length/PAGE_SIZE)-1));
+  const start=pageNo*PAGE_SIZE,shown=filtered.slice(start,start+PAGE_SIZE);
+  statusEl.textContent=entries.length.toLocaleString("tr")+" anlam çakışması · "+Object.keys(overrides).length.toLocaleString("tr")+" manuel düzeltme · "+filtered.length.toLocaleString("tr")+" sonuç";
+  list.innerHTML=shown.length?shown.map(x=>'<article class="card" data-key="'+esc(x.key)+'"><h2>'+esc(x.display)+'</h2><div class="key">'+esc(x.key)+'</div><div class="candidates">'+x.candidates.map((c,i)=>'<button class="candidate" data-i="'+i+'"><span>'+esc(c.meaning)+'<small class="source">'+esc((c.sources||[]).join(" · "))+'</small></span><span>'+c.count.toLocaleString("tr")+' kayıt</span></button>').join("")+'</div><div class="editor"><input class="meaning" value="'+esc(overrides[x.key]||x.selected)+'" aria-label="'+esc(x.display)+' için seçilen anlam"><button class="reset">Varsayılana dön</button></div></article>').join(""):'<div class="empty">Bu filtreyle kayıt yok. Rapor henüz üretilmediyse tools/build_dictionary.py çalıştır.</div>';
+  document.querySelector("#page").textContent=filtered.length?((start+1)+"–"+Math.min(start+PAGE_SIZE,filtered.length)+" / "+filtered.length):"0 / 0";
+}
+list.addEventListener("click",e=>{
+  const card=e.target.closest(".card");if(!card)return;
+  const key=card.dataset.key,entry=entries.find(x=>x.key===key);
+  if(e.target.classList.contains("candidate")){const meaning=entry.candidates[+e.target.dataset.i].meaning;overrides[key]=meaning;refresh();}
+  if(e.target.classList.contains("reset")){delete overrides[key];refresh();}
+});
+list.addEventListener("input",e=>{
+  if(!e.target.classList.contains("meaning"))return;
+  const key=e.target.closest(".card").dataset.key,entry=entries.find(x=>x.key===key),value=e.target.value.trim();
+  if(value&&value!==entry.selected)overrides[key]=value;else delete overrides[key];
+  statusEl.textContent=entries.length.toLocaleString("tr")+" anlam çakışması · "+Object.keys(overrides).length.toLocaleString("tr")+" manuel düzeltme";
+});
+document.querySelector("#q").addEventListener("input",()=>{pageNo=0;refresh()});
+document.querySelector("#filter").addEventListener("change",()=>{pageNo=0;refresh()});
+document.querySelector("#prev").onclick=()=>{pageNo=Math.max(0,pageNo-1);refresh()};
+document.querySelector("#next").onclick=()=>{pageNo=Math.min(Math.ceil(filtered.length/PAGE_SIZE)-1,pageNo+1);refresh()};
+document.querySelector("#download").onclick=()=>{
+  const blob=new Blob([JSON.stringify(overrides,null,2)+"\n"],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="lugat-overrides.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+start().catch(e=>{list.innerHTML='<div class="empty">'+esc(e.message)+'</div>';statusEl.textContent="";});
+</script>
+</body>
+</html>

@@ -14,6 +14,7 @@ Kullanım:
 
 Çıktılar:
     books/lugat-big.json   {sade_anahtar: "Yazılış|anlam"}  (tek kelimeler ve tamlamalar)
+    books/lugat-review.json  Birden fazla anlam adayı olan kayıtlar
     books/kelime-sira.json {"total": lugattaki kelimelerin toplam tekrarı, "words": [[kelime, sıklık, anlam], ...]}  en sık 1000 kelime
 """
 import collections
@@ -28,6 +29,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SRC = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT
 OUT = ROOT / "books"
+OVERRIDES_FILE = ROOT / "data/lugat-overrides.json"
+REVIEW_FILE = OUT / "lugat-review.json"
 
 # Lugatta işaretlenmesi gereksiz, her yerde geçen Türkçe kelimeler
 STOP = set("""
@@ -48,6 +51,7 @@ def plain(s):
 # 1) Anlamlar: her kelime için en sık verilen anlam (eşitlikte kısa olan)
 meanings = collections.defaultdict(collections.Counter)
 display = {}
+meaning_sources = collections.defaultdict(lambda: collections.defaultdict(set))
 for f in glob.glob(str(SRC / "data/*/raw/*.csv")):
     with open(f, encoding="utf-8") as fh:
         r = csv.reader(fh)
@@ -62,11 +66,20 @@ for f in glob.glob(str(SRC / "data/*/raw/*.csv")):
             if len(key) < 3 or key in STOP or not re.search(r"[a-z]", key):
                 continue
             meanings[key][v] += 1
+            meaning_sources[key][v].add(Path(f).relative_to(SRC).as_posix())
             display.setdefault(key, k)
+
+overrides = json.loads(OVERRIDES_FILE.read_text(encoding="utf-8")) if OVERRIDES_FILE.exists() else {}
+if not isinstance(overrides, dict):
+    raise ValueError(f"{OVERRIDES_FILE} bir JSON nesnesi olmalı")
+for key, value in overrides.items():
+    if not isinstance(key, str) or not isinstance(value, str) or not value.strip():
+        raise ValueError(f"Geçersiz lugat düzeltmesi: {key!r}")
 
 lugat = {}
 for key, cnt in meanings.items():
-    best = sorted(cnt.items(), key=lambda kv: (-kv[1], len(kv[0])))[0][0]
+    candidates = sorted(cnt.items(), key=lambda kv: (-kv[1], len(kv[0]), kv[0]))
+    best = overrides.get(key, candidates[0][0])
     lugat[key] = f"{display[key]}|{best}"
 # Sitedeki kitaplarda hiç geçmeyen kayıtları at (dosya küçülür, site hızlanır).
 # Tek kelime: kitaplardaki bir kelime bu kayıtla başlıyorsa kalır (sitede ekler kırpılarak aranıyor).
@@ -108,9 +121,24 @@ def used(key):
 
 site_lugat = {k: v for k, v in lugat.items() if used(k)}
 OUT.mkdir(exist_ok=True)
+review = []
+for key, cnt in meanings.items():
+    if key not in site_lugat or len(cnt) < 2:
+        continue
+    candidates = sorted(cnt.items(), key=lambda kv: (-kv[1], len(kv[0]), kv[0]))
+    review.append({
+        "key": key,
+        "display": display[key],
+        "selected": site_lugat[key].split("|", 1)[1],
+        "overridden": key in overrides,
+        "candidates": [{"meaning": meaning, "count": count, "sources": sorted(meaning_sources[key][meaning])} for meaning, count in candidates],
+    })
+review.sort(key=lambda item: item["key"])
+REVIEW_FILE.write_text(json.dumps(review, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 (OUT / "lugat-big.json").write_text(json.dumps(site_lugat, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 single = sum(1 for k in site_lugat if " " not in k)
 print(f"lugat-big.json: {len(site_lugat)} kayıt ({single} tek kelime, {len(site_lugat) - single} tamlama; kitaplarda geçmeyen {len(lugat) - len(site_lugat)} kayıt atıldı)")
+print(f"lugat-review.json: {len(review)} birden fazla anlamı olan kayıt; manuel düzeltme: {sum(1 for item in review if item['overridden'])}")
 
 # 2) Öğrenme sırası: sıklık dosyaları varsa yenile.
 # Bu depo ham sözlük CSV'lerini içerir; frekans dosyaları ayrı kaynak veridir.
