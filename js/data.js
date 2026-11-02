@@ -10,31 +10,7 @@ let LIBRARY = [];
 const BOOKS = new Map();
 const SHELVES = [{ id: "kulliyat", title: "Risale-i Nur Külliyatı" }, { id: "cep", title: "Cep Risaleleri" }];
 
-/* Lugat: kelime → anlam. Anahtarlar küçük harf. */
-const LUGAT = {
-  "kâinat": "Bütün varlıklar, evren.", "zerre": "Çok küçük parça; atom.", "lisan": "Dil.",
-  "mânâ": "Anlam.", "hikmet": "Bir şeyin gizli faydası ve sebebi; bilgelik.", "tefekkür": "Derin düşünme, ibretle bakma.",
-  "intizam": "Düzen, tertip.", "izah": "Açıklama.", "sâni": "Sanatkâr; her şeyi sanatla yapan Allah.",
-  "kudret": "Güç, kuvvet.", "nakış": "Süsleme, işleme.", "sanatkâr": "Sanat sahibi, usta.",
-  "gaflet": "Dikkatsizlik, umursamazlık.", "zulümat": "Karanlıklar.", "rahmet": "Merhamet, şefkat ve ihsan.",
-  "fâni": "Geçici, sonu olan.", "bâki": "Daimî, sonsuz kalıcı.", "sermaye": "Ana mal; burada: verilen imkân, ömür.",
-  "nimet": "İyilik, verilen güzel şey.", "ubudiyet": "Kulluk.", "acz": "Güçsüzlük.", "fakr": "Muhtaçlık.",
-  "zillet": "Alçaklık, hor görülme.", "izzet": "Şeref, değer.", "fıtrat": "Yaratılış, tabiat.",
-  "muhafaza": "Koruma.", "sual": "Soru.", "hâdise": "Olay.", "şefkat": "Acıma ile karışık sevgi.",
-  "zahmet": "Sıkıntı, eziyet.", "muhabbet": "Sevgi.", "hakiki": "Gerçek.", "kemal": "Olgunluk, mükemmellik.",
-  "cemal": "Güzellik.", "tecelli": "Görünme, yansıma, belirme.", "ihlas": "Bir işi sadece Allah rızası için yapmak; samimiyet.",
-  "amel": "İş, yapılan ibadet.", "hürmet": "Saygı.", "mühim": "Önemli.", "tesanüd": "Dayanışma.",
-  "muallim": "Öğretmen.", "hâlık": "Yaratan; Allah.", "sıhhat": "Sağlık.", "tevbe": "Pişmanlıkla Allah'a dönüş.",
-  "vesile": "Sebep, araç.", "esmâ": "İsimler; Allah'ın isimleri.", "tevhid": "Allah'ın bir olduğuna inanmak.",
-  "kesret": "Çokluk.", "vahdet": "Birlik.", "bilakis": "Tam tersine.", "temsil": "Benzetme, örnekle anlatma.",
-  "mevcudat": "Var olan şeyler, varlıklar.", "haşir": "Öldükten sonra dirilip toplanma.",
-  "hakikat": "Gerçek, asıl.", "mahiyet": "Bir şeyin içyüzü, özü.", "isbat": "İspat, kanıtlama.",
-  "nübüvvet": "Peygamberlik.", "ehemmiyet": "Önem.", "mütemadiyen": "Durmadan, sürekli.", "fevkalâde": "Olağanüstü.",
-  "binaenaleyh": "Bundan dolayı.", "mahlukat": "Yaratılmışlar.", "rububiyet": "Allah'ın her şeyi terbiye ve idare etmesi.",
-  "uluhiyet": "İlahlık; ibadete layık tek ilah olmak.", "ebedî": "Sonsuz.", "ezelî": "Başlangıcı olmayan.",
-  "dalalet": "Doğru yoldan sapma.", "hidayet": "Doğru yola girme.", "tasdik": "Doğrulama.", "nefis": "İnsanın kötülüğe meyleden yanı.",
-  "ruh": "Can, insanın manevî varlığı.", "kalb": "Gönül; manevî duygu merkezi.", "akıl": "Düşünme gücü."
-};
+/* Word meanings come only from books/lugat-big.json, generated from the source CSV dictionaries. */
 
 
 /* Arapça ifadeler ve mealleri. Metindeki yazılışla eşleşir; harekeler yok sayılır.
