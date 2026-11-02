@@ -9,7 +9,7 @@ const fmtP = (p) => "%" + p.toLocaleString("tr", { maximumFractionDigits: p >= 1
 const statCache = new Map();
 function statText(book) {
   let t = statCache.get(book.id);
-  if (!t) { t = indexOf(book).map((r) => r.plain).join("\n").replace(/[’`]/g, "'"); statCache.set(book.id, t); }
+  if (!t) { t = indexOf(book).map((r) => r.plain).join("\n").replace(/[’'`]/g, ""); statCache.set(book.id, t); }
   return t;
 }
 // Kelime başında eşleşme; "ekli hâller" kapalıysa kelime sonunda da sınır aranır
@@ -71,8 +71,10 @@ async function showStats(bookId) {
   };
   const countTerm = async () => {
     const raw = $("#stq").value.trim(), res = $("#stq-res");
-    const term = plain(raw).replace(/[’`]/g, "'").replace(/\s+/g, " ").trim();
-    if (term.replace(/[^a-z0-9]/g, "").length < 2) { res.innerHTML = `<div class="empty">En az 2 harf yaz.</div>`; return; }
+    if (plain(raw).replace(/[^a-z0-9]/g, "").length < 2) { res.innerHTML = `<div class="empty">En az 2 harf yaz.</div>`; return; }
+    await loadBig();
+    const toks = raw.split(/\s+/), term = toks.length > 1 ? phraseLookup(toks) : bigLookup(raw);
+    if (!term) { res.innerHTML = `<div class="empty">Bu kelime veya ifade kaynak sözlükte bulunmuyor.</div>`; return; }
     const suf = $("#stq-suf").checked, ids = books.map((x) => x.b.id);
     res.innerHTML = `<div class="empty">Kitaplar hazırlanıyor…</div>`;
     try { await ensureBooks(ids, (d, n) => { res.innerHTML = `<div class="empty">Kitaplar hazırlanıyor: ${d} / ${n}</div>`; }); }
