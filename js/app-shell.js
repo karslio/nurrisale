@@ -138,6 +138,6 @@ menu.addEventListener("click", async (e) => {
       <li>${BIG ? Object.keys(BIG).length.toLocaleString("tr") : "40.000"}+ kelime ve tamlamalık lugat, sık geçen Arapça ifadelerin meâli</li>
       <li>Kelime Öğren: en sık geçen 1000 kelime, sıklık sırasıyla</li>
       <li>Haşiyeler, yer imleri, vurgular ve notlar, sesli okuma, çevrimdışı okuma</li></ul>
-      <p style="color:var(--muted);font-size:14px">Lugat ve kelime sıklıkları <a href="https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans" target="_blank" rel="noopener">Risale-i Nur Kelime Frekansı</a> çalışmasından alındı (Ali Tekdemir, CC0). Ayetler <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil</a> Kur'an metniyle (CC BY 3.0) eşleştirildi; meal: Türkçe Tercüme, Rowwad Tercüme Merkezi, <a href="https://quranenc.com/tr/browse/turkish_rwwad" target="_blank" rel="noopener">QuranEnc.com</a>, sürüm 1.0.4. Sayfa numaraları sitenin kendi sayfalamasıdır, basılı kitapla aynı değildir.</p>`);
+      <p style="color:var(--muted);font-size:14px">Ayetler <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil</a> Kur'an metniyle (CC BY 3.0) eşleştirildi; meal: Türkçe Tercüme, Rowwad Tercüme Merkezi, <a href="https://quranenc.com/tr/browse/turkish_rwwad" target="_blank" rel="noopener">QuranEnc.com</a>, sürüm 1.0.4. Sayfa numaraları sitenin kendi sayfalamasıdır, basılı kitapla aynı değildir.</p>`);
   if (m === "install" && installEvt) { installEvt.prompt(); installEvt = null; }
 });

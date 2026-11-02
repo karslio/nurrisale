@@ -73,7 +73,6 @@ function showLibrary() {
       <div>Bir öğrenme projesi · <a href="https://github.com/karslio/nurrisale" target="_blank" rel="noopener">Kaynak kodu</a></div>
       <div>Ayet mealleri: Rowwad Tercüme Merkezi (<a href="https://quranenc.com/tr/browse/turkish_rwwad" target="_blank" rel="noopener">QuranEnc.com</a>, 1.0.4) · Kur'an metni: <a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil</a> (CC BY 3.0)</div>
       <div>Ayet olmayan Arapça ve Farsça satırların Türkçesi: NurRisale çalışma tercümesi (yaklaşık meal)</div>
-      <div>Lugat ve kelime sıklıkları: <a href="https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans" target="_blank" rel="noopener">Risale-i Nur Kelime Frekansı</a> (Ali Tekdemir, CC0)</div>
     </footer>
     </div>`;
   $("#home-learn").onclick = () => openLearn(srsDue().length ? "review" : "learn");

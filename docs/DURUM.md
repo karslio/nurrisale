@@ -13,7 +13,7 @@ Risale-i Nur Külliyatı okuma sitesi, öğrenme projesi.
 - `books/<id>.json` — sayfalar (`s` bölüm, `b` bloklar: p/c/ar/h), içindekiler, haşiyeler
 - `books/lugat.json` — ~950 kelimelik küçük lugat (yedek)
 - `books/lugat-big.json` — 31 bin kayıtlık büyük lugat (11 bin kelime + 20 bin tamlama; kitaplarda geçmeyenler atıldı), `books/kelime-sira.json` — en sık 1000 kelime
-  - `tools/build_lugat.py` ile [Risale-i Nur Kelime Frekansı](https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans) verisinden (Ali Tekdemir, CC0); sitede kaynak belirtildi
+  - `tools/build_lugat.py` ile depodaki yerel sözlük CSV kopyalarından üretilir (CC0)
 - `books/ayetler.json` — ayet eşleşmeleri (3.810 Arapça satırın %41'i, 501 farklı ayet) ve Türkçe meal (Rowwad, QuranEnc.com 1.0.4; metne dokunmadan, kaynakla) — `tools/build_ayet.py /yol/quran-json`
 - `books/konular.json` — konu dizini: 28 konu (haşir, kader, namaz, ihlas, gençlik…), her biri için anahtar kelimelerin en yoğun geçtiği 30 bölüm/alt başlık ve kitaplara göre sayılar (`tools/build_konular.py`)
 - `books/arapca.json` — ayet olmayan Arapça/Farsça satırların meali (dua, salavat, Âyetü'l-Kübra, Farsça münacatlar): 930 tercüme, 1.404 satır; kaynak `tools/arapca_tercume.json` (NurRisale çalışma tercümesi, yaklaşık meal), `tools/build_arapca.py`
