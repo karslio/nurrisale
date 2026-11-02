@@ -6,7 +6,8 @@ Site: https://karslio.github.io/nurrisale
 
 ## Klasörler
 
-- `index.html` — sitenin tamamı (HTML, CSS ve JavaScript tek dosyada)
+- `index.html` — HTML iskeleti ve sayfa içi CSS
+- `js/` — uygulamanın JavaScript dosyaları; `index.html` içinde bağımlılık sırasıyla yüklenir.
 - `books/index.json` — kitap listesi (ad, açıklama, kapak rengi, sayfa sayısı)
 - `books/<kitap>.json` — kitabın sayfaları, içindekiler ve haşiyeleri
 - `books/lugat-big.json`, `books/kelime-sira.json` — büyük lugat ve en sık 1000 kelime
