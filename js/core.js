@@ -23,9 +23,7 @@ async function loadLibrary() {
   if (!r.ok) throw new Error("liste");
   LIBRARY = await r.json();
 }
-async function loadLugat() {
-  try { const r = await fetch("books/lugat.json"); if (r.ok) { const x = await r.json(); for (const k in x) LUGAT[lower(k)] = x[k]; indexLugat(); } } catch {}
-}
+async function loadLugat() {}
 async function loadBook(id) {
   if (BOOKS.has(id)) return BOOKS.get(id);
   const r = await fetch(`books/${id}.json`);
@@ -62,15 +60,7 @@ function buildChapters(book) {
 }
 const chapterOf = (book, page) => book.chapters.find((c) => page >= c.start && page <= c.end) || book.chapters[0];
 
-/* Lugat eşleştirme */
-let LUGAT_KEYS = [];
-function indexLugat() { LUGAT_KEYS = Object.keys(LUGAT).sort((a, b) => b.length - a.length); }
-indexLugat();
-function findLugat(word) {
-  const w = lower(word.replace(/['’].*$/, ""));
-  if (LUGAT[w]) return w;
-  return LUGAT_KEYS.find((k) => k.length >= 4 && w.startsWith(k)) || null;
-}
+/* Definitions are looked up exclusively in the generated source dictionary (BIG). */
 const WORD = /([A-Za-zÇĞİÖŞÜçğıöşüÂÎÛâîû'’-]+)/;
 /* Büyük lugat (eRisale ve SorularlaRisale sayfa altı lugatlarından derlenmiş, CC0):
    tek kelimeler ve "derd-i maîşet" gibi tamlamalar. Anahtarlar şapkasız, küçük harf. */
@@ -117,8 +107,7 @@ function renderWords(text, highlight) {
     if (done) continue;
     const w = parts[i], key = bigLookup(w);
     if (key) { out += span(key, wordHtml(w)); continue; }
-    const k2 = findLugat(w);
-    out += k2 ? `<span class="w" data-k="${escapeHtml(k2)}">${wordHtml(w)}</span>` : wordHtml(w);
+    out += wordHtml(w);
   }
   return out;
 }
