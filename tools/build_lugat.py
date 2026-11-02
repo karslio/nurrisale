@@ -1,8 +1,11 @@
 """Büyük lugat ve kelime öğrenme listesi üretir.
 
-Kaynak: https://github.com/alitekdemir/Risale-i-Nur-Kelime-Frekans (CC0)
-  data/*/raw/*.csv                    → kelime, anlam (sayfa altı lugatları)
-  data/eRisale/analysis/terkipsiz/*   → kitaplara göre kelime sıklıkları
+Sözlük anlamları bu depoya kopyalanmış yerel CSV dosyalarından okunur:
+  data/eRisale/raw/*.csv         → kelime, anlam (sayfa altı lugatları)
+  data/SorularlaRisale/raw/*.csv → kelime, anlam (sayfa altı lugatları)
+
+Kelime sıklığı dosyaları yalnızca komutta verilen yerel veri klasöründe varsa
+kelime-sira.json yeniden üretilir; dosyalar yoksa mevcut liste korunur.
 
 Kullanım:
     python3 tools/build_lugat.py
