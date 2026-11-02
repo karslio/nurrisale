@@ -93,10 +93,26 @@ function scrollSideToCurrent() {
   const c = side.querySelector(".row.cur");
   if (c) c.scrollIntoView({ block: "center" });
 }
-function openSide() { renderSide(); document.body.classList.add("side-open"); setTimeout(scrollSideToCurrent, 50); }
-function closeSide() { document.body.classList.remove("side-open"); }
-$("#btn-side").onclick = () => { if (narrow()) { document.body.classList.contains("side-open") ? closeSide() : openSide(); } else scrollSideToCurrent(); };
+function updateSideButton() {
+  const expanded = narrow() ? document.body.classList.contains("side-open") : !document.body.classList.contains("side-collapsed");
+  $("#btn-side").setAttribute("aria-expanded", String(expanded));
+  $("#btn-side").setAttribute("aria-label", expanded ? "Kitap listesini gizle" : "Kitap listesini göster");
+}
+if (!narrow() && store.get("nr-side-collapsed", false)) document.body.classList.add("side-collapsed");
+function openSide() { renderSide(); document.body.classList.add("side-open"); updateSideButton(); setTimeout(scrollSideToCurrent, 50); }
+function closeSide() { document.body.classList.remove("side-open"); updateSideButton(); }
+$("#btn-side").onclick = () => {
+  if (narrow()) { document.body.classList.contains("side-open") ? closeSide() : openSide(); }
+  else {
+    const collapsed = !document.body.classList.contains("side-collapsed");
+    document.body.classList.toggle("side-collapsed", collapsed);
+    store.set("nr-side-collapsed", collapsed);
+    updateSideButton();
+  }
+};
+window.addEventListener("resize", updateSideButton);
 $("#scrim").onclick = closeSide;
+updateSideButton();
 
 /* Üstteki yol: Kitap / Bölüm + sayfa kutusu */
 function renderCrumbs() {
