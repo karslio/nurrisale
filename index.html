@@ -127,6 +127,16 @@ button { font: inherit; color: inherit; }
 main { margin-left: var(--side-w); padding-top: calc(env(safe-area-inset-top, 0px) + var(--bar1) + var(--bar2)); padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); padding-bottom: 80px; min-height: 100%; }
 .scrim { display: none; }
 
+@media (min-width: 961px) {
+  .side { transition: transform .22s ease; }
+  main { transition: margin-left .22s ease; }
+  body.side-collapsed .side { transform: translateX(-102%); }
+  body.side-collapsed main { margin-left: 0; }
+  body.side-collapsed .logo { width: auto; }
+  body.side-collapsed .bar2 .side-title { width: 52px; justify-content: center; padding-left: 0; }
+  body.side-collapsed .bar2 .side-title span { display: none; }
+}
+
 /* Ana sayfa: arama */
 .home { max-width: 760px; margin: 0 auto; padding-block: 48px 24px; display: grid; gap: 18px; }
 .emblem { text-align: center; font-family: var(--font-arabic); color: var(--red); font-size: 30px; line-height: 1.5; }
@@ -674,7 +684,7 @@ body.lesson .pmark { opacity: .35; }
   .covers { grid-template-columns: repeat(auto-fill, minmax(94px, 1fr)); gap: 18px 12px; }
   .cv .img { height: 140px; } .cv img { max-height: 140px; }
 }
-@media (prefers-reduced-motion: reduce) { .side, .scrim, .cv img, .tree .tw { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .side, .scrim, main, .cv img, .tree .tw { transition: none; } }
 </style>
 
 <div class="bars" id="bars">
@@ -694,7 +704,7 @@ body.lesson .pmark { opacity: .35; }
     </div>
   </div>
   <div class="bar2">
-    <button class="side-title" id="btn-side" aria-label="Kitaplar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg><span>Kitaplar</span></button>
+    <button class="side-title" id="btn-side" aria-label="Kitap listesini gizle" aria-expanded="true" aria-controls="side"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg><span>Kitaplar</span></button>
     <div class="crumbs" id="crumbs"></div>
   </div>
   <div class="progress" id="progress"></div>
